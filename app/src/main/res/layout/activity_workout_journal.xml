@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+ xmlns:android="http://schemas.android.com/apk/res/android"
+ android:orientation="vertical"
+ android:layout_width="match_parent"
+ android:layout_height="match_parent"
+ android:background="@android:color/white"
+ android:animateLayoutChanges="true"
+ >
+
+	<!-- Notes bar -->
+	<LinearLayout
+      android:id="@+id/notesLayout"
+      android:layout_width="match_parent"
+      android:layout_height="100dp"
+      android:orientation="horizontal"
+      android:visibility="gone"
+      >
+       
+		            <TextView
+		                android:id="@+id/exerciseNoteTv"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:padding="5dp"
+		                android:layout_weight="1"
+		                android:hint="@string/workout_exercise_no_note_hint"
+		                android:textColorHint="@color/baseColor"
+		                android:textSize="16sp" 
+		                android:clickable="true"
+		                android:onClick="onNotesTap"
+		                />
+
+		            <View
+		                android:id="@+id/notesSeparatorMiddleV"
+		                android:layout_width="1dp"
+		                android:background="@color/baseColor" 
+		                android:layout_height="match_parent"
+		                android:clickable="false"
+		                />
+
+		            <TextView
+		                android:id="@+id/setNoteTv"
+		                android:layout_width="0dp"
+		                android:layout_height="wrap_content"
+		                android:padding="3dp"
+		                android:layout_weight="1"
+		 				android:hint="@string/workout_set_no_note_hint"
+		 				android:textColorHint="@color/baseColor"
+		                android:textSize="16sp" 
+		                android:clickable="true"
+		                android:onClick="onNotesTap"
+		                />
+
+	</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/baseColor_ligher"
+ />
+
+   	<!-- Working area -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        >
+            <ListView
+                android:id="@+id/exercisesLv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="7" 
+                android:choiceMode="singleChoice"
+                android:background="@drawable/listview_workoutedit"
+                android:listSelector="@color/baseColor_ligher" />
+
+            <View
+                android:id="@+id/listsSeparatorTv"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/baseColor_ligher" />
+
+            <ListView
+                android:id="@+id/setsLv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:choiceMode="singleChoice"
+                android:background="@drawable/listview_workoutedit"
+                android:listSelector="@color/baseColor_lightest" />
+            
+	</LinearLayout>
+		
+    <!-- Edit bar -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:background="@color/baseColor"
+         >
+
+            <ImageButton
+                android:id="@+id/CancelBtn"
+                style="@style/WorkoutEditButtonStyle"
+                android:contentDescription="@string/workout_add_btn_hint"
+                android:onClick="onBackButtonPressed"
+                android:src="@drawable/ic_custom_circledback" />
+
+            <EditText
+                android:id="@+id/editReps"
+                style="@style/WorkoutEditTextViewStyle"
+                android:layout_weight="2"
+                android:inputType="numberSigned"
+                android:maxLength="2"
+                android:hint="@string/workout_edit_reps_hint"
+                android:visibility="gone" 
+                />
+
+            <EditText
+                android:id="@+id/editWeight"
+                style="@style/WorkoutEditTextViewStyle"
+                android:layout_weight="2"
+                android:inputType="numberDecimal"
+                android:maxLength="5"
+                android:hint="@string/workout_edit_weight_hint"
+                android:visibility="gone" 
+                />
+
+            <AutoCompleteTextView
+                android:id="@+id/addExerciseACTV"
+                style="@style/WorkoutEditTextViewStyle"
+                android:layout_weight="4"
+                android:hint="@string/workout_exercise_textview_hint"
+                android:maxLength="64"
+                 />
+            
+            <ImageButton
+                android:id="@+id/addExerciseSBtn"
+                style="@style/WorkoutEditButtonStyle"
+                android:src="@drawable/ic_custom_circledplus"
+                android:contentDescription="@string/workout_add_btn_hint"
+                android:onClick="onAddButtonPressed" >
+
+            </ImageButton>
+
+	</LinearLayout>
+</LinearLayout>

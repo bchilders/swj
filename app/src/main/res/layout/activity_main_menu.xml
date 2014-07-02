@@ -1,0 +1,37 @@
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    tools:context=".MainMenu" >
+
+
+    <Button
+        android:id="@+id/buttonMmStart"
+        style="@style/MainMenuButtonStyle"
+        android:text="@string/main_menu_btn_start" />
+
+    <Button
+        android:id="@+id/buttonMmExercises"
+        style="@style/MainMenuButtonStyle"
+        android:text="@string/main_menu_btn_exercises" />
+
+    <Button
+        android:id="@+id/buttonMmPresets"
+        style="@style/MainMenuButtonStyle"
+        android:text="@string/main_menu_btn_presets" />
+    
+    <Button
+        android:id="@+id/buttonMmBody"
+        style="@style/MainMenuButtonStyle"
+        android:text="@string/main_menu_btn_body" />
+    
+    <Button
+        android:id="@+id/buttonMmReports"
+        style="@style/MainMenuButtonStyle"
+        android:text="@string/main_menu_btn_reports" />
+
+</LinearLayout>
+
