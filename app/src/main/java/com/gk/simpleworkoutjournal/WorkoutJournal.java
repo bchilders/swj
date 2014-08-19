@@ -414,6 +414,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			currCursor = (Cursor) currAdapter.getItem( currAdapter.getCurrent() );
 			
 			Log.v(APP_NAME, "tapped notes: exercise section. current item: "+exercisesAdapter.getCurrent());
+            if ( exercisesAdapter.getCurrent() == -1 ) {
+                Log.v(APP_NAME, "tapped notes: doing nothing since no item selected");
+                return;
+            }
+
 			headText = currCursor.getString( currCursor.getColumnIndex(DBClass.KEY_ID));
 			isExercise = 1;
 			break;
@@ -425,6 +430,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			currCursor = (Cursor) currAdapter.getItem( currAdapter.getCurrent() );
 			
 			Log.v(APP_NAME, "tapped notes: sets section. current item: "+setsAdapter.getCurrent());
+
+            if ( exercisesAdapter.getCurrent() == -1 ) {
+                Log.v(APP_NAME, "tapped notes: doing nothing since no item selected");
+                return;
+            }
+
 			if ( currCursor.getCount() == 0 ) return;// here need other check for case when no set selected (when navogating after exercise lv tapped)
 			headText = currCursor.getString( currCursor.getColumnIndex(DBClass.KEY_EX_NAME)) + "  "  +
 					   currCursor.getInt( currCursor.getColumnIndex(DBClass.KEY_REPS))    + " : " +
