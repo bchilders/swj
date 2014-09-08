@@ -91,7 +91,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         exercisesAdapter = new WorkoutDataAdapter(this, allExCursor, WorkoutDataAdapter.Subject.EXERCISES);
         //fill the text view now
         exercisesLv.setAdapter(exercisesAdapter);
-        
+
         //exercisesLv.setSelection(exercisesAdapter.getCount()-1); 
     	exercisesLv.smoothScrollToPosition(exercisesLv.getCount() - 1);
     	exercisesLv.setItemChecked(exercisesLv.getCount() - 1, true);
@@ -161,6 +161,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     	dbmediator.open();
     	//we are trying  both to log exercise to log DB and to add it into exercise DB and list view
     	if (exerciseTextView.getVisibility() == View.VISIBLE) {
+
 	    	Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed(). Exercise in edit text: "+exerciseTextView.getText());
 	    	String newName = exerciseTextView.getText().toString();
 	    	if (newName.trim().length() == 0) {
@@ -173,17 +174,30 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		    	//refresh listview with new data
 		    	allExCursor = dbmediator.fetchExerciseHistory();
 		    	exercisesAdapter.changeCursor(allExCursor);
-		    	//exercisesAdapter.setCurrent(allExCursor.getCount()-1); // need this?
+
+                currAdapter = exercisesAdapter;
+                currCursor = allExCursor;
+		    	exercisesAdapter.setCurrent(allExCursor.getCount()-1); // need this?
 
 		    	exerciseTextView.setText("");
 		    	
 		    	//jump to last item but do not choose it
 		    	exercisesLv.smoothScrollToPosition(exercisesLv.getCount() - 1);
+
+                //get set list for this exercise
+                allSetsCursor = dbmediator.fetchSetsForExercise( newName );
+                setsAdapter = new WorkoutDataAdapter(this, allSetsCursor, WorkoutDataAdapter.Subject.SETS);
+                setsLv.setAdapter( setsAdapter  );
+                setsAdapter.notifyDataSetChanged();
+
 	    	}
 	    	
     	//we are trying to add reps and weight
     	} else {
-    		Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed() Reps: "+repsEdit.getText()+ " Weight: "+weightEdit.getText()+ "Ex curr idx: "+exercisesAdapter.getCurrent() );
+
+
+
+            Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed() Reps: "+repsEdit.getText()+ " Weight: "+weightEdit.getText()+ "Ex curr idx: "+exercisesAdapter.getCurrent() );
     		String repString = repsEdit.getText().toString();
     		String weiString = weightEdit.getText().toString();
     		
@@ -191,7 +205,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 	    		Toast.makeText(this, "Empty fields are not allowed", Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
 	    		return;	
     		}
-    		
+
     		int newRep = Integer.parseInt(repString);
 	    	Float newWei = Float.parseFloat(weiString);
 	    	
@@ -201,19 +215,19 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 	    	//get name of the current exercise
 			Cursor tmpcs = (Cursor) exercisesAdapter.getItem(exercisesAdapter.getCurrent() );
 			Log.v(APP_NAME, "tmpcs rows: "+tmpcs.getCount());
-			String test = tmpcs.getString(allExCursor.getColumnIndex(DBClass.KEY_ID));
+			String exerciseName = tmpcs.getString(allExCursor.getColumnIndex(DBClass.KEY_ID));
 	    	
-	    	dbmediator.insertSet(test, newRep, newWei );
+	    	dbmediator.insertSet(exerciseName, newRep, newWei );
 	    	
-	    	allSetsCursor = dbmediator.fetchSetsForExercise(test);
+	    	allSetsCursor = dbmediator.fetchSetsForExercise(exerciseName);
 	    	Log.v(APP_NAME, "before change cursor");
-	    	setsAdapter.changeCursor(allSetsCursor);
-	    	setsAdapter.notifyDataSetChanged();
-	    	
-	    	
-	    	setsLv.smoothScrollToPosition(setsLv.getCount() - 1); // scroll to first (last?) with date of exrcises, not to last in view
-	    	Log.v(APP_NAME, "after change cursor");
-	    	
+
+            //refresh cursor
+            setsAdapter = new WorkoutDataAdapter(this, allSetsCursor, WorkoutDataAdapter.Subject.SETS);
+            setsLv.setAdapter( setsAdapter  );
+            setsAdapter.changeCursor(allSetsCursor);
+            setsAdapter.notifyDataSetChanged();
+            setsLv.smoothScrollToPosition( setsLv.getCount() - 1);
     	}
     	dbmediator.close();
     }
@@ -333,12 +347,13 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 	@Override
 	public boolean onTouch(View view, MotionEvent event) {
 		//switch lower pane edits depending on touch target ( exercise list view or sets list view)
-
 		if (event.getAction() == MotionEvent.ACTION_UP) {
-			Log.v(APP_NAME," dumping after ontouch");
-			DatabaseUtils.dumpCursor(allExCursor);
-			Log.v(APP_NAME, "WorkoutJournal :: onTouch , click selected: "+exercisesLv.getSelectedItemPosition()+" checked: "+exercisesLv.getCheckedItemPosition());
-			
+/*
+            Log.v(APP_NAME," dumping after ontouch");
+            Log.v(APP_NAME,"current item of currCursor"+currAdapter.getCurrent() );
+            DatabaseUtils.dumpCursor(currCursor);*/
+			//Log.v(APP_NAME, "WorkoutJournal :: onTouch , click selected: "+currLv.getSelectedItemPosition()+" checked: "+currLv.getCheckedItemPosition());
+
 			switch (view.getId()) {
 				case R.id.setsLv:
 					if ( exercisesAdapter.getCurrent() != -1 ) { 
@@ -348,8 +363,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 					}
 					break;
 
+                case R.id.exercisesLv:
+
+                    break;
 			}
 		}
+
 		return false;
 	}
 	
@@ -399,7 +418,10 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		Log.v(APP_NAME, "WorkoutJournal :: syncPositions : set to "+dstCursor.getPosition());
 		return dstCursor.getPosition();
 	}
-	
+
+    /*
+    * will change current adapter to appropriate one
+     */
 	public void onNotesTap(View v) {
 		boolean haveRecepient = false;
 		String headText = null;
@@ -407,12 +429,13 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		switch (v.getId()) {
 		case R.id.exerciseNoteTv:
 			haveRecepient = true;
-			currCursor = allExCursor;
-			currAdapter = exercisesAdapter;
 			currLv = exercisesLv;
 			currAdapter = exercisesAdapter;
 			currCursor = (Cursor) currAdapter.getItem( currAdapter.getCurrent() );
-			
+
+            Log.v(APP_NAME, "aaa");
+            DatabaseUtils.dumpCursor(currCursor); //gk
+
 			Log.v(APP_NAME, "tapped notes: exercise section. current item: "+exercisesAdapter.getCurrent());
             if ( exercisesAdapter.getCurrent() == -1 ) {
                 Log.v(APP_NAME, "tapped notes: doing nothing since no item selected");
@@ -424,7 +447,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			break;
 		case R.id.setNoteTv:
 			haveRecepient = true;
-			currAdapter = setsAdapter;
 			currLv = setsLv;
 			currAdapter = setsAdapter;
 			currCursor = (Cursor) currAdapter.getItem( currAdapter.getCurrent() );
@@ -444,7 +466,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		default:
 			break;
 		}
-		
+
+
+
 		if (haveRecepient && !(currCursor == null) && currCursor.getCount() != 0 ) {
 			currCursor.moveToPosition( currAdapter.getCurrent() );
 			String note = currCursor.getString( currCursor.getColumnIndex(DBClass.KEY_NOTE));
@@ -467,28 +491,47 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		Log.v(APP_NAME, "onActivityResult" );
 		if ( resultCode == RESULT_OK ) {
 			String note = data.getStringExtra("note");
+
+            Log.v(APP_NAME, "bbb");
+            DatabaseUtils.dumpCursor(currCursor); //gk
+
 			currCursor = (Cursor) currAdapter.getItem( currAdapter.getCurrent() );
+            Log.v(APP_NAME, "onActivityResult once got item with nr."+currAdapter.getCurrent());
+
+            Log.v(APP_NAME, "ccc");
+            DatabaseUtils.dumpCursor(currCursor); //gk
+
+            Log.v(APP_NAME, "onActivityResult once got item");
 			dbmediator.open();
+
 			switch ( requestCode ){
+
 				case 1: //exercise
+                    Log.v(APP_NAME, "gonna insert note '"+note+"' for ex id "+currCursor.getString( currCursor.getColumnIndex(DBClass.KEY_ID)));
 					dbmediator.insertExerciseNote(  currCursor.getString( currCursor.getColumnIndex(DBClass.KEY_ID) ), note );
 					exerciseNoteTv.setText( note );
-					currCursor = dbmediator.fetchExerciseHistory();
-					Log.v(APP_NAME, "TEST STARTED");
+					allExCursor = dbmediator.fetchExerciseHistory();
+                    currAdapter.changeCursor( allExCursor );
+                    currCursor = allExCursor;
+					Log.v(APP_NAME, "onActivityResult once fetched exercise history after inserting note");
 					DatabaseUtils.dumpCursor(allExCursor);
-					Log.v(APP_NAME, "TEST PASSED");
+                    Log.v(APP_NAME, "onActivityResult once fetched exercise history after inserting note");
 					break;
+
 				case 0: //set
+
 					Log.v(APP_NAME, "gonna insert note '"+note+"' for set id "+currCursor.getLong( currCursor.getColumnIndex(DBClass.KEY_ID)));
 					dbmediator.insertSetNote( currCursor.getLong( currCursor.getColumnIndex(DBClass.KEY_ID) ) , note );
 					setNoteTv.setText( note );
 					Cursor tmpcs = (Cursor) exercisesAdapter.getItem(exercisesAdapter.getCurrent());
 					String test = tmpcs.getString(allExCursor.getColumnIndex(DBClass.KEY_ID));
-					currCursor = dbmediator.fetchSetsForExercise(test );
+					allSetsCursor = dbmediator.fetchSetsForExercise(test );
+                    currAdapter.changeCursor( allSetsCursor );
+                    currCursor = allSetsCursor;
 					break;
 			}
-			
-			currAdapter.changeCursor(currCursor);
+
+			//currAdapter.changeCursor( currCursor );
 			currAdapter.notifyDataSetChanged();
 			dbmediator.close();
 			
