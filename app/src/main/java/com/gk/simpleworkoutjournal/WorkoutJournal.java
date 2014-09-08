@@ -64,8 +64,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         weightEdit = (EditText) findViewById(R.id.editWeight);
       
         // set notes touch listeners for exercise and set
-        TextView exerciseNotes = (TextView) findViewById(R.id.exerciseNoteTv);
-        exerciseNotes.setOnTouchListener(this);
+        exerciseNoteTv.setOnTouchListener(this);
         
         // set click / touch listeners
         setsLv.setOnItemClickListener(this);
@@ -163,29 +162,46 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     	if (exerciseTextView.getVisibility() == View.VISIBLE) {
 
 	    	Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed(). Exercise in edit text: "+exerciseTextView.getText());
-	    	String newName = exerciseTextView.getText().toString();
-	    	if (newName.trim().length() == 0) {
+	    	String incomingName = exerciseTextView.getText().toString();
+            incomingName = incomingName.trim();
+	    	if ( incomingName.length() == 0 ) {
 	    		Toast.makeText(this, "Empty fields are not allowed", Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
 	    		return;
 	    	}
 	    	
-	    	dbmediator.addExercise( newName ); // may fail since exercise is in db - it's ok
-	    	if ( dbmediator.logExercise( newName ) ) {
-		    	//refresh listview with new data
+	    	dbmediator.addExercise( incomingName ); // may fail since exercise is in db - it's ok
+	    	if ( dbmediator.logExercise( incomingName ) ) {
+		    	//populate listview with updated data
 		    	allExCursor = dbmediator.fetchExerciseHistory();
 		    	exercisesAdapter.changeCursor(allExCursor);
 
                 currAdapter = exercisesAdapter;
                 currCursor = allExCursor;
-		    	exercisesAdapter.setCurrent(allExCursor.getCount()-1); // need this?
+		    	exercisesAdapter.setCurrent(allExCursor.getCount() - 1 );
 
 		    	exerciseTextView.setText("");
+
+                //show note at once if it exist
+                Cursor thisExercise = (Cursor) exercisesAdapter.getItem( exercisesAdapter.getCurrent() );
+                String exerciseNote = thisExercise.getString( allExCursor.getColumnIndex(DBClass.KEY_NOTE) );
+
+                //if not hint - empty box. If hint exist for this exercise - add it to box
+                if ( exerciseNote != null ) {
+                    exerciseNoteTv.setText( exerciseNote );
+                } else  {
+                    exerciseNoteTv.setText("");
+                    exerciseNoteTv.setHint(R.string.workout_exercise_newnote_hint);
+                }
+
+                //always empty notes box for sets sice we lost focuse
+                setNoteTv.setText("");
+                setNoteTv.setHint(R.string.workout_set_no_note_hint);
 		    	
 		    	//jump to last item but do not choose it
 		    	exercisesLv.smoothScrollToPosition(exercisesLv.getCount() - 1);
 
                 //get set list for this exercise
-                allSetsCursor = dbmediator.fetchSetsForExercise( newName );
+                allSetsCursor = dbmediator.fetchSetsForExercise( incomingName );
                 setsAdapter = new WorkoutDataAdapter(this, allSetsCursor, WorkoutDataAdapter.Subject.SETS);
                 setsLv.setAdapter( setsAdapter  );
                 setsAdapter.notifyDataSetChanged();
@@ -331,7 +347,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			currNoteTv.setText(noteSet);
 		}
 		
-		if ( inContextMode == true )
+		if ( inContextMode )
 		{
 			contextMode.setTitle( "ID: "+currAdapter.getCurrent());
 		}
@@ -390,7 +406,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		Log.v(APP_NAME, "syncPositions: dumping src cursor with active pos: "+srcCursor.getPosition() );
 		DatabaseUtils.dumpCursor(srcCursor);
 		long baseDate = srcCursor.getLong(srcCursor.getColumnIndex(DBClass.KEY_TIME));   // and get  time
-		long curDate = -1;// =  dstCursor.getColumnIndex(DBClass.KEY_TIME);
+		long curDate; // =  dstCursor.getColumnIndex(DBClass.KEY_TIME);
 		boolean found = false;
 		int max = secondaryAdapter.getCount();
 		int min = 0;
@@ -426,15 +442,13 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		boolean haveRecepient = false;
 		String headText = null;
 		int isExercise = 0;
+
 		switch (v.getId()) {
 		case R.id.exerciseNoteTv:
 			haveRecepient = true;
 			currLv = exercisesLv;
 			currAdapter = exercisesAdapter;
-			currCursor = (Cursor) currAdapter.getItem( currAdapter.getCurrent() );
-
-            Log.v(APP_NAME, "aaa");
-            DatabaseUtils.dumpCursor(currCursor); //gk
+			currCursor = (Cursor) currAdapter.getItem( currAdapter.getCurrent() ); //check.
 
 			Log.v(APP_NAME, "tapped notes: exercise section. current item: "+exercisesAdapter.getCurrent());
             if ( exercisesAdapter.getCurrent() == -1 ) {
@@ -479,7 +493,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			dialogIntent.putExtra("headText", headText);
 			dialogIntent.putExtra("note", note);
 			// id is exercise name or sets id
-			//dialogIntent.putExtra("id", currCursor.getString( currCursor.getColumnIndex(DBClass.KEY_ID) ) );
 			
 			startActivityForResult( dialogIntent, isExercise );
 			Log.v(APP_NAME, "after  startActivity" );
@@ -549,14 +562,16 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     	//setsLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         // Start the CAB using the ActionMode.Callback defined above
         //mActionMode = getActivity().
-		if ( inContextMode == true) return false;
+		if ( inContextMode ) return false;
 		
 		Log.v(APP_NAME,"onLongClick :: going to start context");
 		inContextMode = true;
 		ContextMenuCallback actionModeCb = new ContextMenuCallback( currCursor, dbmediator); //move to common
 		contextMode =  startActionMode( actionModeCb );
-		inContextMode = true;
-		contextMode.setTitle( "ID: "+currAdapter.getCurrent());
+	    assert contextMode != null;
+
+        inContextMode = true;
+        contextMode.setTitle( "ID: "+currAdapter.getCurrent());
 		//contextMode.setTag();
 		//arg1.setSelected(true);
         return true;
