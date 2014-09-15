@@ -439,6 +439,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     * will change current adapter to appropriate one
      */
 	public void onNotesTap(View v) {
+        Log.v(APP_NAME, "tapped notes");
 		boolean haveRecepient = false;
 		String headText = null;
 		int isExercise = 0;
@@ -463,6 +464,14 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			haveRecepient = true;
 			currLv = setsLv;
 			currAdapter = setsAdapter;
+
+            //if no sets
+            if ( setsAdapter == null )
+            {
+                Log.v(APP_NAME, "tapped notes: doing nothing since adapter dont exist");
+                return;
+            }
+
 			currCursor = (Cursor) currAdapter.getItem( currAdapter.getCurrent() );
 			
 			Log.v(APP_NAME, "tapped notes: sets section. current item: "+setsAdapter.getCurrent());
@@ -478,7 +487,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 					   currCursor.getFloat( currCursor.getColumnIndex(DBClass.KEY_WEIGHT));
 			break;
 		default:
-			break;
+			return;
 		}
 
 
