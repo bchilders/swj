@@ -20,7 +20,7 @@
 		            <TextView
 		                android:id="@+id/exerciseNoteTv"
 		                android:layout_width="0dp"
-		                android:layout_height="wrap_content"
+		                android:layout_height="match_parent"
 		                android:padding="5dp"
 		                android:layout_weight="1"
 		                android:hint="@string/workout_exercise_no_note_hint"
@@ -41,7 +41,7 @@
 		            <TextView
 		                android:id="@+id/setNoteTv"
 		                android:layout_width="0dp"
-		                android:layout_height="wrap_content"
+		                android:layout_height="match_parent"
 		                android:padding="3dp"
 		                android:layout_weight="1"
 		 				android:hint="@string/workout_set_no_note_hint"

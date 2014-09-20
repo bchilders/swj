@@ -270,7 +270,7 @@ public class DBClass  {
 			 result = realdb.insert(TABLE_EXERCISES, null, values);
 		 values.clear();
 		 Log.v(APP_NAME, "DBClass :: addExercise done");
-		 return (result != -1) ? true : false;
+		 return (result != -1);
 	 }
 	 
 	 public boolean logExercise(String exercise) {
