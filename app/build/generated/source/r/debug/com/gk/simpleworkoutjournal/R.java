@@ -48,7 +48,6 @@ public final class R {
     public static final class id {
         public static final int CancelBtn=0x7f0a000c;
         public static final int action_jump_to_date=0x7f0a001d;
-        public static final int action_makedone_icon=0x7f0a001e;
         public static final int action_moreinfo_icon=0x7f0a001c;
         public static final int addExerciseACTV=0x7f0a000f;
         public static final int addExerciseSBtn=0x7f0a0010;
