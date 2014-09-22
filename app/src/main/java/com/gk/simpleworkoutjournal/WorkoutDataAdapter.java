@@ -1,6 +1,7 @@
 package com.gk.simpleworkoutjournal;
 
 import java.util.Calendar;
+import java.util.HashSet;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -23,6 +24,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	private Subject currSubj;
 	private String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	private TextView exerciseTv, repsTv, weightTv;
+    private HashSet checkedItems;
 	private ImageView img;
 	private TextView dateHeader;
 	private long prevTimestamp, timestamp;
@@ -30,9 +32,10 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	private int currentIndex = -1;
 	private String dateString;
 	private boolean showDate;
-	
+
 	public WorkoutDataAdapter(Context context, Cursor c, Subject subject) {
 		super(context, c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER );
+        checkedItems = new HashSet();
 		currSubj = subject;
 		
 	}
@@ -138,7 +141,21 @@ public class WorkoutDataAdapter extends CursorAdapter {
         }
         return root;
 	}
-	
+
+    public void setChecked( int position ) {
+        long itemId = 0;
+        checkedItems.add( itemId );
+    }
+
+    public void unsetChecked( int position ) {
+        long itemId = 0;
+        checkedItems.remove( itemId );
+    }
+
+    public void clearChecked() {
+        checkedItems.clear();
+    }
+
 	public void setCurrent(int position) {
 		Log.v(APP_NAME, "setCurrent:  new current for subj "+currSubj.toString()+": "+position);
 		currentIndex = position;

@@ -102,8 +102,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     	exercisesLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
     	//setsLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
     	
-    	exercisesLv.setMultiChoiceModeListener( new ContextMenuCallback( allExCursor, dbmediator ) );
-    	setsLv.setMultiChoiceModeListener( new ContextMenuCallback( allSetsCursor, dbmediator ) );
+    	exercisesLv.setMultiChoiceModeListener( new ContextMenuCallback( allExCursor, dbmediator, ContextMenuCallback.Subject.EXERCISES  ) );
+    	setsLv.setMultiChoiceModeListener( new ContextMenuCallback( allSetsCursor, dbmediator, ContextMenuCallback.Subject.SETS  ) );
     	inContextMode = false;
     	dbmediator.close();
     }
@@ -603,8 +603,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		
 		Log.v(APP_NAME,"onLongClick :: going to start context");
 		inContextMode = true;
-		ContextMenuCallback actionModeCb = new ContextMenuCallback( currCursor, dbmediator); //move to common
-		contextMode =  startActionMode( actionModeCb );
+		//ContextMenuCallback actionModeCb = new ContextMenuCallback( currCursor, dbmediator, ); //move to common
+		//contextMode =  startActionMode( null );
 
 	    assert contextMode != null;
 

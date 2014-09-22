@@ -14,21 +14,22 @@ import com.gk.datacontrol.DBClass;
 enum Subject { EXERCISE, SET };
 
 public class ContextMenuCallback implements MultiChoiceModeListener {
+    public enum Subject { EXERCISES, SETS };
+    private Subject subject;
 	private Cursor activeCursor;
-	private Subject subj;
 	private int id;
 	private boolean isActive;
 	private DBClass dbmediator;
 	
 	public void setData( Subject subj, int id ) {
 		this.isActive = true;
-		this.subj = subj;
+		this.subject = subj;
 		this.id = id;
 	}
 	
 	@Override
 	public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
-		Log.e("LOL", "ContextMenuCallback :: onActionItemClicked mode: "+arg0+" item: "+arg1);
+		Log.e("CMcallback", "ContextMenuCallback :: onActionItemClicked mode: "+arg0+" item: "+arg1);
 		// TODO Auto-generated method stub
 		arg0.getTag();
 		return true;
@@ -36,21 +37,22 @@ public class ContextMenuCallback implements MultiChoiceModeListener {
 
 	@Override
 	public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		Log.e("LOL", "ContextMenuCallback :: onCreateActionMode mode: "+mode+" menu: "+menu);
+		Log.e("CMcallback", "ContextMenuCallback :: onCreateActionMode mode: "+mode+" menu: "+menu);
 	    MenuInflater inflater = mode.getMenuInflater();
 	    inflater.inflate(R.menu.main_menu, menu);
 		// TODO Auto-generated method stub
 		return true;
 	}
 	
-	public ContextMenuCallback( Cursor associatedCursor, DBClass dbmediator ) {
+	public ContextMenuCallback( Cursor associatedCursor, DBClass dbmediator, Subject subj ) {
 		// TODO Auto-generated method stub
 		super();
+        this.subject = subj;
 		this.dbmediator = dbmediator;
 		this.activeCursor = associatedCursor;
 		if ( activeCursor != null)
 		{
-			Log.v("LOL", "Created context menu callback ");
+			Log.v("CMcallback", "Created context menu callback "+subj);
 		}
 	}
 	

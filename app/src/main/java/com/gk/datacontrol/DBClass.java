@@ -61,13 +61,14 @@ public class DBClass  {
 			"FOREIGN KEY ("+KEY_EX_NAME+") REFERENCES "+TABLE_EXERCISES+"("+KEY_NAME+")"+
 			");";	
 	//TODO: to be implemented in next version
+    /*
 	private static final String CREATE_PRESET_TABLE = "CREATE TABLE "+TABLE_PRESETS+" ("+
 			KEY_PRESET_NAME + " TEXT,"+
 			KEY_EX_NAME 	+ " TEXT,"+
 			KEY_SEQ  		+ " INTEGER," +
 			"FOREIGN KEY ("+KEY_EX_NAME+") REFERENCES "+TABLE_EXERCISES+"("+KEY_EX_NAME+")"+
 			");";
-	
+	*/
 	private SQLiteDatabase realdb;
 	private DBHelper dbHelper;
 	private ContentValues values;
