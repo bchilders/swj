@@ -9,10 +9,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -102,8 +104,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     	exercisesLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
     	//setsLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
     	
-    	exercisesLv.setMultiChoiceModeListener( new ContextMenuCallback( allExCursor, dbmediator, ContextMenuCallback.Subject.EXERCISES  ) );
-    	setsLv.setMultiChoiceModeListener( new ContextMenuCallback( allSetsCursor, dbmediator, ContextMenuCallback.Subject.SETS  ) );
+    	exercisesLv.setMultiChoiceModeListener( new ContextMenuCallback( allExCursor, dbmediator  ) );
+    	setsLv.setMultiChoiceModeListener( new ContextMenuCallback( allSetsCursor, dbmediator  ) );
     	inContextMode = false;
     	dbmediator.close();
     }
@@ -578,8 +580,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     currCursor = allSetsCursor;
 					break;
 			}
-
-
 			//currAdapter.changeCursor( currCursor );
 			currAdapter.notifyDataSetChanged();
 
@@ -615,7 +615,68 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		//arg1.setSelected(true);
         return true;
 	}
-	
+
+    class ContextMenuCallback implements AbsListView.MultiChoiceModeListener {
+        public static final String APP_NAME = "SWJournal";
+        private int id;
+        private boolean isActive;
+        private DBClass dbmediator;
+
+        public void setData( Subject subj, int id ) {
+            this.isActive = true;
+            this.id = id;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
+            Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked mode: "+arg0+" item: "+arg1);
+            // TODO Auto-generated method stub
+            arg0.getTag();
+            return true;
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            Log.v(APP_NAME, "ContextMenuCallback :: onCreateActionMode mode: "+mode+" menu: "+menu);
+            MenuInflater inflater = mode.getMenuInflater();
+            inflater.inflate(R.menu.main_menu, menu);
+            // TODO Auto-generated method stub
+            return true;
+        }
+
+        public ContextMenuCallback( Cursor associatedCursor, DBClass dbmediator ) {
+            // TODO Auto-generated method stub
+            super();
+            this.dbmediator = dbmediator;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode arg0) {
+            Log.v(APP_NAME, "ContextMenuCallback :: onDestroyActionMode mode: "+arg0);
+            isActive = false;
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode arg0, Menu arg1) {
+            Log.v(APP_NAME, "ContextMenuCallback :: onPrepareActionMode mode: "+arg0+ " menu: "+arg1);
+            // TODO Auto-generated method stub
+            return true;
+        }
+
+        @Override
+        public void onItemCheckedStateChanged(ActionMode arg0, int index, long arg2, boolean newState) {
+            // TODO Auto-generated method stub
+
+            Log.v(APP_NAME," dumping after onItemCheckedStateChanged");
+
+            Log.v(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: "+arg0+" int: "+index+ " long "+arg2+" bool: "+newState);
+        }
+
+    }
 
 }
+
+
 
