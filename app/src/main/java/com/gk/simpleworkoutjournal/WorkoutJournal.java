@@ -602,7 +602,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		if ( inContextMode ) return false;
 		
 		Log.v(APP_NAME,"onLongClick :: going to start context");
-		inContextMode = true;
 		//ContextMenuCallback actionModeCb = new ContextMenuCallback( currCursor, dbmediator, ); //move to common
 		//contextMode =  startActionMode( null );
 
@@ -654,8 +653,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         public void onDestroyActionMode(ActionMode arg0) {
             Log.v(APP_NAME, "ContextMenuCallback :: onDestroyActionMode mode: "+arg0);
             isActive = false;
-            // TODO Auto-generated method stub
 
+            currAdapter.clearChecked();
         }
 
         @Override
@@ -666,12 +665,17 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
 
         @Override
-        public void onItemCheckedStateChanged(ActionMode arg0, int index, long arg2, boolean newState) {
-            // TODO Auto-generated method stub
+        public void onItemCheckedStateChanged(ActionMode arg0, int index, long arg2, boolean isChecked ) {
 
-            Log.v(APP_NAME," dumping after onItemCheckedStateChanged");
+            Log.v(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + arg0 + " int: " + index + " long " + arg2 + " bool: " + isChecked);
+            if ( isChecked ) {
+                currAdapter.setChecked( index );
+            } else {
+                currAdapter.unsetChecked( index );
+            }
+           //TODO: show "sets" or "exercises"  in context bar. Find a wway to disable opposite list view while in comtect mode
 
-            Log.v(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: "+arg0+" int: "+index+ " long "+arg2+" bool: "+newState);
+
         }
 
     }
