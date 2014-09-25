@@ -666,12 +666,27 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         @Override
         public void onItemCheckedStateChanged(ActionMode arg0, int index, long arg2, boolean isChecked ) {
-
+            contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
             Log.v(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + arg0 + " int: " + index + " long " + arg2 + " bool: " + isChecked);
             if ( isChecked ) {
                 currAdapter.setChecked( index );
             } else {
                 currAdapter.unsetChecked( index );
+            }
+
+            String contextMenuTitle;
+            switch ( currAdapter.getSubject() )
+            {
+                case EXERCISES:
+                    exercisesAdapter.notifyDataSetChanged();
+                    contextMode.setTitle("Exercises selected: "+ exercisesLv.getMaxScrollAmount() );
+
+                    break;
+                case SETS:
+                    contextMode.setTitle("Sets selected: "+ setsLv.getCheckedItemCount() );
+                    break;
+                default:
+                    throw new IllegalStateException( "trying to create context menu for unknown subject");
             }
            //TODO: show "sets" or "exercises"  in context bar. Find a wway to disable opposite list view while in comtect mode
 
