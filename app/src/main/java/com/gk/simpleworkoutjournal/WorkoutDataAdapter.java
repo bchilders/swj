@@ -145,7 +145,8 @@ public class WorkoutDataAdapter extends CursorAdapter {
 
     public void invertChecked( int index ) {
 
-        if ( checkedItems.contains( index ) ) {
+        if ( checkedItems.contains( index ) )
+        {
             checkedItems.remove( index );
         } else {
             checkedItems.add( index );

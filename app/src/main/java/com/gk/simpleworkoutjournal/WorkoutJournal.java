@@ -73,7 +73,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         // set click / touch listeners
         setsLv.setOnItemClickListener(this);
         exercisesLv.setOnItemClickListener(this);
-        
+
         setsLv.setOnTouchListener(this);
         exercisesLv.setOnTouchListener(this);
 
@@ -97,8 +97,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     	//exercisesLv.setItemChecked(exercisesLv.getCount() - 1, true); TODO: remove
     	//TODO: show appropriate sets
 
-    	exercisesLv.setMultiChoiceModeListener( new ContextMenuCallback( allExCursor, dbmediator  ) );
-    	setsLv.setMultiChoiceModeListener( new ContextMenuCallback( allSetsCursor, dbmediator  ) );
+        ContextMenuCallback ctxXb = new ContextMenuCallback();
+    	exercisesLv.setMultiChoiceModeListener( ctxXb );
+    	setsLv.setMultiChoiceModeListener( ctxXb );
     	inContextMode = false;
     	dbmediator.close();
     }
@@ -248,6 +249,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
     public void updateContextBar()
     {
+        /*
         switch ( currAdapter.getSubject() )
         {
             case EXERCISES:
@@ -260,7 +262,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 break;
             default:
                 throw new IllegalStateException( "trying to create context menu for unknown subject");
-        }
+        }*/
     }
     /*
      * 
@@ -577,14 +579,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
     class ContextMenuCallback implements AbsListView.MultiChoiceModeListener {
         public static final String APP_NAME = "SWJournal";
-        private int id;
-        private boolean isActive;
-        private DBClass dbmediator;
-
-        public void setData( Subject subj, int id ) {
-            this.isActive = true;
-            this.id = id;
-        }
+        Subject contextSubj;
 
         @Override
         public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
@@ -595,26 +590,22 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
 
         @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            Log.v(APP_NAME, "ContextMenuCallback :: onCreateActionMode mode: "+mode+" menu: "+menu);
-            MenuInflater inflater = mode.getMenuInflater();
+        public boolean onCreateActionMode(ActionMode actMode, Menu menu) {
+            Log.v(APP_NAME, "ContextMenuCallback :: onCreateActionMode mode: "+actMode+" menu: "+menu);
+            MenuInflater inflater = actMode.getMenuInflater();
             inflater.inflate(R.menu.main_menu, menu);
             // TODO Auto-generated method stub
             return true;
         }
 
-        public ContextMenuCallback( Cursor associatedCursor, DBClass dbmediator ) {
-            // TODO Auto-generated method stub
-            super();
-            this.dbmediator = dbmediator;
-        }
-
         @Override
-        public void onDestroyActionMode(ActionMode arg0) {
-            Log.v(APP_NAME, "ContextMenuCallback :: onDestroyActionMode mode: "+arg0);
-            isActive = false;
-
+        public void onDestroyActionMode(ActionMode actMode) {
+            Log.v(APP_NAME, "ContextMenuCallback :: onDestroyActionMode mode: "+actMode);
             currAdapter.clearChecked();
+//            exercisesLv.setChoiceMode( AbsListView.CHOICE_MODE_MULTIPLE_MODAL );
+//            if ( setsLv != null ) setsLv.setChoiceMode( AbsListView.CHOICE_MODE_MULTIPLE_MODAL );
+
+
         }
 
         @Override
@@ -629,18 +620,40 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
             Log.e(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
             currAdapter.invertChecked( index );
-            currAdapter.notifyDataSetChanged(); //TODO: why bg is not redrawed?
+            currAdapter.notifyDataSetChanged();
+
+            //if all items deselected
+            int checkedAmount = currAdapter.getcheckedAmount();
+            if ( checkedAmount == 0 )
+            {
+                actMode.finish();
+            }
 
             String actionBarText = "";
             //if long click is the first click - we need to get currLv here. Potentially will need to define other current as well!
             switch ( currAdapter.getSubject() )
             {
                 case EXERCISES:
+                    //if changed from other listview
+                    if ( contextSubj == Subject.SETS ) {
+                        setsAdapter.clearChecked();
+                        setsAdapter.notifyDataSetChanged();
+                    }
+
+                    contextSubj = Subject.EXERCISES;
                     actionBarText = "Exercises selected: ";
                     currLv = exercisesLv;
                     break;
                 case SETS:
-                    actionBarText = "Sets selected: ";
+                    //if changed from other listview
+                    if ( contextSubj == Subject.EXERCISES ) {
+                        exercisesAdapter.clearChecked();
+                        exercisesAdapter.notifyDataSetChanged();
+                    }
+
+                    contextSubj = Subject.SETS;
+
+                    actionBarText =  "Sets selected: ";
                     currLv = setsLv;
                     break;
                 default:
