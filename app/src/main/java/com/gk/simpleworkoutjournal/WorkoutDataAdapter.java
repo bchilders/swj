@@ -59,7 +59,8 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	    formattedDate.setTimeInMillis( timestamp );
 	    
 	    // check if we need to highlight current position
-	    if (cursor.getPosition() == currentIndex) {
+        //Log.v(APP_NAME, " pos: "+ cursor.getPosition()+" contains in checked: "+checkedItems.contains( cursor.getPosition() ));
+	    if ( cursor.getPosition() == currentIndex || checkedItems.contains( cursor.getPosition() ) ) {
 	    	view.setBackgroundColor( ctx.getResources().getColor(R.color.baseColor_lightest) );
 	    } else {
 	    	view.setBackgroundColor(Color.WHITE);
@@ -142,14 +143,18 @@ public class WorkoutDataAdapter extends CursorAdapter {
         return root;
 	}
 
-    public void setChecked( int position ) {
-        long itemId = 0;
-        checkedItems.add( itemId );
+    public void invertChecked( int index ) {
+
+        if ( checkedItems.contains( index ) ) {
+            checkedItems.remove( index );
+        } else {
+            checkedItems.add( index );
+        }
+
     }
 
-    public void unsetChecked( int position ) {
-        long itemId = 0;
-        checkedItems.remove( itemId );
+    public int getcheckedAmount() {
+        return checkedItems.size();
     }
 
     public void clearChecked() {

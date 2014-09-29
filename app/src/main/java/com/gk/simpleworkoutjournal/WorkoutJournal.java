@@ -29,7 +29,7 @@ import com.gk.datacontrol.DBClass;
 
 import static com.gk.simpleworkoutjournal.WorkoutDataAdapter.*;
 
-public class WorkoutJournal extends Activity implements  OnItemClickListener, OnTouchListener, OnItemLongClickListener  {
+public class WorkoutJournal extends Activity implements  OnItemClickListener, OnTouchListener {
 	public static final String APP_NAME = "SWJournal";
 	
 	LinearLayout notesLayout;
@@ -76,10 +76,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         
         setsLv.setOnTouchListener(this);
         exercisesLv.setOnTouchListener(this);
-        
-        // set long click listeners
-        setsLv.setOnItemLongClickListener( this );
-        exercisesLv.setOnItemLongClickListener( this );
+
 //        //TODO: DEV-ONLY 
 //        Log.v(APP_NAME, "WorkoutJournal :: onCreate :: starting filling debug info, it will take some time");
 //        DebugHelper debugHelper = new DebugHelper( dbmediator );
@@ -97,13 +94,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         //exercisesLv.setSelection(exercisesAdapter.getCount()-1); 
     	exercisesLv.smoothScrollToPosition(exercisesLv.getCount() - 1);
-    	exercisesLv.setItemChecked(exercisesLv.getCount() - 1, true);
+    	//exercisesLv.setItemChecked(exercisesLv.getCount() - 1, true); TODO: remove
     	//TODO: show appropriate sets
-    	
-    	// this stuff is neede for context menu
-    	exercisesLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-    	//setsLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-    	
+
     	exercisesLv.setMultiChoiceModeListener( new ContextMenuCallback( allExCursor, dbmediator  ) );
     	setsLv.setMultiChoiceModeListener( new ContextMenuCallback( allSetsCursor, dbmediator  ) );
     	inContextMode = false;
@@ -255,18 +248,19 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
     public void updateContextBar()
     {
-        String contextMainText = "unknown";
-
-        switch ( currAdapter.getSubject() ) {
+        switch ( currAdapter.getSubject() )
+        {
             case EXERCISES:
-                contextMainText = currCursor.getString(currCursor.getColumnIndex("_id"));
+                exercisesAdapter.notifyDataSetChanged();
+                //contextMode.setTitle("Exercises selected: "+ currAdapter.getcheckedAmount() );
+
                 break;
             case SETS:
-                contextMainText =  "Set chosen";
+               // contextMode.setTitle("Sets selected: "+ setsLv.getCheckedItemCount() );
                 break;
+            default:
+                throw new IllegalStateException( "trying to create context menu for unknown subject");
         }
-
-         contextMode.setTitle( contextMainText  );
     }
     /*
      * 
@@ -274,7 +268,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
      */
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		// TODO Auto-generated method stub
 
 		String noNoteHint = "";
 		switch (view.getId()) {
@@ -291,10 +284,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 				// obtain sets for this exercise
 				// fetch new sets only if exercise entry changed
 				if ( currAdapter.getCurrent() != position )	{
+
+                    currAdapter.setCurrent(position);
+                    currAdapter.notifyDataSetChanged();
+
 				    //empty hint box for set since we have chosen other exercise
 					setNoteTv.setHint( getString(R.string.workout_set_no_note_hint) );
 					setNoteTv.setText("");
-					
+
+                    //update sets list view accordingly
 					Cursor tmpcs = (Cursor) exercisesAdapter.getItem(position);
 					String exercise = tmpcs.getString(allExCursor.getColumnIndex(DBClass.KEY_ID));
 					dbmediator.open(); 
@@ -303,7 +301,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 					setsAdapter = new WorkoutDataAdapter(this, allSetsCursor, WorkoutDataAdapter.Subject.SETS);
 				    setsLv.setAdapter( setsAdapter  );
 				    setsAdapter.notifyDataSetChanged();
-				    if (setsLv.getCount() != 0 )  {
+
+                    if (setsLv.getCount() != 0 )  {
 				    	int pos = syncPositionsBasedOnDate( exercisesLv, setsLv);
 				    	//setsLv.setSelection( pos ); // jump to last item
 				        View v = setsLv.getChildAt( pos );
@@ -312,6 +311,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 				           v.requestFocus();
 				        }
 				    }
+
 				}
 
 				
@@ -333,6 +333,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 				//PROBLEM possibly set if is not set at that moment
 				
 				currAdapter.setCurrent(position);
+                currAdapter.notifyDataSetChanged();
+
 				int pos = syncPositionsBasedOnDate( setsLv, exercisesLv);
 			    	//exercisesLv.setSelection( pos );// jump to last item
 			        View v = exercisesLv.getChildAt( pos );
@@ -348,14 +350,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		
 		//remove line below
 		Log.v(APP_NAME, "WorkoutJournal :: onItemClick , click position: "+position+" selected: "+currLv.getSelectedItemPosition()+" checked: "+exercisesLv.getCheckedItemPosition()+" current: "+currAdapter.getCurrent());	
-		
-		// reset bg color for for previous view, set new view as current and set bg color to it.
-		if ( currAdapter.getCurrent() != -1 ) 
-			currAdapter.getView( currAdapter.getCurrent(), view, currLv ).setBackgroundColor(Color.WHITE);
-		currAdapter.setCurrent( position );
-		currAdapter.getView( currAdapter.getCurrent(), view, currLv ).setBackgroundColor( getResources().getColor(R.color.baseColor_ligher) );
-		currAdapter.notifyDataSetChanged();
-		
+
 		// show appropriate note or hint
 		Cursor tmpcs2 = (Cursor) currAdapter.getItem(position);
 		String noteSet = tmpcs2.getString(currCursor.getColumnIndex(DBClass.KEY_NOTE));
@@ -384,13 +379,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 	public boolean onTouch(View view, MotionEvent event) {
 		//switch lower pane edits depending on touch target ( exercise list view or sets list view)
 		if (event.getAction() == MotionEvent.ACTION_UP) {
-
-/*
-            Log.v(APP_NAME," dumping after ontouch");
-            Log.v(APP_NAME,"current item of currCursor"+currAdapter.getCurrent() );
-            DatabaseUtils.dumpCursor(currCursor);*/
-			//Log.v(APP_NAME, "WorkoutJournal :: onTouch , click selected: "+currLv.getSelectedItemPosition()+" checked: "+currLv.getCheckedItemPosition());
-
 
 			switch (view.getId()) {
 				case R.id.setsLv:
@@ -514,8 +502,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			return;
 		}
 
-
-
 		if (haveRecepient && !(currCursor == null) && currCursor.getCount() != 0 ) {
 			currCursor.moveToPosition( currAdapter.getCurrent() );
 			String note = currCursor.getString( currCursor.getColumnIndex(DBClass.KEY_NOTE));
@@ -589,32 +575,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		
 	}
 
-	@Override
-	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2,
-			long arg3) {
-        //if (mActionMode != null) {
-        //    return false;
-        //}
-    	//exercisesLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-    	//setsLv.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        // Start the CAB using the ActionMode.Callback defined above
-        //mActionMode = getActivity().
-		if ( inContextMode ) return false;
-		
-		Log.v(APP_NAME,"onLongClick :: going to start context");
-		//ContextMenuCallback actionModeCb = new ContextMenuCallback( currCursor, dbmediator, ); //move to common
-		//contextMode =  startActionMode( null );
-
-	    assert contextMode != null;
-
-        inContextMode = true;
-        updateContextBar();
-		//contextMode.setTag();
-
-		//arg1.setSelected(true);
-        return true;
-	}
-
     class ContextMenuCallback implements AbsListView.MultiChoiceModeListener {
         public static final String APP_NAME = "SWJournal";
         private int id;
@@ -665,31 +625,31 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
 
         @Override
-        public void onItemCheckedStateChanged(ActionMode arg0, int index, long arg2, boolean isChecked ) {
-            contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
-            Log.v(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + arg0 + " int: " + index + " long " + arg2 + " bool: " + isChecked);
-            if ( isChecked ) {
-                currAdapter.setChecked( index );
-            } else {
-                currAdapter.unsetChecked( index );
-            }
+        public void onItemCheckedStateChanged(ActionMode actMode, int index, long arg2, boolean isChecked ) {
+            //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
+            Log.e(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
+            currAdapter.invertChecked( index );
+            currAdapter.notifyDataSetChanged(); //TODO: why bg is not redrawed?
 
-            String contextMenuTitle;
+            String actionBarText = "";
+            //if long click is the first click - we need to get currLv here. Potentially will need to define other current as well!
             switch ( currAdapter.getSubject() )
             {
                 case EXERCISES:
-                    exercisesAdapter.notifyDataSetChanged();
-                    contextMode.setTitle("Exercises selected: "+ exercisesLv.getMaxScrollAmount() );
-
+                    actionBarText = "Exercises selected: ";
+                    currLv = exercisesLv;
                     break;
                 case SETS:
-                    contextMode.setTitle("Sets selected: "+ setsLv.getCheckedItemCount() );
+                    actionBarText = "Sets selected: ";
+                    currLv = setsLv;
                     break;
                 default:
-                    throw new IllegalStateException( "trying to create context menu for unknown subject");
+                    break;
             }
-           //TODO: show "sets" or "exercises"  in context bar. Find a wway to disable opposite list view while in comtect mode
 
+            actionBarText += currAdapter.getcheckedAmount();
+            actMode.setTitle( actionBarText );
+           //TODO: Find a wway to disable opposite list view while in comtect
 
         }
 
