@@ -97,9 +97,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     	//exercisesLv.setItemChecked(exercisesLv.getCount() - 1, true); TODO: remove
     	//TODO: show appropriate sets
 
-        ContextMenuCallback ctxXb = new ContextMenuCallback();
-    	exercisesLv.setMultiChoiceModeListener( ctxXb );
-    	setsLv.setMultiChoiceModeListener( ctxXb );
+    	exercisesLv.setMultiChoiceModeListener(  new ContextMenuCallback( Subject.EXERCISES ) );
+    	setsLv.setMultiChoiceModeListener(  new ContextMenuCallback( Subject.SETS ) );
     	inContextMode = false;
     	dbmediator.close();
     }
@@ -581,6 +580,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         public static final String APP_NAME = "SWJournal";
         Subject contextSubj;
 
+        ContextMenuCallback( Subject subj )
+        {
+            super();
+            this.contextSubj = subj;
+        }
+
         @Override
         public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
             Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked mode: "+arg0+" item: "+arg1);
@@ -601,11 +606,10 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         @Override
         public void onDestroyActionMode(ActionMode actMode) {
             Log.v(APP_NAME, "ContextMenuCallback :: onDestroyActionMode mode: "+actMode);
+            if ( !setsLv.isEnabled() ) setsLv.setEnabled( true );
+            if ( !exercisesLv.isEnabled() ) exercisesLv.setEnabled( true );
             currAdapter.clearChecked();
-//            exercisesLv.setChoiceMode( AbsListView.CHOICE_MODE_MULTIPLE_MODAL );
-//            if ( setsLv != null ) setsLv.setChoiceMode( AbsListView.CHOICE_MODE_MULTIPLE_MODAL );
-
-
+            currAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -619,51 +623,40 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         public void onItemCheckedStateChanged(ActionMode actMode, int index, long arg2, boolean isChecked ) {
             //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
             Log.e(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
-            currAdapter.invertChecked( index );
-            currAdapter.notifyDataSetChanged();
-
-            //if all items deselected
-            int checkedAmount = currAdapter.getcheckedAmount();
-            if ( checkedAmount == 0 )
-            {
-                actMode.finish();
-            }
 
             String actionBarText = "";
             //if long click is the first click - we need to get currLv here. Potentially will need to define other current as well!
-            switch ( currAdapter.getSubject() )
+            switch ( this.contextSubj )
             {
                 case EXERCISES:
                     //if changed from other listview
-                    if ( contextSubj == Subject.SETS ) {
-                        setsAdapter.clearChecked();
-                        setsAdapter.notifyDataSetChanged();
-                    }
+                    if ( setsLv.isEnabled() ) setsLv.setEnabled( false );
 
-                    contextSubj = Subject.EXERCISES;
                     actionBarText = "Exercises selected: ";
                     currLv = exercisesLv;
+                    currAdapter = exercisesAdapter;
                     break;
                 case SETS:
                     //if changed from other listview
-                    if ( contextSubj == Subject.EXERCISES ) {
-                        exercisesAdapter.clearChecked();
-                        exercisesAdapter.notifyDataSetChanged();
-                    }
-
-                    contextSubj = Subject.SETS;
+                    if ( exercisesLv.isEnabled() )exercisesLv.setEnabled( false );
 
                     actionBarText =  "Sets selected: ";
                     currLv = setsLv;
+                    currAdapter = setsAdapter;
                     break;
                 default:
                     break;
             }
 
+            currAdapter.invertChecked( index );
+            currAdapter.notifyDataSetChanged();
+
+            //if all items deselected
+            int checkedAmount = currAdapter.getcheckedAmount();
+            if ( checkedAmount == 0 ) actMode.finish();
+
             actionBarText += currAdapter.getcheckedAmount();
             actMode.setTitle( actionBarText );
-           //TODO: Find a wway to disable opposite list view while in comtect
-
         }
 
     }
