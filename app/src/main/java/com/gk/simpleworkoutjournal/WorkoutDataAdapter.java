@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +22,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	public enum Subject { EXERCISES, SETS };
 	private Subject currSubj;
 	private String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-	private TextView exerciseTv, repsTv, weightTv;
+	private TextView exerciseTv, repsTv, weightTv, delimiterTv;
     private HashSet checkedItems;
 	private ImageView img;
 	private TextView dateHeader;
@@ -60,11 +59,13 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	    
 	    // check if we need to highlight current position
         //Log.v(APP_NAME, " pos: "+ cursor.getPosition()+" contains in checked: "+checkedItems.contains( cursor.getPosition() ));
-	    if ( cursor.getPosition() == currentIndex || checkedItems.contains( cursor.getPosition() ) ) {
-	    	view.setBackgroundColor( ctx.getResources().getColor(R.color.baseColor_lightest) );
+	    if ( checkedItems.contains( cursor.getPosition() ) ) {
+            view.setBackgroundColor( ctx.getResources().getColor(R.color.baseColor_lightest_complementary) );
+	    } else if ( cursor.getPosition() == currentIndex ) {
+            view.setBackgroundColor( ctx.getResources().getColor(R.color.baseColor_lightest) );
 	    } else {
-	    	view.setBackgroundColor(Color.WHITE);
-	    }
+            view.setBackgroundColor(Color.WHITE);
+        }
 	    
 	    // check if we need to show note image
 	    if (noteString.isEmpty()) {
@@ -89,7 +90,13 @@ public class WorkoutDataAdapter extends CursorAdapter {
        			exerciseTv = (TextView) view.findViewById(R.id.workout_entry_textview);
        			entryMainText = cursor.getString(cursor.getColumnIndex("_id"));
        			exerciseTv.setText(entryMainText);
-       			
+
+                if ( checkedItems.contains( cursor.getPosition() ) ) {
+                    dateHeader.setBackgroundResource( R.drawable.date_header_bg_complementary );
+                } else {
+                    dateHeader.setBackgroundResource( R.drawable.date_header_bg );
+                }
+
        			// we need to show date header if previous entry have different date
     	        if ( showDate ) {
     	        	dateHeader.setVisibility(View.VISIBLE);
@@ -109,6 +116,17 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	       		
 	       		repsTv = (TextView) view.findViewById(R.id.workout_reps_textview);
 	       		repsTv.setText(String.valueOf(setReps));
+
+                //for checked items delimiter have different color
+                delimiterTv = (TextView) view.findViewById(R.id.workout_set_delimiter);
+                if ( checkedItems.contains( cursor.getPosition() ) ) {
+                    delimiterTv.setTextColor( ctx.getResources().getColor(R.color.baseColor_lighter_complementary) );
+                    dateHeader.setTextColor( ctx.getResources().getColor(R.color.baseColor_darker_complementary) );
+                } else {
+                    delimiterTv.setTextColor( ctx.getResources().getColor(R.color.baseColor_lighter) );
+                    dateHeader.setTextColor( ctx.getResources().getColor(R.color.baseColor_darker) );
+                }
+
 	       		weightTv = (TextView) view.findViewById(R.id.workout_weight_textview);
 	       		weightTv.setText(String.valueOf(setWeight));
 	       		

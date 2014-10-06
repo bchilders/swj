@@ -569,7 +569,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			}
 			//currAdapter.changeCursor( currCursor );
 			currAdapter.notifyDataSetChanged();
-
 			dbmediator.close();
 			
 		}
@@ -609,7 +608,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             if ( !setsLv.isEnabled() ) setsLv.setEnabled( true );
             if ( !exercisesLv.isEnabled() ) exercisesLv.setEnabled( true );
             currAdapter.clearChecked();
-            currAdapter.notifyDataSetChanged();
+            //currAdapter.notifyDataSetChanged(); TODO: probably may remove
         }
 
         @Override

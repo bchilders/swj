@@ -2,6 +2,10 @@
 <resources>
     <color name="baseColor">#33B5E5</color>
     <color name="baseColor_darker">#178ab4</color>
-    <color name="baseColor_ligher">#77ceee</color>
+    <color name="baseColor_lighter">#77ceee</color>
     <color name="baseColor_lightest">#bbe7f7</color>
+
+    <color name="baseColor_darker_complementary">#b44117</color>
+    <color name="baseColor_lighter_complementary">#ee9777</color>
+    <color name="baseColor_lightest_complementary">#f7cbbb</color>
 </resources>
