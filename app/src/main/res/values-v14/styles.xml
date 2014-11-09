@@ -7,20 +7,30 @@
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
       <item name="android:actionBarStyle">@style/AppBaseTheme.MyActionBar</item>
+      <item name="android:actionModeStyle">@style/AppBaseTheme.MyContextBar</item>
       <item name="android:actionModeBackground">@color/baseColor</item>
     </style>
 
-    
     <style name="AppBaseTheme.MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/baseColor</item>
-        <item name="android:titleTextStyle">@style/AppBaseTheme.MyActionBar.MyTitleTextStyle</item>
+        <item name="android:titleTextStyle">@style/AppBaseTheme.MyActionBar.MyActionBarTitleText</item>
     </style>
-    
-	<style name="AppBaseTheme.MyActionBar.MyTitleTextStyle" parent="@style/AppBaseTheme.MyActionBar" >
+
+    <style name="AppBaseTheme.MyContextBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/baseColor_complementary</item>
+        <item name="android:titleTextStyle">@style/AppBaseTheme.MyActionBar.MyContextBarTitleText</item>
+    </style>
+
+	<style name="AppBaseTheme.MyActionBar.MyActionBarTitleText" parent="@style/AppBaseTheme.MyActionBar" >
 	     <item name="android:textColor">@android:color/white</item>
 	     <item name="android:textSize">24sp</item>
 	</style>
-    
+
+    <style name="AppBaseTheme.MyActionBar.MyContextBarTitleText" parent="@style/AppBaseTheme.MyActionBar" >
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <style name="MainMenuButtonStyle" parent="@android:style/android:style/Widget.ImageButton">
 		<item name="android:layout_width">300dp</item>
 		<item name="android:layout_height">60dp</item>
