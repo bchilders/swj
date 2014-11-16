@@ -9,6 +9,7 @@
       <item name="android:actionBarStyle">@style/AppBaseTheme.MyActionBar</item>
       <item name="android:actionModeStyle">@style/AppBaseTheme.MyContextBar</item>
       <item name="android:actionModeBackground">@color/baseColor</item>
+      <item name="android:actionModeCloseDrawable">@drawable/ic_custom_arrowback</item>
     </style>
 
     <style name="AppBaseTheme.MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">

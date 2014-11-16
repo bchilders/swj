@@ -19,7 +19,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -41,7 +43,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 	TextView 		   currNoteTv,  exerciseNoteTv,   setNoteTv ;
 	Cursor   		   currCursor,  allExCursor,      allSetsCursor;
 	WorkoutDataAdapter currAdapter, exercisesAdapter, setsAdapter;
-	
+
+    ImageButton switchBtn;
+
 	ActionMode  contextMode;
 	boolean inContextMode;
 	
@@ -66,7 +70,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         
         repsEdit = (EditText) findViewById(R.id.editReps);
         weightEdit = (EditText) findViewById(R.id.editWeight);
-      
+
+        switchBtn = (ImageButton)findViewById(R.id.CancelBtn);
+
         // set notes touch listeners for exercise and set
         exerciseNoteTv.setOnTouchListener(this);
         
@@ -135,15 +141,20 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     }
     
     public void onBackButtonPressed(View v) {
+
+
     	Log.v(APP_NAME, "WorkoutJournal :: onBackButtonPressed()" );
     	if (exerciseTextView.getVisibility() == View.GONE) {
 			exerciseTextView.setVisibility(View.VISIBLE);
 			repsEdit.setVisibility(View.GONE);
 			weightEdit.setVisibility(View.GONE);
+            switchBtn.setImageResource(R.drawable.ic_custom_circledforward);
+
     	} else if ( exercisesAdapter.getCurrent() != -1 ) { 
 			exerciseTextView.setVisibility(View.GONE);
 			repsEdit.setVisibility(View.VISIBLE);
 			weightEdit.setVisibility(View.VISIBLE);
+            switchBtn.setImageResource(R.drawable.ic_custom_circledback);
 		}
     }
     /*
@@ -319,6 +330,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		    	exerciseTextView.setVisibility(View.GONE);
 				repsEdit.setVisibility(View.VISIBLE);
 				weightEdit.setVisibility(View.VISIBLE);
+                switchBtn.setImageResource(R.drawable.ic_custom_circledback);
 				break;
 			case R.id.set_entry_container:
 				exerciseTextView.setText("");
@@ -387,6 +399,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 						exerciseTextView.setVisibility(View.GONE);
 						repsEdit.setVisibility(View.VISIBLE);
 						weightEdit.setVisibility(View.VISIBLE);
+                        switchBtn.setImageResource(R.drawable.ic_custom_circledback);
 					}
 					break;
 
@@ -578,6 +591,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     class ContextMenuCallback implements AbsListView.MultiChoiceModeListener {
         public static final String APP_NAME = "SWJournal";
         Subject contextSubj;
+        LinearLayout actionModeZone = (LinearLayout) findViewById( R.id.actionModeZone);
 
         ContextMenuCallback( Subject subj )
         {
@@ -596,6 +610,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         @Override
         public boolean onCreateActionMode(ActionMode actMode, Menu menu) {
             Log.v(APP_NAME, "ContextMenuCallback :: onCreateActionMode mode: "+actMode+" menu: "+menu);
+
+            actionModeZone.setVisibility( View.VISIBLE );
             MenuInflater inflater = actMode.getMenuInflater();
             inflater.inflate(R.menu.main_menu, menu);
             // TODO Auto-generated method stub
@@ -605,6 +621,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         @Override
         public void onDestroyActionMode(ActionMode actMode) {
             Log.v(APP_NAME, "ContextMenuCallback :: onDestroyActionMode mode: "+actMode);
+            actionModeZone.setVisibility( View.GONE );
+
             if ( !setsLv.isEnabled() ) setsLv.setEnabled( true );
             if ( !exercisesLv.isEnabled() ) exercisesLv.setEnabled( true );
             currAdapter.clearChecked();

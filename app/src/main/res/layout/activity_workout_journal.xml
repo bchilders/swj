@@ -92,18 +92,45 @@
 		
     <!-- Edit bar -->
     <LinearLayout
+        android:id="@+id/dataEditZone"
+        android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="56dp"
         android:layout_gravity="bottom"
         android:background="@color/baseColor"
          >
 
+        <LinearLayout
+            android:id="@+id/actionModeZone"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="bottom"
+            android:background="@color/baseColor_complementary"
+            android:visibility="gone"
+            >
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:textColor="@android:color/white"
+                android:text="Delete log entries"/>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                android:textColor="@android:color/white"
+                android:text="Delete exercises"/>
+
+        </LinearLayout>
+
             <ImageButton
                 android:id="@+id/CancelBtn"
                 style="@style/WorkoutEditButtonStyle"
                 android:contentDescription="@string/workout_add_btn_hint"
                 android:onClick="onBackButtonPressed"
-                android:src="@drawable/ic_custom_circledback" />
+                android:src="@drawable/ic_custom_circledforward" />
 
             <EditText
                 android:id="@+id/editReps"
