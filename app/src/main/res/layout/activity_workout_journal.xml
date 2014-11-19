@@ -113,15 +113,13 @@
                 android:layout_width="fill_parent"
                 android:layout_weight="1"
                 android:layout_height="fill_parent"
+                style="@style/WorkoutContextEditButtonStyle"
                 android:textColor="@android:color/white"
-                android:text="Delete log entries"/>
-
-            <Button
-                android:layout_width="fill_parent"
-                android:layout_weight="1"
-                android:layout_height="fill_parent"
-                android:textColor="@android:color/white"
-                android:text="Delete exercises"/>
+                android:textSize="20sp"
+                android:text="Delete log entries"
+                android:paddingLeft="15sp"
+                android:drawableLeft="@drawable/ic_custom_circledtrashbin"
+                />
 
         </LinearLayout>
 
