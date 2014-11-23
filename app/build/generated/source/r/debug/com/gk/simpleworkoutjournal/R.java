@@ -28,59 +28,68 @@ public final class R {
         public static final int activity_vertical_margin=0x7f060001;
     }
     public static final class drawable {
-        public static final int button_mmenu=0x7f020000;
-        public static final int button_mmenu_pressed=0x7f020001;
-        public static final int button_mmenu_unpressed=0x7f020002;
-        public static final int button_workoutedit=0x7f020003;
-        public static final int button_workoutedit_pressed=0x7f020004;
-        public static final int button_workoutedit_unpressed=0x7f020005;
-        public static final int date_header_bg=0x7f020006;
-        public static final int date_header_bg_complementary=0x7f020007;
-        public static final int ic_action_custom_circledlist=0x7f020008;
-        public static final int ic_action_custom_circledsave=0x7f020009;
-        public static final int ic_action_custom_preferences=0x7f02000a;
-        public static final int ic_circledpen=0x7f02000b;
-        public static final int ic_custom_arrowback=0x7f02000c;
-        public static final int ic_custom_circledback=0x7f02000d;
-        public static final int ic_custom_circleddot=0x7f02000e;
-        public static final int ic_custom_circledpen=0x7f02000f;
-        public static final int ic_custom_circledplus=0x7f020010;
-        public static final int ic_custom_circledtick=0x7f020011;
-        public static final int ic_launcher=0x7f020012;
-        public static final int listview_workoutedit=0x7f020013;
-        public static final int textview_workoutedit=0x7f020014;
+        public static final int button_contextedit=0x7f020000;
+        public static final int button_contextedit_pressed=0x7f020001;
+        public static final int button_contextedit_unpressed=0x7f020002;
+        public static final int button_mmenu=0x7f020003;
+        public static final int button_mmenu_pressed=0x7f020004;
+        public static final int button_mmenu_unpressed=0x7f020005;
+        public static final int button_workoutedit=0x7f020006;
+        public static final int button_workoutedit_pressed=0x7f020007;
+        public static final int button_workoutedit_unpressed=0x7f020008;
+        public static final int date_header_bg=0x7f020009;
+        public static final int date_header_bg_complementary=0x7f02000a;
+        public static final int ic_action_custom_circledlist=0x7f02000b;
+        public static final int ic_action_custom_circledsave=0x7f02000c;
+        public static final int ic_action_custom_preferences=0x7f02000d;
+        public static final int ic_circledpen=0x7f02000e;
+        public static final int ic_custom_arrowback=0x7f02000f;
+        public static final int ic_custom_circledback=0x7f020010;
+        public static final int ic_custom_circleddot=0x7f020011;
+        public static final int ic_custom_circledforward=0x7f020012;
+        public static final int ic_custom_circledpen=0x7f020013;
+        public static final int ic_custom_circledplus=0x7f020014;
+        public static final int ic_custom_circledtick=0x7f020015;
+        public static final int ic_custom_circledtrashbin=0x7f020016;
+        public static final int ic_custom_overflow_btn_circles=0x7f020017;
+        public static final int ic_launcher=0x7f020018;
+        public static final int listview_workoutedit=0x7f020019;
+        public static final int textview_workoutedit=0x7f02001a;
     }
     public static final class id {
-        public static final int CancelBtn=0x7f0a000c;
-        public static final int action_jump_to_date=0x7f0a001d;
-        public static final int action_moreinfo_icon=0x7f0a001c;
-        public static final int addExerciseACTV=0x7f0a000f;
-        public static final int addExerciseSBtn=0x7f0a0010;
+        public static final int CancelBtn=0x7f0a000e;
+        public static final int actionModeZone=0x7f0a000d;
+        public static final int action_moreinfo_icon=0x7f0a0020;
+        public static final int addExerciseACTV=0x7f0a0011;
+        public static final int addExerciseSBtn=0x7f0a0012;
         public static final int buttonMmBody=0x7f0a0003;
         public static final int buttonMmExercises=0x7f0a0001;
         public static final int buttonMmPresets=0x7f0a0002;
         public static final int buttonMmReports=0x7f0a0004;
         public static final int buttonMmStart=0x7f0a0000;
-        public static final int editReps=0x7f0a000d;
-        public static final int editWeight=0x7f0a000e;
+        public static final int context_action_delete_ex=0x7f0a001f;
+        public static final int context_action_rename_edit_single=0x7f0a001e;
+        public static final int dataEditZone=0x7f0a000c;
+        public static final int editReps=0x7f0a000f;
+        public static final int editWeight=0x7f0a0010;
         public static final int exerciseNoteTv=0x7f0a0006;
-        public static final int exercise_entry_container=0x7f0a0011;
+        public static final int exercise_entry_container=0x7f0a0013;
         public static final int exercisesLv=0x7f0a0009;
         public static final int listsSeparatorTv=0x7f0a000a;
-        public static final int noteDialogEditText=0x7f0a0015;
-        public static final int note_dialog_CANCEL=0x7f0a0017;
-        public static final int note_dialog_OK=0x7f0a0016;
+        public static final int noteDialogEditText=0x7f0a0017;
+        public static final int note_dialog_CANCEL=0x7f0a0019;
+        public static final int note_dialog_OK=0x7f0a0018;
         public static final int notesLayout=0x7f0a0005;
         public static final int notesSeparatorMiddleV=0x7f0a0007;
         public static final int setNoteTv=0x7f0a0008;
-        public static final int set_entry_container=0x7f0a0018;
+        public static final int set_entry_container=0x7f0a001a;
         public static final int setsLv=0x7f0a000b;
-        public static final int workout_entry_date_header=0x7f0a0012;
-        public static final int workout_entry_note_image=0x7f0a0014;
-        public static final int workout_entry_textview=0x7f0a0013;
-        public static final int workout_reps_textview=0x7f0a0019;
-        public static final int workout_set_delimiter=0x7f0a001a;
-        public static final int workout_weight_textview=0x7f0a001b;
+        public static final int workout_entry_date_header=0x7f0a0014;
+        public static final int workout_entry_note_image=0x7f0a0016;
+        public static final int workout_entry_textview=0x7f0a0015;
+        public static final int workout_reps_textview=0x7f0a001b;
+        public static final int workout_set_delimiter=0x7f0a001c;
+        public static final int workout_weight_textview=0x7f0a001d;
     }
     public static final class layout {
         public static final int activity_main_menu=0x7f030000;
@@ -126,11 +135,13 @@ public final class R {
         public static final int AppBaseTheme_MyActionBar_MyActionBarTitleText=0x7f080003;
         public static final int AppBaseTheme_MyActionBar_MyContextBarTitleText=0x7f080004;
         public static final int AppBaseTheme_MyContextBar=0x7f080005;
+        public static final int AppBaseTheme_MyOverflowButton=0x7f080006;
         /**  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f080001;
-        public static final int MainMenuButtonStyle=0x7f080006;
-        public static final int WorkoutEditButtonStyle=0x7f080007;
-        public static final int WorkoutEditTextViewStyle=0x7f080008;
+        public static final int MainMenuButtonStyle=0x7f080007;
+        public static final int WorkoutContextEditButtonStyle=0x7f080008;
+        public static final int WorkoutEditButtonStyle=0x7f080009;
+        public static final int WorkoutEditTextViewStyle=0x7f08000a;
     }
 }
