@@ -1,11 +1,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-<!-- 
-    <item
-        android:id="@+id/action_settings_icon"
-        android:icon="@drawable/ic_action_custom_preferences"
-        
-        android:showAsAction="always"
-        android:title="@string/action_settings"
-        />
-         -->
+
+
+
+
 </menu>

@@ -10,6 +10,12 @@
       <item name="android:actionModeStyle">@style/AppBaseTheme.MyContextBar</item>
       <item name="android:actionModeBackground">@color/baseColor</item>
       <item name="android:actionModeCloseDrawable">@drawable/ic_custom_arrowback</item>
+      <item name="android:actionOverflowButtonStyle">@style/AppBaseTheme.MyOverflowButton</item>
+    </style>
+
+    <style name="AppBaseTheme.MyOverflowButton">
+        <item name="android:padding">7dp</item>
+        <item name="android:src">@drawable/ic_custom_overflow_btn_circles</item>
     </style>
 
     <style name="AppBaseTheme.MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">

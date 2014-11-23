@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.gk.datacontrol.DBClass;
 
 import static com.gk.simpleworkoutjournal.WorkoutDataAdapter.*;
+import static com.gk.simpleworkoutjournal.WorkoutDataAdapter.APP_NAME;
 
 public class WorkoutJournal extends Activity implements  OnItemClickListener, OnTouchListener {
 	public static final String APP_NAME = "SWJournal";
@@ -599,6 +600,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             this.contextSubj = subj;
         }
 
+
         @Override
         public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
             Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked mode: "+arg0+" item: "+arg1);
@@ -613,7 +615,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
             actionModeZone.setVisibility( View.VISIBLE );
             MenuInflater inflater = actMode.getMenuInflater();
-            inflater.inflate(R.menu.main_menu, menu);
+            inflater.inflate(R.menu.workout_context_menu, menu);
             // TODO Auto-generated method stub
             return true;
         }
@@ -649,7 +651,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     //if changed from other listview
                     if ( setsLv.isEnabled() ) setsLv.setEnabled( false );
 
-                    actionBarText = "Exercises selected: ";
+                    actionBarText = "Exercises chosen: ";
                     currLv = exercisesLv;
                     currAdapter = exercisesAdapter;
                     break;
@@ -657,7 +659,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     //if changed from other listview
                     if ( exercisesLv.isEnabled() )exercisesLv.setEnabled( false );
 
-                    actionBarText =  "Sets selected: ";
+                    actionBarText =  "Sets chosen: ";
                     currLv = setsLv;
                     currAdapter = setsAdapter;
                     break;
@@ -670,7 +672,20 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
             //if all items deselected
             int checkedAmount = currAdapter.getcheckedAmount();
-            if ( checkedAmount == 0 ) actMode.finish();
+            if ( checkedAmount == 0 ) {
+
+                actMode.finish();
+
+            } else if ( checkedAmount == 1 && this.contextSubj == Subject.EXERCISES ) {
+
+                actMode.getMenu().getItem( 0 ).setVisible( true );
+                actMode.getMenu().getItem( 1 ).setVisible( true );
+
+            } else {
+                actMode.getMenu().getItem( 0 ).setVisible( false );
+                actMode.getMenu().getItem( 1 ).setVisible( false );
+
+            }
 
             actionBarText += currAdapter.getcheckedAmount();
             actMode.setTitle( actionBarText );
