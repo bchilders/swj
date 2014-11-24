@@ -602,10 +602,24 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
 
         @Override
-        public boolean onActionItemClicked(ActionMode arg0, MenuItem arg1) {
-            Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked mode: "+arg0+" item: "+arg1);
+        public boolean onActionItemClicked(ActionMode actMode, MenuItem menuItem) {
+            Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked mode: "+actMode+" item: "+menuItem);
             // TODO Auto-generated method stub
-            arg0.getTag();
+            switch( menuItem.getItemId() )
+            {
+                case R.id.context_action_rename_edit_single:
+                    Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: "+0);
+                    break;
+
+                case R.id.context_action_delete_ex:
+                    Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: "+1);
+                    break;
+
+                default:
+                    Log.e(APP_NAME, "ContextMenuCallback :: onActionItemClicked unexpected case");
+                    break;
+            }
+
             return true;
         }
 
@@ -676,10 +690,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 actMode.finish();
 
-            } else if ( checkedAmount == 1 && this.contextSubj == Subject.EXERCISES ) {
+            } else if ( checkedAmount == 1 ) {
 
-                actMode.getMenu().getItem( 0 ).setVisible( true );
-                actMode.getMenu().getItem( 1 ).setVisible( true );
+                actMode.getMenu().getItem( 0 ).setVisible( true ); //edit btn
+
+                if ( this.contextSubj == Subject.EXERCISES ) {
+                    actMode.getMenu().getItem(1).setVisible(true); // delete exercise btn
+                } else {
+                    actMode.getMenu().getItem( 1 ).setVisible( false );
+                }
 
             } else {
                 actMode.getMenu().getItem( 0 ).setVisible( false );
