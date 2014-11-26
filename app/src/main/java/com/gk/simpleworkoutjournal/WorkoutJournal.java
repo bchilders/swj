@@ -592,7 +592,18 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     class ContextMenuCallback implements AbsListView.MultiChoiceModeListener {
         public static final String APP_NAME = "SWJournal";
         Subject contextSubj;
+
         LinearLayout actionModeZone = (LinearLayout) findViewById( R.id.actionModeZone);
+        Button ctxDeleteLog = (Button)findViewById(R.id.ctx_deleteLogEntriesBtn);
+
+        ImageButton ctxCancelBtn = (ImageButton)findViewById(R.id.ctx_cancelBtn);
+        ImageButton ctxAddBtn = (ImageButton) findViewById(R.id.ctx_addEditedBtn);
+
+        EditText ctxEditRepsField = (EditText)findViewById(R.id.ctx_editReps);
+        EditText ctxEditWeightField = (EditText)findViewById(R.id.ctx_editWeight);
+
+        AutoCompleteTextView ctxEditExField = (AutoCompleteTextView) findViewById(R.id.addExerciseACTV);
+
 
         ContextMenuCallback( Subject subj )
         {
@@ -605,14 +616,33 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         public boolean onActionItemClicked(ActionMode actMode, MenuItem menuItem) {
             Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked mode: "+actMode+" item: "+menuItem);
             // TODO Auto-generated method stub
+
+            ctxDeleteLog.setVisibility(View.GONE);
+            ctxCancelBtn.setVisibility(View.VISIBLE);
+            ctxAddBtn.setVisibility(View.VISIBLE);
+
             switch( menuItem.getItemId() )
             {
                 case R.id.context_action_rename_edit_single:
                     Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: "+0);
+
+                    if ( contextSubj == Subject.EXERCISES )   {
+                        ctxEditExField.setVisibility(View.VISIBLE);
+                        ctxEditRepsField.setVisibility(View.GONE);
+                        ctxEditWeightField.setVisibility(View.GONE);
+                    } else {
+                        ctxEditExField.setVisibility(View.GONE);
+                        ctxEditRepsField.setVisibility(View.VISIBLE);
+                        ctxEditWeightField.setVisibility(View.VISIBLE);
+                    }
+
                     break;
 
                 case R.id.context_action_delete_ex:
                     Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: "+1);
+
+                    //some dialog over here
+
                     break;
 
                 default:
@@ -657,6 +687,14 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
             Log.e(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
 
+            ctxDeleteLog.setVisibility(View.VISIBLE);
+
+            ctxCancelBtn.setVisibility(View.GONE);
+            ctxAddBtn.setVisibility(View.GONE);
+            ctxEditRepsField.setVisibility(View.GONE);
+            ctxEditWeightField.setVisibility(View.GONE);
+            ctxEditExField.setVisibility(View.GONE);
+
             String actionBarText = "";
             //if long click is the first click - we need to get currLv here. Potentially will need to define other current as well!
             switch ( this.contextSubj )
@@ -668,6 +706,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     actionBarText = "Exercises chosen: ";
                     currLv = exercisesLv;
                     currAdapter = exercisesAdapter;
+
                     break;
                 case SETS:
                     //if changed from other listview
@@ -703,7 +742,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             } else {
                 actMode.getMenu().getItem( 0 ).setVisible( false );
                 actMode.getMenu().getItem( 1 ).setVisible( false );
-
             }
 
             actionBarText += currAdapter.getcheckedAmount();
