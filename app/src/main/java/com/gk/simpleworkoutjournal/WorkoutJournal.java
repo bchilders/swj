@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
@@ -17,7 +16,6 @@ import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,8 +27,9 @@ import android.widget.Toast;
 
 import com.gk.datacontrol.DBClass;
 
+import java.util.HashSet;
+
 import static com.gk.simpleworkoutjournal.WorkoutDataAdapter.*;
-import static com.gk.simpleworkoutjournal.WorkoutDataAdapter.APP_NAME;
 
 public class WorkoutJournal extends Activity implements  OnItemClickListener, OnTouchListener {
 	public static final String APP_NAME = "SWJournal";
@@ -49,7 +48,10 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
 	ActionMode  contextMode;
 	boolean inContextMode;
-	
+
+    ContextMenuCallback exercisesContextualMode;
+    ContextMenuCallback setsContextualMode;
+
 	boolean notesShowed = false;
 	DBClass dbmediator;
 	
@@ -103,9 +105,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     	exercisesLv.smoothScrollToPosition(exercisesLv.getCount() - 1);
     	//exercisesLv.setItemChecked(exercisesLv.getCount() - 1, true); TODO: remove
     	//TODO: show appropriate sets
+        exercisesContextualMode = new ContextMenuCallback( Subject.EXERCISES );
+        setsContextualMode = new ContextMenuCallback( Subject.SETS );
 
-    	exercisesLv.setMultiChoiceModeListener(  new ContextMenuCallback( Subject.EXERCISES ) );
-    	setsLv.setMultiChoiceModeListener(  new ContextMenuCallback( Subject.SETS ) );
+    	exercisesLv.setMultiChoiceModeListener(  exercisesContextualMode );
+    	setsLv.setMultiChoiceModeListener( setsContextualMode );
     	inContextMode = false;
     	dbmediator.close();
     }
@@ -378,6 +382,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 		
 		if ( inContextMode )
 		{
+            //TODO: if ever called? inContextMode is neede?
             updateContextBar();
 		}
 		
@@ -532,7 +537,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			Log.v(APP_NAME, "after  startActivity" );
 		} 
 	}
-		
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		Log.v(APP_NAME, "onActivityResult" );
@@ -586,15 +591,62 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 			dbmediator.close();
 			
 		}
-		
 	}
 
+    public void onContextButtonPressed(View contextualActionButton )
+    {
+        Log.v(APP_NAME, "WorkoutJournal :: onContextButtonPressed");
+
+        ContextMenuCallback cmcb;
+        switch ( currAdapter.getSubject()) {
+            case EXERCISES:
+                cmcb = exercisesContextualMode;
+                break;
+
+            case SETS:
+                cmcb = setsContextualMode;
+                break;
+
+            default:
+                Log.e(APP_NAME, "WorkoutJournal :: onContextButtonPressed. Weird state met");
+                return;
+        }
+
+        switch ( contextualActionButton.getId() )
+        {
+            case R.id.context_action_delete_ex:
+                cmcb.onDeleteExPressed();
+                break;
+
+            case R.id.context_action_rename_edit_single:
+                cmcb.onEditRenamePressed();
+                break;
+
+            case R.id.ctx_deleteLogEntriesBtn:
+                cmcb.onDeleteLogEntriesPressed();
+                break;
+
+            case R.id.ctx_cancelBtn:
+                cmcb.onCancelEditBtnPressed();
+                break;
+
+            case R.id.ctx_addEditedBtn:
+                cmcb.onAddEditedBtnPressed();
+                break;
+
+            default:
+                Log.e(APP_NAME, "WorkoutJournal :: onContextButtonPressed. handler for passed view is missing");
+                return;
+        }
+    }
+
+    // TODO: how to move this shit out of this class?
     class ContextMenuCallback implements AbsListView.MultiChoiceModeListener {
         public static final String APP_NAME = "SWJournal";
         Subject contextSubj;
 
         LinearLayout actionModeZone = (LinearLayout) findViewById( R.id.actionModeZone);
-        Button ctxDeleteLog = (Button)findViewById(R.id.ctx_deleteLogEntriesBtn);
+        Button ctxDeleteLogBtn = (Button)findViewById(R.id.ctx_deleteLogEntriesBtn);
 
         ImageButton ctxCancelBtn = (ImageButton)findViewById(R.id.ctx_cancelBtn);
         ImageButton ctxAddBtn = (ImageButton) findViewById(R.id.ctx_addEditedBtn);
@@ -602,8 +654,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         EditText ctxEditRepsField = (EditText)findViewById(R.id.ctx_editReps);
         EditText ctxEditWeightField = (EditText)findViewById(R.id.ctx_editWeight);
 
-        AutoCompleteTextView ctxEditExField = (AutoCompleteTextView) findViewById(R.id.addExerciseACTV);
-
+        AutoCompleteTextView ctxEditExField = (AutoCompleteTextView) findViewById(R.id.ctx_editExerciseACTV);
 
         ContextMenuCallback( Subject subj )
         {
@@ -617,14 +668,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked mode: "+actMode+" item: "+menuItem);
             // TODO Auto-generated method stub
 
-            ctxDeleteLog.setVisibility(View.GONE);
-            ctxCancelBtn.setVisibility(View.VISIBLE);
-            ctxAddBtn.setVisibility(View.VISIBLE);
 
             switch( menuItem.getItemId() )
             {
                 case R.id.context_action_rename_edit_single:
                     Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: "+0);
+
+                    ctxDeleteLogBtn.setVisibility(View.GONE);
+                    ctxCancelBtn.setVisibility(View.VISIBLE);
+                    ctxAddBtn.setVisibility(View.VISIBLE);
 
                     if ( contextSubj == Subject.EXERCISES )   {
                         ctxEditExField.setVisibility(View.VISIBLE);
@@ -639,6 +691,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     break;
 
                 case R.id.context_action_delete_ex:
+
+                    ctxDeleteLogBtn.setVisibility(View.VISIBLE);
+                    ctxCancelBtn.setVisibility(View.GONE);
+                    ctxAddBtn.setVisibility(View.GONE);
+
                     Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: "+1);
 
                     //some dialog over here
@@ -687,7 +744,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
             Log.e(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
 
-            ctxDeleteLog.setVisibility(View.VISIBLE);
+            ctxDeleteLogBtn.setVisibility(View.VISIBLE);
 
             ctxCancelBtn.setVisibility(View.GONE);
             ctxAddBtn.setVisibility(View.GONE);
@@ -746,6 +803,40 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
             actionBarText += currAdapter.getcheckedAmount();
             actMode.setTitle( actionBarText );
+        }
+
+        public void onDeleteExPressed() {
+            Log.v(APP_NAME, "ContextMenuCallback :: onDeleteExPressed");
+        }
+
+        public void onEditRenamePressed() {
+            Log.v(APP_NAME, "ContextMenuCallback :: onEditRenamePressed");
+        }
+
+        public void onDeleteLogEntriesPressed() {
+            Log.v(APP_NAME, "ContextMenuCallback :: onDeleteLogEntriesPressed");
+
+            HashSet<Integer> ids = currAdapter.getIdsOfChecked();
+            for ( Integer id : ids )
+            {
+                Log.v(APP_NAME, "ContextMenuCallback :: following ID to delete: "+id);
+            }
+        }
+
+        public void onCancelEditBtnPressed() {
+            Log.v(APP_NAME, "ContextMenuCallback :: onCancelEditBtnPressed");
+
+            ctxCancelBtn.setVisibility(View.GONE);
+            ctxAddBtn.setVisibility(View.GONE);
+            ctxEditRepsField.setVisibility(View.GONE);
+            ctxEditWeightField.setVisibility(View.GONE);
+            ctxEditExField.setVisibility(View.GONE);
+
+            ctxDeleteLogBtn.setVisibility(View.VISIBLE);
+        }
+
+        public void onAddEditedBtnPressed() {
+            Log.v(APP_NAME, "ContextMenuCallback :: onAddEditedBtnPressed");
         }
 
     }

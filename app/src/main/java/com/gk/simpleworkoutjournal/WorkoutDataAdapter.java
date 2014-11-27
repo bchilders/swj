@@ -23,7 +23,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	private Subject currSubj;
 	private String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	private TextView exerciseTv, repsTv, weightTv, delimiterTv;
-    private HashSet checkedItems;
+    private HashSet<Integer> checkedItems;
 	private ImageView img;
 	private TextView dateHeader;
 	private long prevTimestamp, timestamp;
@@ -34,7 +34,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 
 	public WorkoutDataAdapter(Context context, Cursor c, Subject subject) {
 		super(context, c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER );
-        checkedItems = new HashSet();
+        checkedItems = new HashSet<Integer>();
 		currSubj = subject;
 		
 	}
@@ -171,6 +171,8 @@ public class WorkoutDataAdapter extends CursorAdapter {
         }
 
     }
+
+    public HashSet getIdsOfChecked() { return checkedItems; }
 
     public int getcheckedAmount() {
         return checkedItems.size();

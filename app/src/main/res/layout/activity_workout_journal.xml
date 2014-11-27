@@ -109,26 +109,26 @@
             android:visibility="gone"
             >
 
-
             <Button
                 android:id="@+id/ctx_deleteLogEntriesBtn"
                 android:layout_width="fill_parent"
                 android:layout_weight="1"
                 android:layout_height="fill_parent"
-                style="@style/WorkoutContextEditButtonStyle"
+                style="@style/WorkoutEditButtonStyle_complementary"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
                 android:text="Delete log entries"
                 android:paddingLeft="15sp"
                 android:drawableLeft="@drawable/ic_custom_circledtrashbin"
+                android:onClick="onContextButtonPressed"
                 />
 
             <ImageButton
                 android:id="@+id/ctx_cancelBtn"
-                style="@style/WorkoutEditButtonStyle"
+                style="@style/WorkoutEditButtonStyle_complementary"
                 android:contentDescription="@string/workout_add_btn_hint"
-                android:onClick="onBackButtonPressed"
-                android:src="@drawable/ic_custom_circledforward" />
+                android:onClick="onContextButtonPressed"
+                android:src="@drawable/ic_custom_circledback" />
 
             <EditText
                 android:id="@+id/ctx_editReps"
@@ -160,10 +160,10 @@
 
             <ImageButton
                 android:id="@+id/ctx_addEditedBtn"
-                style="@style/WorkoutEditButtonStyle"
+                style="@style/WorkoutEditButtonStyle_complementary"
                 android:src="@drawable/ic_custom_circledtick"
                 android:contentDescription="@string/workout_add_btn_hint"
-                android:onClick="onAddButtonPressed" >
+                android:onClick="onContextButtonPressed" >
 
             </ImageButton>
         </LinearLayout>
@@ -204,7 +204,7 @@
                  />
             
             <ImageButton
-                android:id="@+id/addExerciseSBtn"
+                android:id="@+id/addEntryBtn"
                 style="@style/WorkoutEditButtonStyle"
                 android:src="@drawable/ic_custom_circledplus"
                 android:contentDescription="@string/workout_add_btn_hint"
