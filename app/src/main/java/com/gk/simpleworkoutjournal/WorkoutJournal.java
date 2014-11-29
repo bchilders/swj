@@ -1,6 +1,7 @@
 package com.gk.simpleworkoutjournal;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -22,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -223,8 +225,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 	    	
     	//we are trying to add reps and weight
     	} else {
-
-
 
             Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed() Reps: "+repsEdit.getText()+ " Weight: "+weightEdit.getText()+ "Ex curr idx: "+exercisesAdapter.getCurrent() );
     		String repString = repsEdit.getText().toString();
@@ -666,13 +666,21 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         @Override
         public boolean onActionItemClicked(ActionMode actMode, MenuItem menuItem) {
             Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked mode: "+actMode+" item: "+menuItem);
-            // TODO Auto-generated method stub
 
+            //get the only possible entry to work with
+            if ( currAdapter.getcheckedAmount() != 1 ) {
+                Log.e(APP_NAME, "ContextMenuCallback :: onActionItemClicked: one checked expected, other amount is actually checked.");
+                return false;
+            }
 
+            Integer sequenceNumber = (Integer)currAdapter.getIdsOfCtxChecked().toArray()[0];
+            Cursor entry = (Cursor)currLv.getItemAtPosition( sequenceNumber );
+
+            //launch appropriate action for this entry
             switch( menuItem.getItemId() )
             {
                 case R.id.context_action_rename_edit_single:
-                    Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: "+0);
+                    Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: edit/rename");
 
                     ctxDeleteLogBtn.setVisibility(View.GONE);
                     ctxCancelBtn.setVisibility(View.VISIBLE);
@@ -696,9 +704,19 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     ctxCancelBtn.setVisibility(View.GONE);
                     ctxAddBtn.setVisibility(View.GONE);
 
-                    Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: "+1);
+                    Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked case: delete ex");
 
+                    String exToDelete = entry.getString( entry.getColumnIndex("exercise_name") );
                     //some dialog over here
+                    //AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    //AlertDialog alert = new AlertDialog.Builder( this );
+
+
+                    Log.v(APP_NAME, "ContextMenuCallback :: onActionItemClicked about to delete "+exToDelete);
+
+                    dbmediator.open();
+                    dbmediator.deleteExercise( exToDelete );
+                    dbmediator.close();
 
                     break;
 
@@ -744,13 +762,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
             Log.e(APP_NAME, "ContextMenuCallback :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
 
-            ctxDeleteLogBtn.setVisibility(View.VISIBLE);
-
-            ctxCancelBtn.setVisibility(View.GONE);
-            ctxAddBtn.setVisibility(View.GONE);
-            ctxEditRepsField.setVisibility(View.GONE);
-            ctxEditWeightField.setVisibility(View.GONE);
-            ctxEditExField.setVisibility(View.GONE);
+            //reset buttons and editTexts
+            onCancelEditBtnPressed();
 
             String actionBarText = "";
             //if long click is the first click - we need to get currLv here. Potentially will need to define other current as well!
@@ -777,7 +790,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     break;
             }
 
-            currAdapter.invertChecked( index );
+            currAdapter.invertCtxChecked(index);
             currAdapter.notifyDataSetChanged();
 
             //if all items deselected
@@ -811,12 +824,20 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         public void onEditRenamePressed() {
             Log.v(APP_NAME, "ContextMenuCallback :: onEditRenamePressed");
+
+            if ( currAdapter.getcheckedAmount() != 1)
+            {
+                Log.v(APP_NAME, "ContextMenuCallback :: onEditRenamePressed one ckecked item expected, while there are more");
+            }
+
+            HashSet<Integer> onlyItem = currAdapter.getIdsOfCtxChecked();
+
         }
 
         public void onDeleteLogEntriesPressed() {
             Log.v(APP_NAME, "ContextMenuCallback :: onDeleteLogEntriesPressed");
 
-            HashSet<Integer> ids = currAdapter.getIdsOfChecked();
+            HashSet<Integer> ids = currAdapter.getIdsOfCtxChecked();
             for ( Integer id : ids )
             {
                 Log.v(APP_NAME, "ContextMenuCallback :: following ID to delete: "+id);
@@ -833,6 +854,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             ctxEditExField.setVisibility(View.GONE);
 
             ctxDeleteLogBtn.setVisibility(View.VISIBLE);
+
+            ctxEditWeightField.setText("");
+            ctxEditRepsField.setText("");
+            ctxEditExField.setText("");
+
         }
 
         public void onAddEditedBtnPressed() {

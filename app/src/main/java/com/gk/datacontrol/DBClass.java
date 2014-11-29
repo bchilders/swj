@@ -80,7 +80,6 @@ public class DBClass  {
 		
 	}
 
-
 	public void close() {
 		if (dbHelper!=null) dbHelper.close();
 	}
@@ -155,7 +154,34 @@ public class DBClass  {
 		}
 		return res;
 	}
-	
+
+    //TODO: empty log as well
+    public int deleteExercise( String exName ) {
+        Log.v(APP_NAME, "DBClass :: deleteExercise :: exName: "+ exName);
+
+        int affected;
+        int affectedSum = 0;
+        String key = KEY_EX_NAME;
+
+        String[] tables = new String[]{ TABLE_SETS, TABLE_EXERCISE_LOG, TABLE_EXERCISES };
+
+        for ( String table : tables ) {
+
+            if ( table == TABLE_EXERCISES) {
+                key = KEY_NAME; // name instead of exercise_name in the last table
+            }
+
+            affected = realdb.delete(table, key+"=\""+exName+"\"",null);
+            Log.v(APP_NAME, "DBClass :: deleteExercise :: removed from \""+table+"\" table: "+ affected );
+            affectedSum += affected;
+
+        }
+        Log.v(APP_NAME, "DBClass :: deleteExercise :: sum of deleted: "+ affectedSum );
+        return affectedSum;
+    }
+
+
+
 	public long insertExerciseNote( String exercise, String newNote )  {
 		values.put( KEY_NOTE, newNote  );
 		

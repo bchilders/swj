@@ -23,7 +23,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	private Subject currSubj;
 	private String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	private TextView exerciseTv, repsTv, weightTv, delimiterTv;
-    private HashSet<Integer> checkedItems;
+    private HashSet<Integer> ctxCheckedItems;
 	private ImageView img;
 	private TextView dateHeader;
 	private long prevTimestamp, timestamp;
@@ -34,7 +34,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 
 	public WorkoutDataAdapter(Context context, Cursor c, Subject subject) {
 		super(context, c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER );
-        checkedItems = new HashSet<Integer>();
+        ctxCheckedItems = new HashSet<Integer>();
 		currSubj = subject;
 		
 	}
@@ -58,8 +58,8 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	    formattedDate.setTimeInMillis( timestamp );
 	    
 	    // check if we need to highlight current position
-        //Log.v(APP_NAME, " pos: "+ cursor.getPosition()+" contains in checked: "+checkedItems.contains( cursor.getPosition() ));
-	    if ( checkedItems.contains( cursor.getPosition() ) ) {
+        //Log.v(APP_NAME, " pos: "+ cursor.getPosition()+" contains in checked: "+ctxCheckedItems.contains( cursor.getPosition() ));
+	    if ( ctxCheckedItems.contains( cursor.getPosition() ) ) {
             view.setBackgroundColor( ctx.getResources().getColor(R.color.baseColor_lightest_complementary) );
 	    } else if ( cursor.getPosition() == currentIndex ) {
             view.setBackgroundColor( ctx.getResources().getColor(R.color.baseColor_lightest) );
@@ -91,7 +91,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
        			entryMainText = cursor.getString(cursor.getColumnIndex("_id"));
        			exerciseTv.setText(entryMainText);
 
-                if ( checkedItems.contains( cursor.getPosition() ) ) {
+                if ( ctxCheckedItems.contains( cursor.getPosition() ) ) {
                     dateHeader.setBackgroundResource( R.drawable.date_header_bg_complementary );
                 } else {
                     dateHeader.setBackgroundResource( R.drawable.date_header_bg );
@@ -119,7 +119,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 
                 //for checked items delimiter have different color
                 delimiterTv = (TextView) view.findViewById(R.id.workout_set_delimiter);
-                if ( checkedItems.contains( cursor.getPosition() ) ) {
+                if ( ctxCheckedItems.contains( cursor.getPosition() ) ) {
                     delimiterTv.setTextColor( ctx.getResources().getColor(R.color.baseColor_lighter_complementary) );
                     dateHeader.setTextColor( ctx.getResources().getColor(R.color.baseColor_darker_complementary) );
                 } else {
@@ -161,25 +161,25 @@ public class WorkoutDataAdapter extends CursorAdapter {
         return root;
 	}
 
-    public void invertChecked( int index ) {
+    public void invertCtxChecked(int index) {
 
-        if ( checkedItems.contains( index ) )
+        if ( ctxCheckedItems.contains( index ) )
         {
-            checkedItems.remove( index );
+            ctxCheckedItems.remove( index );
         } else {
-            checkedItems.add( index );
+            ctxCheckedItems.add( index );
         }
 
     }
 
-    public HashSet getIdsOfChecked() { return checkedItems; }
+    public HashSet<Integer> getIdsOfCtxChecked() { return ctxCheckedItems; }
 
     public int getcheckedAmount() {
-        return checkedItems.size();
+        return ctxCheckedItems.size();
     }
 
     public void clearChecked() {
-        checkedItems.clear();
+        ctxCheckedItems.clear();
     }
 
 	public void setCurrent(int position) {
