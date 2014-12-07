@@ -38,6 +38,8 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     AutoCompleteTextView ctxEditExField;
 
+    ActionMode thisActionMode;
+
     WJContext(WorkoutJournal activity, WorkoutDataAdapter.Subject subj)
     {
         super();
@@ -63,7 +65,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
         //get the only possible entry to work with
         if ( activity.currAdapter.getcheckedAmount() != 1 ) {
-            Log.e(APP_NAME, "WJContext :: onActionItemClicked: one checked expected, other amount is actually checked.");
+            Log.e(APP_NAME, "WJContext :: onActionItemClicked: one checked expected, other amount is actually checked: "+activity.currAdapter.getcheckedAmount());
             return false;
         }
 
@@ -131,6 +133,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         Log.v(APP_NAME, "WJContext :: onCreateActionMode mode: "+actMode+" menu: "+menu);
 
         actionModeZone.setVisibility( View.VISIBLE );
+        thisActionMode = actMode;
         MenuInflater inflater = actMode.getMenuInflater();
         inflater.inflate(R.menu.workout_context_menu, menu);
 
@@ -263,23 +266,44 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         Log.v(APP_NAME, "WJContext :: onAddEditedBtnPressed");
     }
 
+    private void deleteSelectedExercise() {
+
+        Integer sequenceNumber = (Integer)activity.exercisesAdapter.getIdsOfCtxChecked().toArray()[0];
+        Cursor entry = (Cursor)activity.exercisesLv.getItemAtPosition( sequenceNumber );
+        String exToDelete = entry.getString( entry.getColumnIndex("exercise_name") );
+        Log.v(APP_NAME, "WJContext :: onClick: use choose to delete exercise " + exToDelete+" with sequence number "+sequenceNumber);
+        activity.dbmediator.open();
+        activity.dbmediator.deleteExercise( exToDelete );
+        activity.dbmediator.close();
+
+        switch ( activity.adjustAfterExDeleted() ) {
+            case 0: // no need to change anything (will focus on the next element got this idx)
+                //activity.exercisesAdapter.invertCtxChecked( sequenceNumber );
+                break;
+
+            case 1: // need to move invert CtxCheckedselected lower
+                activity.exercisesAdapter.invertCtxChecked( sequenceNumber - 1); //select
+                activity.exercisesAdapter.invertCtxChecked( sequenceNumber ); //deselect
+                break;
+
+            case 2: // no items left
+            default:
+                Log.e(APP_NAME, "WJContext :: deleteSelectedExercise: exiting after nno items left or unexpected return from deleteSelectedExercise(). Exercise:  " + exToDelete);
+                thisActionMode.finish();
+                return;
+        }
+
+        //activity.exercisesAdapter.changeCursor(activity.allExCursor);
+//                activity.currAdapter.notifyDataSetChanged();
+    }
+
     @Override
     public void onClick(DialogInterface dialog, int which) {
         Log.v(APP_NAME, "WJContext :: onClick of alert dialog pressed. dialog: "+dialog+ " which: "+which );
 
         switch ( which )  {
             case -1: // Delete button
-                Integer sequenceNumber = (Integer)activity.currAdapter.getIdsOfCtxChecked().toArray()[0];
-                Cursor entry = (Cursor)activity.currLv.getItemAtPosition( sequenceNumber );
-                String exToDelete = entry.getString( entry.getColumnIndex("exercise_name") );
-                Log.v(APP_NAME, "WJContext :: use choose to delete exercise " + exToDelete);
-                activity.dbmediator.open();
-                activity.dbmediator.deleteExercise( exToDelete );
-
-                activity.dbmediator.close();
-                activity.adjustAfterExDeleted( );
-                //activity.exercisesAdapter.changeCursor(activity.allExCursor);
-//                activity.currAdapter.notifyDataSetChanged();
+                deleteSelectedExercise();
                 break;
 
             case -2: // Cancel button

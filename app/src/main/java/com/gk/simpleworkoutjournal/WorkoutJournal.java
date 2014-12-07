@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -40,8 +39,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     WorkoutDataAdapter currAdapter, exercisesAdapter, setsAdapter;
 
     ImageButton switchBtn;
-
-    ActionMode contextMode;
     boolean inContextMode;
 
     WJContext exercisesContextualMode;
@@ -537,14 +534,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         if (resultCode == RESULT_OK) {
             String note = data.getStringExtra("note");
 
-            Log.v(APP_NAME, "bbb");
-            DatabaseUtils.dumpCursor(currCursor); //gk
+            //DatabaseUtils.dumpCursor(currCursor); //gk
 
-            currCursor = (Cursor) currAdapter.getItem(currAdapter.getCurrent());
-            Log.v(APP_NAME, "onActivityResult once got item with nr." + currAdapter.getCurrent());
+            //currCursor = (Cursor) currAdapter.getItem(currAdapter.getCurrent());
 
-            Log.v(APP_NAME, "ccc");
-            DatabaseUtils.dumpCursor(currCursor); //gk
+            //DatabaseUtils.dumpCursor(currCursor); //gk
 
             Log.v(APP_NAME, "onActivityResult once got item");
             dbmediator.open();
@@ -630,27 +624,42 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
     }
 
-    public void adjustAfterExDeleted( ) {
+    /*
+    @return 2 if no items left to operate on
+            1 if idx of checked must be decremented.
+            0 if no extra actions required
+     */
+    public int adjustAfterExDeleted( ) {
         Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted");
+        int retCode = 0;
 
         // remember - these are values before adjustment - DB is already changed!
         int prevHighlighted  = exercisesAdapter.getCurrent();
         int sumOfElements = exercisesLv.getCount();
 
-        //if it was last element - need to decrement current
-        if ( (prevHighlighted == sumOfElements-1) && ( sumOfElements != 1 ) ) {
-            exercisesAdapter.setCurrent( prevHighlighted - 1 );
+        //if it was the only left element - need to report to handle checked items.
+        if ( sumOfElements <= 1 ) {
+            Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted detected deletion of very last item. Sum of items before deletion: "+sumOfElements);
+            retCode = 2;
         }
+        //if deleted item was last in a row - need to decrement current
+        else if ( prevHighlighted == sumOfElements-1 ) {
+            Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted detected deletion of last in a row item.");
 
-        //if it was the only eft element - need to take taht in mind.
+            exercisesAdapter.setCurrent( prevHighlighted - 1 );
+            retCode = 1;
+        }
 
         Cursor entry = (Cursor)currLv.getItemAtPosition( prevHighlighted );
         String exercise = entry.getString( entry.getColumnIndex("exercise_name") );
 
-
         Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted prevHighlighted: "+prevHighlighted+" sumOfElements: "+sumOfElements+" exercise: "+exercise);
         //show renewed data for exercises and related sets
+        dbmediator.open();
         allExCursor = dbmediator.fetchExerciseHistory();
+        dbmediator.close();
         exercisesAdapter.changeCursor(allExCursor);
+
+        return retCode;
     }
 }
