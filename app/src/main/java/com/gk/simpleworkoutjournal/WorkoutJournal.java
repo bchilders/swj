@@ -625,35 +625,35 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     }
 
     /*
-    @return 2 if no items left to operate on
-            1 if idx of checked must be decremented.
+    @return 3 if no items left to operate on
+            2 if idx of checked must be decremented.
+            1
             0 if no extra actions required
      */
-    public int adjustAfterExDeleted( ) {
+    public int adjustAfterExDeleted( int idxOfDeleted ) {
         Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted");
         int retCode = 0;
 
         // remember - these are values before adjustment - DB is already changed!
-        int prevHighlighted  = exercisesAdapter.getCurrent();
         int sumOfElements = exercisesLv.getCount();
 
         //if it was the only left element - need to report to handle checked items.
         if ( sumOfElements <= 1 ) {
-            Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted detected deletion of very last item. Sum of items before deletion: "+sumOfElements);
-            retCode = 2;
+            Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted detected deletion of very last item. Sum of items before deletion: "+sumOfElements+" deleted item idx: "+idxOfDeleted);
+            retCode = 3;
         }
         //if deleted item was last in a row - need to decrement current
-        else if ( prevHighlighted == sumOfElements-1 ) {
+        else if ( idxOfDeleted == sumOfElements-1 ) {
             Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted detected deletion of last in a row item.");
 
-            exercisesAdapter.setCurrent( prevHighlighted - 1 );
+            exercisesAdapter.setCurrent( idxOfDeleted - 1 );
+            retCode = 2;
+        }
+        else if ( idxOfDeleted == 0 ) {
+            Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted detected deletion of first in a row item.");
             retCode = 1;
         }
 
-        Cursor entry = (Cursor)currLv.getItemAtPosition( prevHighlighted );
-        String exercise = entry.getString( entry.getColumnIndex("exercise_name") );
-
-        Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted prevHighlighted: "+prevHighlighted+" sumOfElements: "+sumOfElements+" exercise: "+exercise);
         //show renewed data for exercises and related sets
         dbmediator.open();
         allExCursor = dbmediator.fetchExerciseHistory();

@@ -276,17 +276,22 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         activity.dbmediator.deleteExercise( exToDelete );
         activity.dbmediator.close();
 
-        switch ( activity.adjustAfterExDeleted() ) {
+        switch ( activity.adjustAfterExDeleted( sequenceNumber ) ) {
             case 0: // no need to change anything (will focus on the next element got this idx)
                 //activity.exercisesAdapter.invertCtxChecked( sequenceNumber );
                 break;
 
-            case 1: // need to move invert CtxCheckedselected lower
+            case 1: // first was deleted
+                //activity.exercisesAdapter.invertCtxChecked( sequenceNumber );
+
+                break;
+
+            case 2: // need to move invert CtxCheckedselected lower
                 activity.exercisesAdapter.invertCtxChecked( sequenceNumber - 1); //select
                 activity.exercisesAdapter.invertCtxChecked( sequenceNumber ); //deselect
                 break;
 
-            case 2: // no items left
+            case 3: // no items left
             default:
                 Log.e(APP_NAME, "WJContext :: deleteSelectedExercise: exiting after nno items left or unexpected return from deleteSelectedExercise(). Exercise:  " + exToDelete);
                 thisActionMode.finish();
@@ -294,7 +299,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         }
 
         //activity.exercisesAdapter.changeCursor(activity.allExCursor);
-//                activity.currAdapter.notifyDataSetChanged();
+        //activity.currAdapter.notifyDataSetChanged();
     }
 
     @Override
