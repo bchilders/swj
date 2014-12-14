@@ -321,7 +321,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 }
 
-
                 exerciseTextView.setVisibility(View.GONE);
                 repsEdit.setVisibility(View.VISIBLE);
                 weightEdit.setVisibility(View.VISIBLE);
@@ -640,6 +639,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         //if it was the only left element - need to report to handle checked items.
         if ( sumOfElements <= 1 ) {
             Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted detected deletion of very last item. Sum of items before deletion: "+sumOfElements+" deleted item idx: "+idxOfDeleted);
+            exercisesAdapter.setCurrent( -1 );
             retCode = 3;
         }
         //if deleted item was last in a row - need to decrement current
@@ -654,11 +654,52 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             retCode = 1;
         }
 
-        //show renewed data for exercises and related sets
+        //show renewed data for exercises
         dbmediator.open();
         allExCursor = dbmediator.fetchExerciseHistory();
         dbmediator.close();
         exercisesAdapter.changeCursor(allExCursor);
+
+        //make sure exercise edit is active
+        exerciseTextView.setVisibility(View.VISIBLE);
+        repsEdit.setVisibility(View.GONE);
+        weightEdit.setVisibility(View.GONE);
+        switchBtn.setImageResource(R.drawable.ic_custom_circledback);
+
+        // obtain sets for new exercise
+        // fetch new sets only if exercise entry changed
+
+        //empty hint box for set since we have chosen other exercise
+        setNoteTv.setHint(getString(R.string.workout_set_no_note_hint));
+        setNoteTv.setText("");
+
+        //no sets if no exercises
+        if ( retCode == 3 )
+        {
+            setsLv.setAdapter(null);
+            return retCode;
+        }
+
+        //update sets list view accordingly
+        Cursor tmpcs = (Cursor) exercisesAdapter.getItem( exercisesAdapter.getCurrent() );
+        String exercise = tmpcs.getString(allExCursor.getColumnIndex(DBClass.KEY_ID));
+        dbmediator.open();
+        allSetsCursor = dbmediator.fetchSetsForExercise(exercise);
+        dbmediator.close();
+        setsAdapter = new WorkoutDataAdapter(this, allSetsCursor, WorkoutDataAdapter.Subject.SETS);
+        setsLv.setAdapter(setsAdapter);
+        setsAdapter.notifyDataSetChanged();
+
+        if (setsLv.getCount() != 0) {
+            int pos = syncPositionsBasedOnDate(exercisesLv, setsLv);
+            //setsLv.setSelection( pos ); // jump to last item
+            View v = setsLv.getChildAt(pos);
+            if (v != null) {
+                v.requestFocus();
+            }
+        }
+
+
 
         return retCode;
     }

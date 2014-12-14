@@ -293,7 +293,8 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
             case 3: // no items left
             default:
-                Log.e(APP_NAME, "WJContext :: deleteSelectedExercise: exiting after nno items left or unexpected return from deleteSelectedExercise(). Exercise:  " + exToDelete);
+                Log.v(APP_NAME, "WJContext :: deleteSelectedExercise: exiting after no items left or unexpected return from deleteSelectedExercise(). Exercise:  " + exToDelete);
+
                 thisActionMode.finish();
                 return;
         }
