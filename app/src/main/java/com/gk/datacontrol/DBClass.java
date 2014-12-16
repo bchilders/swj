@@ -155,7 +155,13 @@ public class DBClass  {
 		return res;
 	}
 
-    //TODO: empty log as well
+    //TODO: delete sets corresponding by date
+    public int deleteExerciseLog( String exName ) {
+        Log.v(APP_NAME, "DBClass :: deleteExerciseLog :: exName: "+ exName);
+        return 1;
+    }
+
+
     public int deleteExercise( String exName ) {
         Log.v(APP_NAME, "DBClass :: deleteExercise :: exName: "+ exName);
 

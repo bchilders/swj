@@ -651,6 +651,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
         else if ( idxOfDeleted == 0 ) {
             Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted detected deletion of first in a row item.");
+
+            //selected is still the same. However, it's position may be changed now if one of prev entries was deleted or selected was last item in the list
+            if ( idxOfDeleted < exercisesAdapter.getCurrent() || exercisesAdapter.getCurrent() == sumOfElements-1 ) {
+                exercisesAdapter.setCurrent( exercisesAdapter.getCurrent() -1 );
+            }
+
             retCode = 1;
         }
 
@@ -682,7 +688,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         //update sets list view accordingly
         Cursor tmpcs = (Cursor) exercisesAdapter.getItem( exercisesAdapter.getCurrent() );
-        String exercise = tmpcs.getString(allExCursor.getColumnIndex(DBClass.KEY_ID));
+        String exercise = tmpcs.getString(tmpcs.getColumnIndex(DBClass.KEY_ID));
         dbmediator.open();
         allSetsCursor = dbmediator.fetchSetsForExercise(exercise);
         dbmediator.close();

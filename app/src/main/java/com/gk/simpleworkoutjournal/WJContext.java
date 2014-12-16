@@ -239,10 +239,23 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed");
 
         HashSet<Integer> ids = activity.currAdapter.getIdsOfCtxChecked();
+
+        activity.dbmediator.open();
+        Cursor entry;
+        String exLogToDelete;
         for ( Integer id : ids )
         {
             Log.v(APP_NAME, "WJContext :: following ID to delete: "+id);
+
+            entry = (Cursor)activity.exercisesLv.getItemAtPosition( id );
+            exLogToDelete = entry.getString( entry.getColumnIndex("exercise_name") );
+            Log.v(APP_NAME, "WJContext :: matching exercise name: "+exLogToDelete);
+            activity.dbmediator.deleteExerciseLog( exLogToDelete );
         }
+
+        activity.dbmediator.close();
+
+
     }
 
     public void onCancelEditBtnPressed() {
