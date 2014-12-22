@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.gk.datacontrol.DBClass;
+
 import java.util.HashSet;
 
 /**
@@ -176,7 +178,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
                 actionBarText = "Exercises chosen: ";
                 activity.currLv = activity.exercisesLv;
-                activity.currAdapter = activity.exercisesAdapter;
+                activity.currAdapter = activity.exerciseLogAdapter;
 
                 break;
             case SETS:
@@ -240,22 +242,15 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
         HashSet<Integer> ids = activity.currAdapter.getIdsOfCtxChecked();
 
-        activity.dbmediator.open();
         Cursor entry;
         String exLogToDelete;
         for ( Integer id : ids )
         {
-            Log.v(APP_NAME, "WJContext :: following ID to delete: "+id);
-
+            Log.v(APP_NAME, "WJContext :: following checked ID of item in list view to delete: "+id);
             entry = (Cursor)activity.exercisesLv.getItemAtPosition( id );
-            exLogToDelete = entry.getString( entry.getColumnIndex("exercise_name") );
-            Log.v(APP_NAME, "WJContext :: matching exercise name: "+exLogToDelete);
-            activity.dbmediator.deleteExerciseLog( exLogToDelete );
+            activity.dbmediator.rmExLogEntry( entry );
         }
-
-        activity.dbmediator.close();
-
-
+        //activity.exercisesLv.setAdapter(activity.setsAdapter);
     }
 
     public void onCancelEditBtnPressed() {
@@ -281,27 +276,25 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     private void deleteSelectedExercise() {
 
-        Integer sequenceNumber = (Integer)activity.exercisesAdapter.getIdsOfCtxChecked().toArray()[0];
+        Integer sequenceNumber = (Integer)activity.exerciseLogAdapter.getIdsOfCtxChecked().toArray()[0];
         Cursor entry = (Cursor)activity.exercisesLv.getItemAtPosition( sequenceNumber );
         String exToDelete = entry.getString( entry.getColumnIndex("exercise_name") );
         Log.v(APP_NAME, "WJContext :: onClick: use choose to delete exercise " + exToDelete+" with sequence number "+sequenceNumber);
-        activity.dbmediator.open();
-        activity.dbmediator.deleteExercise( exToDelete );
-        activity.dbmediator.close();
+        activity.dbmediator.deleteEx(exToDelete);
 
         switch ( activity.adjustAfterExDeleted( sequenceNumber ) ) {
             case 0: // no need to change anything (will focus on the next element got this idx)
-                //activity.exercisesAdapter.invertCtxChecked( sequenceNumber );
+                //activity.exerciseLogAdapter.invertCtxChecked( sequenceNumber );
                 break;
 
             case 1: // first was deleted
-                //activity.exercisesAdapter.invertCtxChecked( sequenceNumber );
+                //activity.exerciseLogAdapter.invertCtxChecked( sequenceNumber );
 
                 break;
 
             case 2: // need to move invert CtxCheckedselected lower
-                activity.exercisesAdapter.invertCtxChecked( sequenceNumber - 1); //select
-                activity.exercisesAdapter.invertCtxChecked( sequenceNumber ); //deselect
+                activity.exerciseLogAdapter.invertCtxChecked( sequenceNumber - 1); //select
+                activity.exerciseLogAdapter.invertCtxChecked( sequenceNumber ); //deselect
                 break;
 
             case 3: // no items left
@@ -312,7 +305,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                 return;
         }
 
-        //activity.exercisesAdapter.changeCursor(activity.allExCursor);
+        //activity.exerciseLogAdapter.changeCursor(activity.allExCursor);
         //activity.currAdapter.notifyDataSetChanged();
     }
 

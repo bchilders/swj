@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,11 +50,10 @@ public class WorkoutDataAdapter extends CursorAdapter {
 		
 		img = (ImageView) view.findViewById(R.id.workout_entry_note_image);
 		dateHeader = (TextView)view.findViewById(R.id.workout_entry_date_header);
-        
-	    String noteString = cursor.isNull(cursor.getColumnIndex(DBClass.KEY_NOTE)) ? 
-	 			   "" : cursor.getString(cursor.getColumnIndex(DBClass.KEY_NOTE));	
+
 	    String entryMainText = "";
-	    
+        String noteString = cursor.getString(cursor.getColumnIndex(DBClass.KEY_NOTE));
+
 	    timestamp = cursor.getLong( cursor.getColumnIndex(DBClass.KEY_TIME) );
 	    formattedDate.setTimeInMillis( timestamp );
 	    
@@ -66,13 +66,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	    } else {
             view.setBackgroundColor(Color.WHITE);
         }
-	    
-	    // check if we need to show note image
-	    if (noteString.isEmpty()) {
-	    	img.setVisibility(View.INVISIBLE);
-	    } else {
-	    	img.setVisibility(View.VISIBLE);
-	    }
+
 	    
 	    // take data required 
 	    if ( cursor.isFirst()) {
@@ -88,7 +82,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	    switch (currSubj) {
        		case EXERCISES:
        			exerciseTv = (TextView) view.findViewById(R.id.workout_entry_textview);
-       			entryMainText = cursor.getString(cursor.getColumnIndex("_id"));
+       			entryMainText = cursor.getString(cursor.getColumnIndex(DBClass.KEY_EX_NAME));
        			exerciseTv.setText(entryMainText);
 
                 if ( ctxCheckedItems.contains( cursor.getPosition() ) ) {
@@ -139,11 +133,20 @@ public class WorkoutDataAdapter extends CursorAdapter {
       		    			 formattedDate.get(Calendar.YEAR) + "   ";
     	        } 
     	        dateString += String.format("%02d:%02d", formattedDate.get(Calendar.HOUR_OF_DAY), formattedDate.get(Calendar.MINUTE));//formattedDate.get(Calendar.HOUR_OF_DAY) + ":" + formattedDate.get(Calendar.);
-       			break;
+
+
+                break;
        		default:
        			Log.e(APP_NAME, "Unrecognized table type");
 	    }
-       
+
+        // check if we need to show note image
+        if ( noteString == null || noteString.isEmpty()) {
+            img.setVisibility(View.INVISIBLE);
+        } else {
+            img.setVisibility(View.VISIBLE);
+        }
+
 	   dateHeader.setText(dateString);
 	}
 
