@@ -67,9 +67,11 @@ public class DBClass  {
 	public DBClass(Context context) {
 		dbHelper = new DBHelper(context);
 		values =  new ContentValues();
+        open();
 		Log.v(APP_NAME, "DBClass :: DBHelper(Context context");
 		
 	}
+
 
 	public void close() {
 		if (dbHelper!=null) dbHelper.close();
@@ -89,7 +91,7 @@ public class DBClass  {
 	
 	public void dumpDBtoLog() {
 		Log.v(APP_NAME, "DBClass :: dumpDBtoLog() ");
-        open();
+
 		Cursor exerciseCursor = realdb.query(TABLE_EXERCISES, null, null, null, null, null, null);
 
 		Cursor setsCursor;
@@ -135,8 +137,8 @@ public class DBClass  {
      * Will delete all logs related to exercise and exercise itself
      */
     public int deleteEx(String exName) {
-        Log.v(APP_NAME, "DBClass :: deleteEx :: exName: "+ exName);
-        open();
+        Log.e(APP_NAME, "DBClass :: OBSOLETE :: deleteEx :: exName: "+ exName);
+
 
         int affectedSum = realdb.delete(TABLE_SETS_LOG,     KEY_EX_NAME + " = '" + exName + "'", null);
         affectedSum    += realdb.delete(TABLE_EXERCISE_LOG, KEY_EX_NAME + " = '" + exName + "'", null);
@@ -147,21 +149,24 @@ public class DBClass  {
         return affectedSum;
     }
 
-    /*
-     *  Will delete exercise log entry and related sets entries, if they exist
-     */
-    public int deleteExLogEntry( Long exLogEntryId, boolean needReOpenDb ) {
-        if ( needReOpenDb ) open();
-        int affectedEntries = realdb.delete(TABLE_SETS_LOG,     KEY_EX_LOG_ID + " = " + exLogEntryId, null); // delete: 0 - many
-        affectedEntries += realdb.delete(TABLE_EXERCISE_LOG, KEY_ID + " = " + exLogEntryId, null); // delete: 1 (if got inside this loop)
-        if ( needReOpenDb ) close();
-        return affectedEntries;
-    }
+    public int deleteEx( Cursor exCursor ) {
+        Log.v(APP_NAME, "DBClass :: deleteEx started");
 
+        String exToDelete = exCursor.getString( exCursor.getColumnIndex("exercise_name") );
+
+        int affectedSum = realdb.delete(TABLE_SETS_LOG,     KEY_EX_NAME + " = '" + exToDelete + "'", null);
+        affectedSum    += realdb.delete(TABLE_EXERCISE_LOG, KEY_EX_NAME + " = '" + exToDelete + "'", null);
+        affectedSum    += realdb.delete(TABLE_EXERCISES,    KEY_NAME    + " = '" + exToDelete + "'", null);
+        close();
+
+        Log.v(APP_NAME, "DBClass :: deleteEx :: sum of deleted: "+ affectedSum );
+        return affectedSum;
+
+    }
 
     public int rmExLogEntry( Cursor exLogEntry ) {
         Log.v(APP_NAME, "DBClass :: rmExLogEntry started" );
-        open();
+
 
         Long exLogId = exLogEntry.getLong( exLogEntry.getColumnIndex( KEY_ID ) );
 
@@ -172,11 +177,12 @@ public class DBClass  {
         return affectedRows;
     }
 
+    //OBSOLETE
 	public long insertExerciseNote( String exercise, String newNote )  {
 		values.put( KEY_NOTE, newNote  );
-        open();
+
 		long res = realdb.update(TABLE_EXERCISES, values, KEY_NAME + "=\"" + exercise +"\"" , null);
-        close();
+
 		if (res != 1) {
 			Log.e(APP_NAME, "DBClass :: insertNote for exercise :: failed. (name: "+exercise+")" );
 		} else {
@@ -186,20 +192,59 @@ public class DBClass  {
 		return res;
 	}
 
+    public long insertExerciseNote( Cursor exCursor, String newNote ) {
+        Log.v(APP_NAME, "DBClass :: insertExerciseNote started" );
+
+        values.put( KEY_NOTE, newNote  );
+
+        String exName = exCursor.getString(exCursor.getColumnIndex(DBClass.KEY_EX_NAME));
+
+        long res = realdb.update(TABLE_EXERCISES, values, KEY_NAME + "=\"" + exName +"\"" , null);
+
+        if (res != 1) {
+            Log.e(APP_NAME, "DBClass :: insertExerciseNote:: failed. (name: "+exName+")" );
+        } else {
+            Log.v(APP_NAME, "DBClass :: insertExerciseNote:: success for exercise "+exName);
+        }
+        values.clear();
+        return res;
+    }
+    //OBSOLETE
 	public long insertSetNote( long setId, String newNote )  {
 		values.put( KEY_NOTE, newNote );
-        open();
+
 		long res = realdb.update(TABLE_SETS_LOG, values, KEY_ID + "=" + setId , null);
-        close();
+
 		if (res != 1) {
-			Log.e(APP_NAME, "DBClass :: insertNote for set :: failed. (id: "+setId+")" );
+			Log.e(APP_NAME, "DBClass :: OBSOLETE :: insertNote for set :: failed. (id: "+setId+")" );
 		} else {
-			Log.v(APP_NAME, "DBClass :: insertNote for set :: success for set with id "+setId);
+			Log.e(APP_NAME, "DBClass :: OBSOLETE :: insertNote for set :: success for set with id "+setId);
 		}
 		values.clear();
 		return res;
 	}
-	
+
+    public long insertSetNote( Cursor setCursor, String newNote ) {
+        Log.v(APP_NAME, "DBClass :: insertSetNote started");
+        values.put(KEY_NOTE, newNote);
+
+
+        long setId = setCursor.getLong(setCursor.getColumnIndex(DBClass.KEY_ID));
+        Log.v(APP_NAME, "DBClass :: insertSetNote :: gonna insert note '" + newNote + "' for set id " + setId);
+        long res = realdb.update(TABLE_SETS_LOG, values, KEY_ID + "=" + setId , null);
+
+
+
+        if (res != 1) {
+            Log.e(APP_NAME, "DBClass :: insertSetNote for set :: failed. (id: "+setId+")" );
+        } else {
+            Log.v(APP_NAME, "DBClass :: insertSetNote for set :: success for set with id "+setId);
+        }
+
+        values.clear();
+        return res;
+
+    }
 	public long insertSet( String exName, long exLogId, int reps, float weight) {
 		 long time = System.currentTimeMillis();
 		 if (setsInDay % 3 == 0) {
@@ -227,9 +272,9 @@ public class DBClass  {
     	values.put(KEY_WEIGHT,  weight);
     	values.put(KEY_TIME, time);
 
-        open();
+
 		long res = realdb.insert(TABLE_SETS_LOG, null, values);
-        close();
+
 		values.clear();
 		if (res == -1) {
 			Log.e(APP_NAME, "DBClass :: insertSet :: failed. (exName: "+exName+
@@ -243,12 +288,13 @@ public class DBClass  {
 		}
 		return res;
 	}
-	
+
+
 	 public Cursor fetchAllExercies() {
 		 Log.v(APP_NAME, "DBClass :: fetchAllExercies begin");
-         open();
+
 		 Cursor mCursor = realdb.rawQuery("SELECT "+KEY_NAME+" AS _id, "+KEY_NOTE+" FROM "+ TABLE_EXERCISES, null);
-         close();
+
 		 if (mCursor != null) {
 		  mCursor.moveToFirst();
 		 }
@@ -256,35 +302,80 @@ public class DBClass  {
 		 return mCursor;
 	 }
 
+    //TODO: OBSOLETE, should change to one with Cursor
 	 public Cursor fetchSetsForExercise( String exerciseName ) {
 
-		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for "+exerciseName);
-         open();
+		 Log.e(APP_NAME, "DBClass :: OBSOLETE FUNCTION CALLED :: fetchSetsForExercise for "+exerciseName);
+
          Cursor setsCursor = realdb.rawQuery("SELECT * FROM "+ TABLE_SETS_LOG +
 				 							 " WHERE "+KEY_EX_NAME+" = '"+exerciseName+"' ORDER BY "+KEY_TIME, null );
 
-		 setsCursor.moveToFirst();
-         close();
+
 
 		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for '"+exerciseName+"' complete.");
 		 return setsCursor;
 	 }
 
+    public Cursor fetchSetsForExercise( Cursor currExercise ) {
+//  if troubles:      Cursor tmpcs = (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getCurrent() );
+
+        Log.v(APP_NAME, "DBClass :: fetchSetsForExercise");
+
+        Cursor setsCursor = null;
+
+        if  ( currExercise != null && currExercise.getCount() != 0) {
+            String exerciseName = currExercise.getString(currExercise.getColumnIndex(KEY_EX_NAME));
+
+            Log.v(APP_NAME, "DBClass :: fetchSetsForExercise :: exercise: " + exerciseName);
+
+            setsCursor = realdb.rawQuery("SELECT * FROM " + TABLE_SETS_LOG +
+                    " WHERE " + KEY_EX_NAME + " = '" + exerciseName + "' ORDER BY " + KEY_TIME, null);
+
+            setsCursor.moveToFirst();
+
+
+            Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for '" + exerciseName + "' complete.");
+        }
+
+        return setsCursor;
+    }
+
+    //OBSLETE
      public String getNoteForEx( String exName ) {
-         open();
+
          Cursor cursor = realdb.rawQuery("SELECT " + KEY_NOTE +" FROM "+ TABLE_EXERCISES + " WHERE " + KEY_NAME + " = '" + exName +"'", null );
 
 
          if (cursor != null) {
              cursor.moveToFirst();
          }
-         close();
+
          return cursor.getString( cursor.getColumnIndex( KEY_NOTE ) );
      }
 
+    public String getNoteForEx( Cursor exCursor ) {
+        Log.v(APP_NAME, "DBClass :: getKeyNoteFoEx begin");
+        String note = "";
+
+        if ( exCursor != null && exCursor.getCount() > 0 ) {
+
+            String exName = exCursor.getString( exCursor.getColumnIndex(DBClass.KEY_EX_NAME) );
+            Log.v(APP_NAME, "DBClass :: getKeyNoteFoEx :: exercise : " + exName);
+            Cursor noteCursor = realdb.rawQuery("SELECT " + KEY_NOTE + " FROM " + TABLE_EXERCISES + " WHERE " + KEY_NAME + " = '" + exName + "'", null);
+
+            if ( noteCursor != null ) {
+                noteCursor.moveToFirst();
+                note = noteCursor.getString(noteCursor.getColumnIndex(KEY_NOTE));
+            }
+
+        }
+
+        return note;
+    }
+
 	 public Cursor fetchExerciseHistory() {
 		 Log.v(APP_NAME, "DBClass :: fetchExerciseHistory begin");
-         open();
+
 
          Cursor mCursor = realdb.rawQuery( "SELECT " +KEY_ID +"," + KEY_EX_NAME + "," + KEY_TIME + "," + TABLE_EXERCISES+"."+KEY_NOTE + " FROM " + TABLE_EXERCISE_LOG +
                  " LEFT OUTER JOIN "+TABLE_EXERCISES+" ON "
@@ -295,7 +386,7 @@ public class DBClass  {
 			 mCursor.moveToFirst();
 		 }
 		 Log.v(APP_NAME, "DBClass :: fetchExerciseHistory complete");
-         close();
+
 		 return mCursor;
 	 }
 	 
@@ -305,13 +396,13 @@ public class DBClass  {
 		 values.put(KEY_NAME, exercise);
 		 
 		 //check if there already exist an exercise like this
-         open();
+
 		 Cursor tmpcs = realdb.rawQuery("SELECT "+KEY_NAME+" FROM "+ TABLE_EXERCISES + " WHERE "+KEY_NAME+ " = \"" + exercise + "\"", null );
 
 
 		 if (tmpcs.getCount() == 0)
 			 result = realdb.insert(TABLE_EXERCISES, null, values);
-         close();
+
 		 values.clear();
 		 Log.v(APP_NAME, "DBClass :: addExercise done");
 		 return (result != -1);
@@ -339,9 +430,9 @@ public class DBClass  {
 		 //DEV-ONLY
 		 
 		 //values.put(KEY_TIME, getUnixDay() );
-         open();
+
 		 long result = realdb.insert(TABLE_EXERCISE_LOG, null, values);
-         close();
+
 		 values.clear();
 		 Log.v(APP_NAME, "DBClass :: logExercise done");
 		 return (result != -1) ? true : false;

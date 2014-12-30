@@ -277,10 +277,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     private void deleteSelectedExercise() {
 
         Integer sequenceNumber = (Integer)activity.exerciseLogAdapter.getIdsOfCtxChecked().toArray()[0];
-        Cursor entry = (Cursor)activity.exercisesLv.getItemAtPosition( sequenceNumber );
-        String exToDelete = entry.getString( entry.getColumnIndex("exercise_name") );
-        Log.v(APP_NAME, "WJContext :: onClick: use choose to delete exercise " + exToDelete+" with sequence number "+sequenceNumber);
-        activity.dbmediator.deleteEx(exToDelete);
+        activity.dbmediator.deleteEx( (Cursor)activity.exercisesLv.getItemAtPosition( sequenceNumber ) );
 
         switch ( activity.adjustAfterExDeleted( sequenceNumber ) ) {
             case 0: // no need to change anything (will focus on the next element got this idx)
@@ -299,7 +296,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
             case 3: // no items left
             default:
-                Log.v(APP_NAME, "WJContext :: deleteSelectedExercise: exiting after no items left or unexpected return from deleteSelectedExercise(). Exercise:  " + exToDelete);
+                Log.v(APP_NAME, "WJContext :: deleteSelectedExercise: exiting after no items left or unexpected return from deleteSelectedExercise()" );
 
                 thisActionMode.finish();
                 return;

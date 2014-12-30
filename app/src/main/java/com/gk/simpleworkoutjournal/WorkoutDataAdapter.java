@@ -20,7 +20,7 @@ import com.gk.datacontrol.DBClass;
 public class WorkoutDataAdapter extends CursorAdapter {
 	public static final String APP_NAME = "SWJournal";
 	
-	public enum Subject { EXERCISES, SETS };
+	public enum Subject { NONE, EXERCISES, SETS, ALL };
 	private Subject currSubj;
 	private String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 	private TextView exerciseTv, repsTv, weightTv, delimiterTv;
@@ -37,7 +37,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 		super(context, c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER );
         ctxCheckedItems = new HashSet<Integer>();
 		currSubj = subject;
-		
+
 	}
 	
 	public Subject getSubject()
@@ -52,7 +52,6 @@ public class WorkoutDataAdapter extends CursorAdapter {
 		dateHeader = (TextView)view.findViewById(R.id.workout_entry_date_header);
 
 	    String entryMainText = "";
-        String noteString = cursor.getString(cursor.getColumnIndex(DBClass.KEY_NOTE));
 
 	    timestamp = cursor.getLong( cursor.getColumnIndex(DBClass.KEY_TIME) );
 	    formattedDate.setTimeInMillis( timestamp );
@@ -66,7 +65,6 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	    } else {
             view.setBackgroundColor(Color.WHITE);
         }
-
 	    
 	    // take data required 
 	    if ( cursor.isFirst()) {
@@ -141,6 +139,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	    }
 
         // check if we need to show note image
+        String noteString = cursor.getString(cursor.getColumnIndex(DBClass.KEY_NOTE));
         if ( noteString == null || noteString.isEmpty()) {
             img.setVisibility(View.INVISIBLE);
         } else {
