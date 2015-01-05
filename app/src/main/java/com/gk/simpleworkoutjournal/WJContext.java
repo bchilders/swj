@@ -16,8 +16,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
-import com.gk.datacontrol.DBClass;
-
 import java.util.HashSet;
 
 /**
@@ -188,7 +186,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
                 actionBarText =  "Sets chosen: ";
                 activity.currLv = activity.setsLv;
-                activity.currAdapter = activity.setsAdapter;
+                activity.currAdapter = activity.setsLogAdapter;
                 break;
             default:
                 break;
@@ -241,17 +239,29 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     public void onDeleteLogEntriesPressed() {
         Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed");
 
-        HashSet<Integer> ids = activity.currAdapter.getIdsOfCtxChecked();
+        HashSet<Integer> ids = activity.exerciseLogAdapter.getIdsOfCtxChecked();
 
+        int affectedSetEntries = 0;
+        int affectedExEntries  = 0;
         Cursor entry;
-        String exLogToDelete;
         for ( Integer id : ids )
         {
             Log.v(APP_NAME, "WJContext :: following checked ID of item in list view to delete: "+id);
             entry = (Cursor)activity.exercisesLv.getItemAtPosition( id );
-            activity.dbmediator.rmExLogEntry( entry );
+
+            affectedSetEntries += activity.dbmediator.rmExLogEntry( entry );
+            affectedExEntries++ ;
         }
-        //activity.exercisesLv.setAdapter(activity.setsAdapter);
+
+        int newMaxIdx = activity.setsLogAdapter.getCount() - affectedSetEntries - 1;
+        if ( activity.setsLogAdapter.getIdxOfCurrent() > newMaxIdx ) activity.setsLogAdapter.setIdxOfCurrent( newMaxIdx );
+
+        newMaxIdx = activity.exerciseLogAdapter.getCount() - affectedExEntries - 1;
+        if ( activity.exerciseLogAdapter.getIdxOfCurrent() > newMaxIdx ) activity.exerciseLogAdapter.setIdxOfCurrent( newMaxIdx );
+
+        if ( affectedSetEntries > 0 ) activity.initiateListUpdate(WorkoutDataAdapter.Subject.SETS , WorkoutJournal.TriggerEvent.DELETE);
+        if ( affectedExEntries > 0 ) activity.initiateListUpdate(WorkoutDataAdapter.Subject.EXERCISES , WorkoutJournal.TriggerEvent.DELETE);
+
     }
 
     public void onCancelEditBtnPressed() {

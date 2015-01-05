@@ -143,7 +143,6 @@ public class DBClass  {
         int affectedSum = realdb.delete(TABLE_SETS_LOG,     KEY_EX_NAME + " = '" + exName + "'", null);
         affectedSum    += realdb.delete(TABLE_EXERCISE_LOG, KEY_EX_NAME + " = '" + exName + "'", null);
         affectedSum    += realdb.delete(TABLE_EXERCISES,    KEY_NAME    + " = '" + exName + "'", null);
-        close();
 
         Log.v(APP_NAME, "DBClass :: deleteEx :: sum of deleted: "+ affectedSum );
         return affectedSum;
@@ -157,7 +156,6 @@ public class DBClass  {
         int affectedSum = realdb.delete(TABLE_SETS_LOG,     KEY_EX_NAME + " = '" + exToDelete + "'", null);
         affectedSum    += realdb.delete(TABLE_EXERCISE_LOG, KEY_EX_NAME + " = '" + exToDelete + "'", null);
         affectedSum    += realdb.delete(TABLE_EXERCISES,    KEY_NAME    + " = '" + exToDelete + "'", null);
-        close();
 
         Log.v(APP_NAME, "DBClass :: deleteEx :: sum of deleted: "+ affectedSum );
         return affectedSum;
@@ -167,14 +165,13 @@ public class DBClass  {
     public int rmExLogEntry( Cursor exLogEntry ) {
         Log.v(APP_NAME, "DBClass :: rmExLogEntry started" );
 
-
         Long exLogId = exLogEntry.getLong( exLogEntry.getColumnIndex( KEY_ID ) );
 
-        int affectedRows = realdb.delete(TABLE_SETS_LOG,  KEY_EX_LOG_ID +" = "+exLogId, null);
-        affectedRows += realdb.delete(TABLE_EXERCISE_LOG, KEY_ID        +" = "+exLogId, null);
+        int affectedSets = realdb.delete(TABLE_SETS_LOG,  KEY_EX_LOG_ID +" = "+exLogId, null);
+        realdb.delete(TABLE_EXERCISE_LOG, KEY_ID        +" = "+exLogId, null);
 
-        Log.v(APP_NAME, "DBClass :: rmExLogEntry :: affected rows: "+ affectedRows );
-        return affectedRows;
+        Log.v(APP_NAME, "DBClass :: rmExLogEntry :: affected sets entries: "+ affectedSets );
+        return affectedSets;
     }
 
     //OBSOLETE
@@ -314,7 +311,7 @@ public class DBClass  {
 	 }
 
     public Cursor fetchSetsForExercise( Cursor currExercise ) {
-//  if troubles:      Cursor tmpcs = (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getCurrent() );
+//  if troubles:      Cursor tmpcs = (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getIdxOfCurrent() );
 
         Log.v(APP_NAME, "DBClass :: fetchSetsForExercise");
 

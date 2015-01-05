@@ -184,13 +184,13 @@ public class WorkoutDataAdapter extends CursorAdapter {
         ctxCheckedItems.clear();
     }
 
-	public void setCurrent(int position) {
-		Log.d(APP_NAME, "setCurrent:  new current for subj "+currSubj.toString()+": "+position);
+	public void setIdxOfCurrent(int position) {
+		Log.d(APP_NAME, "setIdxOfCurrent:  new current for subj "+currSubj.toString()+": "+position);
 		currentIndex = position;
 
 	}
 	
-	public int getCurrent() { return currentIndex; }
+	public int getIdxOfCurrent() { return currentIndex; }
 	
 	/*
 	 *  1 if 1st  > 2nd

@@ -38,10 +38,6 @@ public class SetDataCursorLoader extends CursorLoader {
         Log.v(APP_NAME, "WorkoutDataCursorLoader :: loadInBackground :: id "+this.getId() );
         Cursor  cursor = db.fetchSetsForExercise( targetEx );
 
-        Log.v(APP_NAME, "WorkoutDataCursorLoader :: XXX :: using cursor ");
-//        DatabaseUtils.dumpCursor(exCursor);
-        DatabaseUtils.dumpCursor(cursor);
-
         return cursor;
     }
 }
