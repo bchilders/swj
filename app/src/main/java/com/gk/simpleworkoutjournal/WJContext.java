@@ -160,6 +160,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         return true;
     }
 
+
     @Override
     public void onItemCheckedStateChanged(ActionMode actMode, int index, long arg2, boolean isChecked ) {
         //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.

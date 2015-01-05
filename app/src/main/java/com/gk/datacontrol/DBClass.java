@@ -210,7 +210,7 @@ public class DBClass  {
         return res;
     }
     //OBSOLETE
-	public long insertSetNote( long setId, String newNote )  {
+	public long insertSetNote( String setId, String newNote )  {
 		values.put( KEY_NOTE, newNote );
 
 		long res = realdb.update(TABLE_SETS_LOG, values, KEY_ID + "=" + setId , null);
@@ -232,8 +232,6 @@ public class DBClass  {
         long setId = setCursor.getLong(setCursor.getColumnIndex(DBClass.KEY_ID));
         Log.v(APP_NAME, "DBClass :: insertSetNote :: gonna insert note '" + newNote + "' for set id " + setId);
         long res = realdb.update(TABLE_SETS_LOG, values, KEY_ID + "=" + setId , null);
-
-
 
         if (res != 1) {
             Log.e(APP_NAME, "DBClass :: insertSetNote for set :: failed. (id: "+setId+")" );
@@ -302,7 +300,6 @@ public class DBClass  {
 		 return mCursor;
 	 }
 
-    //TODO: OBSOLETE, should change to one with Cursor
 	 public Cursor fetchSetsForExercise( String exerciseName ) {
 
 		 Log.e(APP_NAME, "DBClass :: OBSOLETE FUNCTION CALLED :: fetchSetsForExercise for "+exerciseName);
