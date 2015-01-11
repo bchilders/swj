@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.gk.datacontrol.DBClass;
+
 import java.util.HashSet;
 
 /**
@@ -162,7 +164,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     @Override
     public void onItemCheckedStateChanged(ActionMode actMode, int index, long arg2, boolean isChecked ) {
         //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
-        Log.e(APP_NAME, "WJContext :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
+        Log.v(APP_NAME, "WJContext :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
 
         //reset buttons and editTexts
         onCancelEditBtnPressed();
@@ -239,28 +241,84 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     public void onDeleteLogEntriesPressed() {
         Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed");
 
-        HashSet<Integer> ids = activity.exerciseLogAdapter.getIdsOfCtxChecked();
+        if ( contextSubj  == WorkoutDataAdapter.Subject.EXERCISES ) {
 
-        int affectedSetEntries = 0;
-        int affectedExEntries  = 0;
-        Cursor entry;
-        for ( Integer id : ids )
-        {
-            Log.v(APP_NAME, "WJContext :: following checked ID of item in list view to delete: "+id);
-            entry = (Cursor)activity.exercisesLv.getItemAtPosition( id );
+            HashSet<Integer> ids = activity.exerciseLogAdapter.getIdsOfCtxChecked();
 
-            affectedSetEntries += activity.dbmediator.rmExLogEntry( entry );
-            affectedExEntries++ ;
+            int affectedSetEntries = 0;
+            int affectedExEntries = 0;
+            Cursor entry;
+            for (Integer id : ids) {
+                Log.v(APP_NAME, "WJContext :: following checked ex ID of item in list view to delete: " + id);
+                entry = (Cursor) activity.exercisesLv.getItemAtPosition(id);
+
+                long exId = entry.getLong( entry.getColumnIndex( DBClass.KEY_ID ) );
+                affectedSetEntries += activity.dbmediator.rmExLogEntry( exId, 1 );
+                affectedExEntries++;
+            }
+
+            int newMaxIdx = activity.setsLogAdapter.getCount() - affectedSetEntries - 1;
+            if (activity.setsLogAdapter.getIdxOfCurrent() > newMaxIdx)
+                activity.setsLogAdapter.setIdxOfCurrent(newMaxIdx);
+
+            newMaxIdx = activity.exerciseLogAdapter.getCount() - affectedExEntries - 1;
+            if (activity.exerciseLogAdapter.getIdxOfCurrent() > newMaxIdx)
+                activity.exerciseLogAdapter.setIdxOfCurrent(newMaxIdx);
+
+            if (affectedSetEntries > 0)
+                activity.initiateListUpdate(WorkoutDataAdapter.Subject.SETS, WorkoutJournal.TriggerEvent.DELETE);
+            if (affectedExEntries > 0)
+                activity.initiateListUpdate(WorkoutDataAdapter.Subject.EXERCISES, WorkoutJournal.TriggerEvent.DELETE);
+
+        } else if ( contextSubj  == WorkoutDataAdapter.Subject.SETS ) {
+
+            HashSet<Integer> setIds = activity.setsLogAdapter.getIdsOfCtxChecked();
+
+            int affectedSetEntries = 0;
+
+            HashSet<Integer> exIds = new  HashSet<Integer>();
+            Cursor entry;
+            for (Integer id : setIds) {
+                Log.v(APP_NAME, "WJContext :: following checked set ID of item in list view to delete: " + id);
+                entry = (Cursor) activity.setsLv.getItemAtPosition(id);
+
+                exIds.add( entry.getInt(entry.getColumnIndex(DBClass.KEY_EX_LOG_ID)) );
+
+                affectedSetEntries += activity.dbmediator.rmSetLogEntry(entry);
+
+            }
+
+            //if ex log entry have no related sets - get rid of it as well
+            int affectedExEntries = 0;
+            for (Integer id : exIds) {
+
+                if ( !activity.dbmediator.haveSetsWithExId( id ) ) {
+                    affectedExEntries += activity.dbmediator.rmExLogEntry( id , 0 );
+                }
+
+            }
+
+            //need to refresh ex list if some ex entry was removed
+            //same code for ex and set
+            if ( affectedExEntries != 0 ) {
+                int newMaxIdx = activity.exerciseLogAdapter.getCount() - affectedExEntries - 1;
+                if (activity.exerciseLogAdapter.getIdxOfCurrent() > newMaxIdx)
+                    activity.exerciseLogAdapter.setIdxOfCurrent(newMaxIdx);
+
+                activity.initiateListUpdate(WorkoutDataAdapter.Subject.EXERCISES, WorkoutJournal.TriggerEvent.DELETE);
+            }
+
+            if (affectedSetEntries != 0) {
+                int newMaxIdx = activity.setsLogAdapter.getCount() - affectedSetEntries - 1;
+                if (activity.setsLogAdapter.getIdxOfCurrent() > newMaxIdx)
+                    activity.setsLogAdapter.setIdxOfCurrent(newMaxIdx);
+
+                activity.initiateListUpdate(WorkoutDataAdapter.Subject.SETS, WorkoutJournal.TriggerEvent.DELETE);
+            }
+
         }
 
-        int newMaxIdx = activity.setsLogAdapter.getCount() - affectedSetEntries - 1;
-        if ( activity.setsLogAdapter.getIdxOfCurrent() > newMaxIdx ) activity.setsLogAdapter.setIdxOfCurrent( newMaxIdx );
-
-        newMaxIdx = activity.exerciseLogAdapter.getCount() - affectedExEntries - 1;
-        if ( activity.exerciseLogAdapter.getIdxOfCurrent() > newMaxIdx ) activity.exerciseLogAdapter.setIdxOfCurrent( newMaxIdx );
-
-        if ( affectedSetEntries > 0 ) activity.initiateListUpdate(WorkoutDataAdapter.Subject.SETS , WorkoutJournal.TriggerEvent.DELETE);
-        if ( affectedExEntries > 0 ) activity.initiateListUpdate(WorkoutDataAdapter.Subject.EXERCISES , WorkoutJournal.TriggerEvent.DELETE);
+        thisActionMode.finish();
 
     }
 

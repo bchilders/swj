@@ -132,22 +132,9 @@ public class DBClass  {
         close();
 	}
 
-
-    /*
-     * Will delete all logs related to exercise and exercise itself
-     */
-    public int deleteEx(String exName) {
-        Log.e(APP_NAME, "DBClass :: OBSOLETE :: deleteEx :: exName: "+ exName);
-
-
-        int affectedSum = realdb.delete(TABLE_SETS_LOG,     KEY_EX_NAME + " = '" + exName + "'", null);
-        affectedSum    += realdb.delete(TABLE_EXERCISE_LOG, KEY_EX_NAME + " = '" + exName + "'", null);
-        affectedSum    += realdb.delete(TABLE_EXERCISES,    KEY_NAME    + " = '" + exName + "'", null);
-
-        Log.v(APP_NAME, "DBClass :: deleteEx :: sum of deleted: "+ affectedSum );
-        return affectedSum;
-    }
-
+   /*
+   * Will delete all logs related to exercise and exercise itself
+   */
     public int deleteEx( Cursor exCursor ) {
         Log.v(APP_NAME, "DBClass :: deleteEx started");
 
@@ -162,19 +149,30 @@ public class DBClass  {
 
     }
 
-    public int rmExLogEntry( Cursor exLogEntry ) {
-        Log.v(APP_NAME, "DBClass :: rmExLogEntry started" );
-
-        Long exLogId = exLogEntry.getLong( exLogEntry.getColumnIndex( KEY_ID ) );
+    /*
+     * @param[in] subject affects only on retval: in case of 0 will return affected ex amount, in case of 1 - sets amount
+     */
+    public int rmExLogEntry( long exLogId, int subject ) {
+        Log.v(APP_NAME, "DBClass :: rmExLogEntry started. ex id passed: "+ exLogId );
 
         int affectedSets = realdb.delete(TABLE_SETS_LOG,  KEY_EX_LOG_ID +" = "+exLogId, null);
-        realdb.delete(TABLE_EXERCISE_LOG, KEY_ID        +" = "+exLogId, null);
+        int affectedExs = realdb.delete(TABLE_EXERCISE_LOG, KEY_ID        +" = "+exLogId, null);
+
+        Log.v(APP_NAME, "DBClass :: rmExLogEntry :: affected sets entries: "+ affectedSets+ " affected ex entries: "+affectedExs );
+        return ( subject == 0 ) ? affectedExs : affectedSets;
+    }
+
+    public int rmSetLogEntry( Cursor setLogEntry ) {
+        Log.v(APP_NAME, "DBClass :: rmSetLogEntry started" );
+
+        Long setLogId = setLogEntry.getLong( setLogEntry.getColumnIndex( KEY_ID ) );
+
+        int affectedSets = realdb.delete(TABLE_SETS_LOG,  KEY_ID +" = "+setLogId, null);
 
         Log.v(APP_NAME, "DBClass :: rmExLogEntry :: affected sets entries: "+ affectedSets );
         return affectedSets;
     }
 
-    //OBSOLETE
 	public long insertExerciseNote( String exercise, String newNote )  {
 		values.put( KEY_NOTE, newNote  );
 
@@ -189,24 +187,6 @@ public class DBClass  {
 		return res;
 	}
 
-    public long insertExerciseNote( Cursor exCursor, String newNote ) {
-        Log.v(APP_NAME, "DBClass :: insertExerciseNote started" );
-
-        values.put( KEY_NOTE, newNote  );
-
-        String exName = exCursor.getString(exCursor.getColumnIndex(DBClass.KEY_EX_NAME));
-
-        long res = realdb.update(TABLE_EXERCISES, values, KEY_NAME + "=\"" + exName +"\"" , null);
-
-        if (res != 1) {
-            Log.e(APP_NAME, "DBClass :: insertExerciseNote:: failed. (name: "+exName+")" );
-        } else {
-            Log.v(APP_NAME, "DBClass :: insertExerciseNote:: success for exercise "+exName);
-        }
-        values.clear();
-        return res;
-    }
-    //OBSOLETE
 	public long insertSetNote( String setId, String newNote )  {
 		values.put( KEY_NOTE, newNote );
 
@@ -221,25 +201,6 @@ public class DBClass  {
 		return res;
 	}
 
-    public long insertSetNote( Cursor setCursor, String newNote ) {
-        Log.v(APP_NAME, "DBClass :: insertSetNote started");
-        values.put(KEY_NOTE, newNote);
-
-
-        long setId = setCursor.getLong(setCursor.getColumnIndex(DBClass.KEY_ID));
-        Log.v(APP_NAME, "DBClass :: insertSetNote :: gonna insert note '" + newNote + "' for set id " + setId);
-        long res = realdb.update(TABLE_SETS_LOG, values, KEY_ID + "=" + setId , null);
-
-        if (res != 1) {
-            Log.e(APP_NAME, "DBClass :: insertSetNote for set :: failed. (id: "+setId+")" );
-        } else {
-            Log.v(APP_NAME, "DBClass :: insertSetNote for set :: success for set with id "+setId);
-        }
-
-        values.clear();
-        return res;
-
-    }
 	public long insertSet( String exName, long exLogId, int reps, float weight) {
 		 long time = System.currentTimeMillis();
 		 if (setsInDay % 3 == 0) {
@@ -298,41 +259,15 @@ public class DBClass  {
 	 }
 
 	 public Cursor fetchSetsForExercise( String exerciseName ) {
-
-		 Log.e(APP_NAME, "DBClass :: OBSOLETE FUNCTION CALLED :: fetchSetsForExercise for "+exerciseName);
+		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for "+exerciseName);
 
          Cursor setsCursor = realdb.rawQuery("SELECT * FROM "+ TABLE_SETS_LOG +
 				 							 " WHERE "+KEY_EX_NAME+" = '"+exerciseName+"' ORDER BY "+KEY_TIME, null );
-
-
 
 		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for '"+exerciseName+"' complete.");
 		 return setsCursor;
 	 }
 
-    public Cursor fetchSetsForExercise( Cursor currExercise ) {
-//  if troubles:      Cursor tmpcs = (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getIdxOfCurrent() );
-
-        Log.v(APP_NAME, "DBClass :: fetchSetsForExercise");
-
-        Cursor setsCursor = null;
-
-        if  ( currExercise != null && currExercise.getCount() != 0) {
-            String exerciseName = currExercise.getString(currExercise.getColumnIndex(KEY_EX_NAME));
-
-            Log.v(APP_NAME, "DBClass :: fetchSetsForExercise :: exercise: " + exerciseName);
-
-            setsCursor = realdb.rawQuery("SELECT * FROM " + TABLE_SETS_LOG +
-                    " WHERE " + KEY_EX_NAME + " = '" + exerciseName + "' ORDER BY " + KEY_TIME, null);
-
-            setsCursor.moveToFirst();
-
-
-            Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for '" + exerciseName + "' complete.");
-        }
-
-        return setsCursor;
-    }
 
     //OBSLETE
      public String getNoteForEx( String exName ) {
@@ -432,8 +367,20 @@ public class DBClass  {
 		 return (result != -1) ? true : false;
 		 
 	 }
-	 
-	  private class DBHelper extends SQLiteOpenHelper {
+
+	 public boolean haveSetsWithExId( long exId ) {
+         Log.v(APP_NAME, "DBClass :: haveSetsWithExId . id: "+ exId);
+         Cursor setsWithExId = realdb.rawQuery( "SELECT "+KEY_ID+" FROM "+TABLE_SETS_LOG+" WHERE "+KEY_EX_LOG_ID+" = "+exId, null);
+
+         if ( setsWithExId.getCount() == 0 )
+         {
+             return false;
+         } else {
+             return true;
+         }
+
+     }
+	 private class DBHelper extends SQLiteOpenHelper {
 	
 		    public DBHelper(Context context) {
 		      super(context, DB_NAME, null, DB_VERSION);
