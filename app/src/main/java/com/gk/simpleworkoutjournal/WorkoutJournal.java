@@ -220,16 +220,10 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         Log.v(APP_NAME, "WorkoutJournal :: onBackButtonPressed()");
         if (exerciseTextView.getVisibility() == View.GONE) {
-            exerciseTextView.setVisibility(View.VISIBLE);
-            repsEdit.setVisibility(View.GONE);
-            weightEdit.setVisibility(View.GONE);
-            switchBtn.setImageResource(R.drawable.ic_custom_circledforward);
+            showEditsForSubject( Subject.EXERCISES );
 
         } else if (exerciseLogAdapter.getIdxOfCurrent() != -1) {
-            exerciseTextView.setVisibility(View.GONE);
-            repsEdit.setVisibility(View.VISIBLE);
-            weightEdit.setVisibility(View.VISIBLE);
-            switchBtn.setImageResource(R.drawable.ic_custom_circledback);
+            showEditsForSubject( Subject.SETS );
         }
     }
 
@@ -322,14 +316,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                     exerciseLogAdapter.setIdxOfCurrent(position);
 
-                    exerciseLogAdapter.getCursor().moveToPosition( position );
-                    String noteString = exerciseLogAdapter.getCursor().getString( exerciseLogAdapter.getCursor().getColumnIndex(DBClass.KEY_NOTE) );
-                    if ( noteString == null || noteString.isEmpty()) {
-                        exerciseNoteTv.setHint( getString(R.string.workout_exercise_newnote_hint) );
-                        exerciseNoteTv.setText( "" );
-                    } else {
-                        exerciseNoteTv.setText( noteString );
-                    }
+                    moveToSelected( Subject.EXERCISES, false );
 
                     //empty hint box for set since we have chosen other exercise
                     setNoteTv.setHint(getString(R.string.workout_set_no_note_hint));
@@ -352,10 +339,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 }
 
-                exerciseTextView.setVisibility(View.GONE);
-                repsEdit.setVisibility(View.VISIBLE);
-                weightEdit.setVisibility(View.VISIBLE);
-                switchBtn.setImageResource(R.drawable.ic_custom_circledback);
+                showEditsForSubject( Subject.SETS );
                 break;
             case R.id.set_entry_container:
                 exerciseTextView.setText("");
@@ -412,10 +396,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             switch (view.getId()) {
                 case R.id.setsLv:
                     if (exerciseLogAdapter.getIdxOfCurrent() != -1) {
-                        exerciseTextView.setVisibility(View.GONE);
-                        repsEdit.setVisibility(View.VISIBLE);
-                        weightEdit.setVisibility(View.VISIBLE);
-                        switchBtn.setImageResource(R.drawable.ic_custom_circledback);
+                        showEditsForSubject( Subject.SETS );
                     }
                     break;
 
@@ -676,10 +657,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         initiateListUpdate( Subject.EXERCISES, TriggerEvent.DELETE );
 
         //make sure exercise edit is active
-        exerciseTextView.setVisibility(View.VISIBLE);
-        repsEdit.setVisibility(View.GONE);
-        weightEdit.setVisibility(View.GONE);
-        switchBtn.setImageResource(R.drawable.ic_custom_circledback);
+        showEditsForSubject( Subject.EXERCISES );
 
         // obtain sets for new exercise
         // fetch new sets only if exercise entry changed
@@ -710,12 +688,37 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         return retCode;
     }
 
-    public void moveToSelected( Subject subj, Cursor data, boolean needToScroll ) {
+    public void showEditsForSubject( Subject subj ) {
+
+        switch ( subj ) {
+            case EXERCISES:
+                exerciseTextView.setVisibility(View.VISIBLE);
+                repsEdit.setVisibility(View.GONE);
+                weightEdit.setVisibility(View.GONE);
+                switchBtn.setImageResource(R.drawable.ic_custom_circledforward);
+                break;
+
+            case SETS:
+                exerciseTextView.setVisibility(View.GONE);
+                repsEdit.setVisibility(View.VISIBLE);
+                weightEdit.setVisibility(View.VISIBLE);
+                switchBtn.setImageResource(R.drawable.ic_custom_circledback);
+                break;
+
+            default:
+                Log.e(APP_NAME, "showEditsForSubject :: met unexpected subject : "+subj );
+        }
+
+    }
+
+    /*
+     * Handler for cases when we dont need to update list, but only change seleted.
+     */
+    public void moveToSelected( Subject subj, boolean needToScroll ) {
         TextView targetNoteView;
         WorkoutDataAdapter targetAdapter;
         ListView targetLv;
         String newNoteHint;
-
 
         switch ( subj ) {
             case EXERCISES:
@@ -745,8 +748,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 return;
         }
 
-        data.moveToPosition( targetAdapter.getIdxOfCurrent() );
-        String noteString = data.getString( data.getColumnIndex(DBClass.KEY_NOTE) );
+        targetAdapter.getCursor().moveToPosition( targetAdapter.getIdxOfCurrent() );
+        String noteString = targetAdapter.getCursor().getString( targetAdapter.getCursor().getColumnIndex(DBClass.KEY_NOTE) );
         if ( noteString == null || noteString.isEmpty()) {
             targetNoteView.setHint( newNoteHint );
             targetNoteView.setText("");
@@ -795,20 +798,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 // if add button clicked
                 if ( exUpTrigger == TriggerEvent.ADD ) {
-
-                    exerciseLogAdapter.getCursor().moveToPosition( exerciseLogAdapter.getIdxOfCurrent() );
-
-
-                    DatabaseUtils.dumpCursor(data);
-                    String noteString = data.getString( data.getColumnIndex(DBClass.KEY_NOTE) );
-                    if ( noteString == null || noteString.isEmpty()) {
-                        exerciseNoteTv.setHint( getString(R.string.workout_exercise_newnote_hint) );
-                        exerciseNoteTv.setText("");
-                    } else {
-                        exerciseNoteTv.setText( noteString );
-                    }
-
-                    exercisesLv.smoothScrollToPosition( exerciseLogAdapter.getIdxOfCurrent() );
+                    moveToSelected( Subject.EXERCISES, true );
                 }
 
                 setsListDataLoader.renewTargetEx(exerciseLogAdapter.getCursor());
@@ -830,19 +820,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     if ( needPassCurrent ) setsLogAdapter.setIdxOfCurrent(current);
 
                     if ( setsUpTrigger == TriggerEvent.ADD ) {
-
-                        setsLogAdapter.getCursor().moveToPosition( setsLogAdapter.getIdxOfCurrent() );
-
-
-                        String noteString = data.getString( data.getColumnIndex(DBClass.KEY_NOTE) );
-                        if ( noteString == null || noteString.isEmpty()) {
-                            setNoteTv.setHint( getString(R.string.workout_exercise_newnote_hint) );
-                            setNoteTv.setText("");
-                        } else {
-                            setNoteTv.setText( noteString );
-                        }
-
-                        setsLv.smoothScrollToPosition( setsLogAdapter.getIdxOfCurrent() ); //doesnt scroll!
+                        moveToSelected( Subject.SETS, true );
                     }
                 }
 
