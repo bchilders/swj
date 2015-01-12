@@ -382,8 +382,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 // show required exercise for selected date
                 //if (setsLv.getCount() != 0 )  { no need to check count in exercises since it always must be  filled
                 //PROBLEM possibly set if is not set at that moment
-
-                setsLogAdapter.setIdxOfCurrent(position);
                 setsLogAdapter.notifyDataSetChanged();
 
                 int pos = syncPositionsBasedOnDate(setsLv, exercisesLv);
@@ -712,6 +710,55 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         return retCode;
     }
 
+    public void moveToSelected( Subject subj, Cursor data, boolean needToScroll ) {
+        TextView targetNoteView;
+        WorkoutDataAdapter targetAdapter;
+        ListView targetLv;
+        String newNoteHint;
+
+
+        switch ( subj ) {
+            case EXERCISES:
+                targetAdapter = exerciseLogAdapter;
+                targetNoteView = exerciseNoteTv;
+                targetLv = exercisesLv;
+
+                newNoteHint = getString(R.string.workout_exercise_newnote_hint);
+
+                //empty sets note since new exercise was selected
+                //but what if new setes adapter have note? TODO
+                setNoteTv.setText("");
+                setNoteTv.setHint( R.string.workout_set_no_note_hint );
+                break;
+
+            case SETS:
+                targetAdapter = setsLogAdapter;
+                targetNoteView = setNoteTv;
+                targetLv = setsLv;
+
+                newNoteHint = getString(R.string.workout_set_newnote_hint);
+
+                break;
+
+            default:
+                Log.e(APP_NAME,"renewNote :: unknown target subject :: subj: "+subj);
+                return;
+        }
+
+        data.moveToPosition( targetAdapter.getIdxOfCurrent() );
+        String noteString = data.getString( data.getColumnIndex(DBClass.KEY_NOTE) );
+        if ( noteString == null || noteString.isEmpty()) {
+            targetNoteView.setHint( newNoteHint );
+            targetNoteView.setText("");
+        } else {
+            targetNoteView.setText( noteString );
+        }
+
+        if ( needToScroll ) {
+            targetLv.smoothScrollToPosition( targetAdapter.getIdxOfCurrent() );
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.v(APP_NAME, "onCreateLoader :: Id " + id );
@@ -750,7 +797,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 if ( exUpTrigger == TriggerEvent.ADD ) {
 
                     exerciseLogAdapter.getCursor().moveToPosition( exerciseLogAdapter.getIdxOfCurrent() );
-                    exercisesLv.smoothScrollToPosition( exerciseLogAdapter.getIdxOfCurrent() );
+
 
                     DatabaseUtils.dumpCursor(data);
                     String noteString = data.getString( data.getColumnIndex(DBClass.KEY_NOTE) );
@@ -760,6 +807,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     } else {
                         exerciseNoteTv.setText( noteString );
                     }
+
+                    exercisesLv.smoothScrollToPosition( exerciseLogAdapter.getIdxOfCurrent() );
                 }
 
                 setsListDataLoader.renewTargetEx(exerciseLogAdapter.getCursor());
@@ -783,7 +832,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     if ( setsUpTrigger == TriggerEvent.ADD ) {
 
                         setsLogAdapter.getCursor().moveToPosition( setsLogAdapter.getIdxOfCurrent() );
-                        setsLv.smoothScrollToPosition( setsLogAdapter.getIdxOfCurrent() ); //doesnt scroll!
+
 
                         String noteString = data.getString( data.getColumnIndex(DBClass.KEY_NOTE) );
                         if ( noteString == null || noteString.isEmpty()) {
@@ -792,6 +841,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                         } else {
                             setNoteTv.setText( noteString );
                         }
+
+                        setsLv.smoothScrollToPosition( setsLogAdapter.getIdxOfCurrent() ); //doesnt scroll!
                     }
                 }
 
