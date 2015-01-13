@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,18 +19,15 @@ import com.gk.datacontrol.DBClass;
 public class WorkoutDataAdapter extends CursorAdapter {
 	public static final String APP_NAME = "SWJournal";
 	
-	public enum Subject { NONE, EXERCISES, SETS, ALL };
+	public enum Subject { NONE, EXERCISES, SETS, ALL }
+
 	private Subject currSubj;
 	private String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-	private TextView exerciseTv, repsTv, weightTv, delimiterTv;
     private HashSet<Integer> ctxCheckedItems;
-	private ImageView img;
-	private TextView dateHeader;
-	private long prevTimestamp, timestamp;
+
 	private Calendar formattedDate = Calendar.getInstance();
 	private int currentIndex = -1;
 	private String dateString;
-	private boolean showDate;
 
 	public WorkoutDataAdapter(Context context, Cursor c, Subject subject) {
 		super(context, c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER );
@@ -47,13 +43,13 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	
 	@Override
 	public void bindView(View view, Context ctx, Cursor cursor) {
-		
-		img = (ImageView) view.findViewById(R.id.workout_entry_note_image);
-		dateHeader = (TextView)view.findViewById(R.id.workout_entry_date_header);
 
-	    String entryMainText = "";
+        ImageView img = (ImageView) view.findViewById(R.id.workout_entry_note_image);
+        TextView dateHeader = (TextView)view.findViewById(R.id.workout_entry_date_header);
 
-	    timestamp = cursor.getLong( cursor.getColumnIndex(DBClass.KEY_TIME) );
+	    String entryMainText;
+
+	    long timestamp = cursor.getLong( cursor.getColumnIndex(DBClass.KEY_TIME) );
 	    formattedDate.setTimeInMillis( timestamp );
 	    
 	    // check if we need to highlight current position
@@ -66,17 +62,20 @@ public class WorkoutDataAdapter extends CursorAdapter {
             view.setBackgroundColor(Color.WHITE);
         }
 	    
-	    // take data required 
+	    // take data required
+        boolean showDate;
+
 	    if ( cursor.isFirst()) {
 	    	dateHeader.setVisibility(View.VISIBLE);
 	    	showDate = true;
 	    } else {
 	        cursor.moveToPrevious();
-	        prevTimestamp = cursor.getLong( cursor.getColumnIndex(DBClass.KEY_TIME) );
+	        long prevTimestamp = cursor.getLong( cursor.getColumnIndex(DBClass.KEY_TIME) );
 	        cursor.moveToNext();
 	        showDate = (compareDates(timestamp, prevTimestamp) == 1);
 	    }
-	       
+
+        TextView exerciseTv, repsTv, weightTv, delimiterTv;
 	    switch (currSubj) {
        		case EXERCISES:
        			exerciseTv = (TextView) view.findViewById(R.id.workout_entry_textview);

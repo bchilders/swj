@@ -88,49 +88,6 @@ public class DBClass  {
         calendar.setTimeInMillis(milliTime);
 		return sdf.format(calendar.getTime());
 	}
-	
-	public void dumpDBtoLog() {
-		Log.v(APP_NAME, "DBClass :: dumpDBtoLog() ");
-
-		Cursor exerciseCursor = realdb.query(TABLE_EXERCISES, null, null, null, null, null, null);
-
-		Cursor setsCursor;
-		String selection = KEY_EX_NAME + " = ?" ;
-		String selectionArgs[];
-		if ( exerciseCursor.moveToFirst() ) {
-			int exerciseNameIndex = exerciseCursor.getColumnIndex(KEY_NAME);
-			int exerciseNoteIndex = exerciseCursor.getColumnIndex(KEY_NOTE);
-			do {
-				Log.v(APP_NAME, "Exercise name: "+ exerciseCursor.getString(exerciseNameIndex));
-				Log.v(APP_NAME, "Exercise note: "+ exerciseCursor.getString(exerciseNoteIndex));
-				selectionArgs = new String[] { exerciseCursor.getString(exerciseNameIndex) };
-				setsCursor = realdb.query(TABLE_SETS_LOG, null, selection, selectionArgs, null , null, null);
-				
-				if ( setsCursor.moveToFirst() ) {
-					int setNameIndex = setsCursor.getColumnIndex(KEY_EX_NAME);
-					int setTimeIndex = setsCursor.getColumnIndex(KEY_TIME);
-					int setNoteIndex = setsCursor.getColumnIndex(KEY_NOTE);
-					int setRepsIndex = setsCursor.getColumnIndex(KEY_REPS);
-					int setWeightIndex = setsCursor.getColumnIndex(KEY_WEIGHT);
-					
-					do {
-						Log.v(APP_NAME, "    Set exercise name: "+ exerciseCursor.getString(setNameIndex));
-						Log.v(APP_NAME, "    Set note: "+ exerciseCursor.getString(setTimeIndex));
-						Log.v(APP_NAME, "    Set name: "+ exerciseCursor.getString(setNoteIndex));
-						Log.v(APP_NAME, "    Set reps: "+ exerciseCursor.getString(setRepsIndex));
-						Log.v(APP_NAME, "    Set weight: "+ exerciseCursor.getString(setWeightIndex));
-						Log.v(APP_NAME, "");
-					} while ( setsCursor.moveToNext() );
-				} else {
-					Log.v(APP_NAME, "    No sets for this exercise");
-				}
-				Log.v(APP_NAME, "");
-			} while ( exerciseCursor.moveToNext() );
-		} else {
-			Log.v(APP_NAME, "No exercises in DB");
-		}
-        close();
-	}
 
    /*
    * Will delete all logs related to exercise and exercise itself
@@ -245,19 +202,6 @@ public class DBClass  {
 		return res;
 	}
 
-
-	 public Cursor fetchAllExercies() {
-		 Log.v(APP_NAME, "DBClass :: fetchAllExercies begin");
-
-		 Cursor mCursor = realdb.rawQuery("SELECT "+KEY_NAME+" AS _id, "+KEY_NOTE+" FROM "+ TABLE_EXERCISES, null);
-
-		 if (mCursor != null) {
-		  mCursor.moveToFirst();
-		 }
-		 Log.v(APP_NAME, "DBClass :: fetchAllExercies complete");
-		 return mCursor;
-	 }
-
 	 public Cursor fetchSetsForExercise( String exerciseName ) {
 		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for "+exerciseName);
 
@@ -267,40 +211,6 @@ public class DBClass  {
 		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for '"+exerciseName+"' complete.");
 		 return setsCursor;
 	 }
-
-
-    //OBSLETE
-     public String getNoteForEx( String exName ) {
-
-         Cursor cursor = realdb.rawQuery("SELECT " + KEY_NOTE +" FROM "+ TABLE_EXERCISES + " WHERE " + KEY_NAME + " = '" + exName +"'", null );
-
-
-         if (cursor != null) {
-             cursor.moveToFirst();
-         }
-
-         return cursor.getString( cursor.getColumnIndex( KEY_NOTE ) );
-     }
-
-    public String getNoteForEx( Cursor exCursor ) {
-        Log.v(APP_NAME, "DBClass :: getKeyNoteFoEx begin");
-        String note = "";
-
-        if ( exCursor != null && exCursor.getCount() > 0 ) {
-
-            String exName = exCursor.getString( exCursor.getColumnIndex(DBClass.KEY_EX_NAME) );
-            Log.v(APP_NAME, "DBClass :: getKeyNoteFoEx :: exercise : " + exName);
-            Cursor noteCursor = realdb.rawQuery("SELECT " + KEY_NOTE + " FROM " + TABLE_EXERCISES + " WHERE " + KEY_NAME + " = '" + exName + "'", null);
-
-            if ( noteCursor != null ) {
-                noteCursor.moveToFirst();
-                note = noteCursor.getString(noteCursor.getColumnIndex(KEY_NOTE));
-            }
-
-        }
-
-        return note;
-    }
 
 	 public Cursor fetchExerciseHistory() {
 		 Log.v(APP_NAME, "DBClass :: fetchExerciseHistory begin");
@@ -364,7 +274,7 @@ public class DBClass  {
 
 		 values.clear();
 		 Log.v(APP_NAME, "DBClass :: logExercise done");
-		 return (result != -1) ? true : false;
+		 return (result != -1);
 		 
 	 }
 
@@ -372,14 +282,9 @@ public class DBClass  {
          Log.v(APP_NAME, "DBClass :: haveSetsWithExId . id: "+ exId);
          Cursor setsWithExId = realdb.rawQuery( "SELECT "+KEY_ID+" FROM "+TABLE_SETS_LOG+" WHERE "+KEY_EX_LOG_ID+" = "+exId, null);
 
-         if ( setsWithExId.getCount() == 0 )
-         {
-             return false;
-         } else {
-             return true;
-         }
-
+         return ( setsWithExId.getCount() > 0 );
      }
+
 	 private class DBHelper extends SQLiteOpenHelper {
 	
 		    public DBHelper(Context context) {

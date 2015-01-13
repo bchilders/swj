@@ -15,14 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 
 import com.gk.datacontrol.DBClass;
 
 import java.util.HashSet;
-
-/**
- * Created by Georgeek on 30.11.2014.
- */
 
 class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.OnClickListener  {
     public static final String APP_NAME = "SWJournal";
@@ -65,14 +62,32 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     public boolean onActionItemClicked(ActionMode actMode, MenuItem menuItem) {
         Log.v(APP_NAME, "WJContext :: onActionItemClicked mode: " + actMode + " item: " + menuItem);
 
+        WorkoutDataAdapter currAdapter;
+        ListView currLv;
+
+        switch ( contextSubj ) {
+            case EXERCISES:
+                currAdapter = activity.exerciseLogAdapter;
+                currLv = activity.exercisesLv;
+                break;
+
+            case SETS:
+                currAdapter = activity.setsLogAdapter;
+                currLv = activity.setsLv;
+
+                break;
+            default:
+                return false;
+        }
+
         //get the only possible entry to work with
-        if ( activity.currAdapter.getcheckedAmount() != 1 ) {
-            Log.e(APP_NAME, "WJContext :: onActionItemClicked: one checked expected, other amount is actually checked: "+activity.currAdapter.getcheckedAmount());
+        if ( currAdapter.getcheckedAmount() != 1 ) {
+            Log.e(APP_NAME, "WJContext :: onActionItemClicked: one checked expected, other amount is actually checked: "+currAdapter.getcheckedAmount());
             return false;
         }
 
-        Integer sequenceNumber = (Integer)activity.currAdapter.getIdsOfCtxChecked().toArray()[0];
-        Cursor entry = (Cursor)activity.currLv.getItemAtPosition( sequenceNumber );
+        Integer sequenceNumber = (Integer)currAdapter.getIdsOfCtxChecked().toArray()[0];
+        Cursor entry = (Cursor)currLv.getItemAtPosition( sequenceNumber );
 
         //launch appropriate action for this entry
         switch( menuItem.getItemId() )
@@ -129,10 +144,10 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         return true;
     }
 
-
     @Override
     public boolean onCreateActionMode(ActionMode actMode, Menu menu) {
         Log.v(APP_NAME, "WJContext :: onCreateActionMode mode: "+actMode+" menu: "+menu);
+        activity.currSubj = contextSubj;
 
         actionModeZone.setVisibility( View.VISIBLE );
         thisActionMode = actMode;
@@ -149,8 +164,19 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
         if ( !activity.setsLv.isEnabled() ) activity.setsLv.setEnabled( true );
         if ( !activity.exercisesLv.isEnabled() ) activity.exercisesLv.setEnabled( true );
-        activity.currAdapter.clearChecked();
-        //currAdapter.notifyDataSetChanged(); TODO: probably may remove
+
+        switch ( contextSubj )
+        {
+            case EXERCISES:
+                activity.exerciseLogAdapter.clearChecked();
+                break;
+
+            case SETS:
+                activity.setsLogAdapter.clearChecked();
+                break;
+        }
+
+
     }
 
     @Override
@@ -164,41 +190,42 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     @Override
     public void onItemCheckedStateChanged(ActionMode actMode, int index, long arg2, boolean isChecked ) {
         //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
-        Log.v(APP_NAME, "WJContext :: onItemCheckedStateChanged mode: " + actMode + " int: " + index + " long " + arg2 + " bool: " + isChecked);
+        Log.v(APP_NAME, "WJContext :: onItemCheckedStateChanged subject: " + contextSubj + " int: " + index + " long " + arg2 + " bool: " + isChecked);
 
         //reset buttons and editTexts
         onCancelEditBtnPressed();
 
-        String actionBarText = "";
+        String actionBarText;
+        WorkoutDataAdapter currAdapter;
+
         //if long click is the first click - we need to get currLv here. Potentially will need to define other current as well!
         switch ( this.contextSubj )
         {
             case EXERCISES:
                 //if changed from other listview
                 if ( activity.setsLv.isEnabled() ) activity.setsLv.setEnabled( false );
-
                 actionBarText = "Exercises chosen: ";
-                activity.currLv = activity.exercisesLv;
-                activity.currAdapter = activity.exerciseLogAdapter;
+
+                currAdapter = activity.exerciseLogAdapter;
 
                 break;
             case SETS:
                 //if changed from other listview
                 if ( activity.exercisesLv.isEnabled() ) activity.exercisesLv.setEnabled( false );
-
                 actionBarText =  "Sets chosen: ";
-                activity.currLv = activity.setsLv;
-                activity.currAdapter = activity.setsLogAdapter;
+
+                currAdapter = activity.setsLogAdapter;
+
                 break;
             default:
-                break;
+                return;
         }
 
-        activity.currAdapter.invertCtxChecked(index);
-        activity.currAdapter.notifyDataSetChanged();
+        currAdapter.invertCtxChecked(index);
+        currAdapter.notifyDataSetChanged();
 
         //if all items deselected
-        int checkedAmount = activity.currAdapter.getcheckedAmount();
+        int checkedAmount = currAdapter.getcheckedAmount();
         if ( checkedAmount == 0 ) {
 
             actMode.finish();
@@ -218,7 +245,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             actMode.getMenu().getItem( 1 ).setVisible( false );
         }
 
-        actionBarText += activity.currAdapter.getcheckedAmount();
+        actionBarText += currAdapter.getcheckedAmount();
         actMode.setTitle( actionBarText );
     }
 
@@ -229,17 +256,32 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     public void onEditRenamePressed() {
         Log.v(APP_NAME, "WJContext :: onEditRenamePressed");
 
-        if ( activity.currAdapter.getcheckedAmount() != 1)
+        WorkoutDataAdapter currAdapter;
+        switch ( this.contextSubj )
+        {
+            case EXERCISES:
+                currAdapter = activity.exerciseLogAdapter;
+                break;
+
+            case SETS:
+                currAdapter = activity.setsLogAdapter;
+                break;
+
+            default:
+                return;
+        }
+
+        if ( currAdapter.getcheckedAmount() != 1)
         {
             Log.v(APP_NAME, "WJContext :: onEditRenamePressed one ckecked item expected, while there are more");
         }
 
-        HashSet<Integer> onlyItem = activity.currAdapter.getIdsOfCtxChecked();
+       // HashSet<Integer> onlyItem = currAdapter.getIdsOfCtxChecked();
 
     }
 
     public void onDeleteLogEntriesPressed() {
-        Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed");
+        Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed :: active context subject: "+contextSubj.toString() );
 
         if ( contextSubj  == WorkoutDataAdapter.Subject.EXERCISES ) {
 
@@ -366,9 +408,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             case 3: // no items left
             default:
                 Log.v(APP_NAME, "WJContext :: deleteSelectedExercise: exiting after no items left or unexpected return from deleteSelectedExercise()" );
-
                 thisActionMode.finish();
-                return;
         }
 
         //activity.exerciseLogAdapter.changeCursor(activity.allExCursor);
