@@ -185,6 +185,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 
 	public void setIdxOfCurrent(int position) {
 		Log.d(APP_NAME, "setIdxOfCurrent:  new current for subj "+currSubj.toString()+": "+position);
+        getCursor().moveToPosition( position );
 		currentIndex = position;
 
 	}
