@@ -98,10 +98,10 @@ public class WorkoutDataAdapter extends CursorAdapter {
     	        	dateHeader.setVisibility(View.INVISIBLE);
     	        }
 
-	            Log.v(APP_NAME, "bindView :: bindView exercise. name: "+entryMainText);
+	            Log.v(APP_NAME, "WorkoutDataAdapter :: bindView : exercise case. name: "+entryMainText);
        			break;
        		case SETS:
-       			Log.v(APP_NAME, "entry of sets type binding started");
+       			Log.v(APP_NAME, "WorkoutDataAdapter :: bindView : entry of sets type binding started");
 	       		int setReps = cursor.getInt(cursor.getColumnIndex(DBClass.KEY_REPS));
 	       		float setWeight = cursor.getFloat(cursor.getColumnIndex(DBClass.KEY_WEIGHT));
 	       		
@@ -184,7 +184,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
     }
 
 	public void setIdxOfCurrent(int position) {
-		Log.d(APP_NAME, "setIdxOfCurrent:  new current for subj "+currSubj.toString()+": "+position);
+		Log.d(APP_NAME, "WorkoutDataAdapter :: setIdxOfCurrent:  new current for subj "+currSubj.toString()+": "+position);
         getCursor().moveToPosition( position );
 		currentIndex = position;
 
@@ -209,4 +209,61 @@ public class WorkoutDataAdapter extends CursorAdapter {
 			return 0;
 		}
 	}
+
+    public String getNoteForCurrent() {
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getNoteForCurrent");
+        return ( (Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_NOTE) );
+    }
+
+    /*
+     * Return text representation of current entry (ex.name for exercise, rep-weight pairfor set)
+     */
+    public String getNameForCurrent() {
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent : subj : "+currSubj.toString());
+
+        String name = "";
+        switch ( currSubj ) {
+            case EXERCISES:
+                name = ( (Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_EX_NAME) );
+                break;
+            case SETS:
+                name = ( (Cursor)getItem( currentIndex ) ).getInt( getCursor().getColumnIndex(DBClass.KEY_REPS)) + " : " +
+                ( (Cursor)getItem( currentIndex ) ).getFloat( getCursor().getColumnIndex(DBClass.KEY_WEIGHT));
+                break;
+            default:
+                Log.e(APP_NAME, "WorkoutDataAdapter :: getNameForCurrent ::unexpected subject : "+currSubj );
+
+        }
+
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent :: name of current : "+name +" subj: "+currSubj.toString());
+
+        return name;
+    }
+
+    public long getIdForCurrent() {
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : subj : "+currSubj.toString() );
+
+        long id;
+        String targetField;
+
+
+        switch ( currSubj ) {
+            case EXERCISES:
+                targetField = DBClass.KEY_ID;
+                break;
+
+            case SETS:
+                targetField = DBClass.KEY_EX_LOG_ID;
+                break;
+
+            default:
+                Log.e(APP_NAME, "WorkoutDataAdapter :: getIdForCurrent ::unexpected subject : "+currSubj );
+                return -1;
+        }
+
+        id = ( (Cursor)getItem( currentIndex ) ).getLong( getCursor().getColumnIndex( targetField ));
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent :: id of current : "+id+" subj : "+currSubj.toString());
+
+        return id;
+    }
 }

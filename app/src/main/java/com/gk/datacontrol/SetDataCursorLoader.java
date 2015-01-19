@@ -3,6 +3,7 @@ package com.gk.datacontrol;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.util.Log;
 
 /**
@@ -34,9 +35,9 @@ public class SetDataCursorLoader extends CursorLoader {
     @Override
     public Cursor loadInBackground() {
         //get sets/exercises
-        Log.v(APP_NAME, "WorkoutDataCursorLoader :: loadInBackground :: id "+this.getId() );
+        Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: id "+this.getId() );
         Cursor  cursor = db.fetchSetsForExercise( targetEx );
-
+        DatabaseUtils.dumpCursor(cursor);
         return cursor;
     }
 }
