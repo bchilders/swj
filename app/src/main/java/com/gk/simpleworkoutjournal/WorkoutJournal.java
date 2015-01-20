@@ -352,7 +352,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 }
 
                 // show required exercise for selected date
-                //if (setsLv.getCount() != 0 )  { no need to check count in exercises since it always must be  filled
                 //PROBLEM possibly set if is not set at that moment
                 setsLogAdapter.notifyDataSetChanged();
 
@@ -559,6 +558,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
     }
 
+    /*
+     * note add window closed
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(APP_NAME, "onActivityResult");
@@ -587,13 +589,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                     dbmediator.insertSetNote( targetId, note);
                     setNoteTv.setText(note);
-                    setsLogAdapter.notifyDataSetChanged();
-                    //initiateListUpdate(Subject.SETS, TriggerEvent.NOTEADD);
+
+                    initiateListUpdate(Subject.SETS, TriggerEvent.NOTEADD);
 
                     break;
             }
-            //currAdapter.changeCursor( currCursor );
-            //currAdapter.notifyDataSetChanged();
+
         }
     }
 
@@ -734,7 +735,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     }
 
     /*
-     * Handler for cases when we dont need to update list, but only change seleted.
+     * Handler for cases when we dont need to update list, but only change selected to one was previosly set.
      */
     public void moveToSelected( Subject subj, boolean needToScroll ) {
         Log.v(APP_NAME, "WorkoutJournal :: moveToSelected :: subject : "+subj.toString()+" need to scroll: "+needToScroll );
