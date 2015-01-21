@@ -399,21 +399,26 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             targetAdapter = setsLogAdapter;
 
             targetKeyFieldIdx = setsLogAdapter.getCursor().getColumnIndex( DBClass.KEY_EX_LOG_ID );
+            sourceKeyFieldIdx = exerciseLogAdapter.getCursor().getColumnIndex( DBClass.KEY_ID );
 
         } else if (baseSubject == Subject.SETS ) {
             baseAdapter = setsLogAdapter;
             targetAdapter = exerciseLogAdapter;
 
             targetKeyFieldIdx = exerciseLogAdapter.getCursor().getColumnIndex( DBClass.KEY_ID );
+            sourceKeyFieldIdx = setsLogAdapter.getCursor().getColumnIndex( DBClass.KEY_EX_LOG_ID );
 
         } else {
             Log.e(APP_NAME, "WorkoutJournal :: syncListPositions :: unexpected subject: " + baseSubject.toString() );
             return;
         }
 
+        if ( baseAdapter.getIdxOfCurrent() == -1 || targetAdapter.getIdxOfCurrent() == -1 ) {
+            Log.d(APP_NAME, "WorkoutJournal :: syncListPositions :: doing nothing since current for one of the adapters is not set" );
+            return;
+        }
 
-
-        long sourceId = baseAdapter.getIdForCurrent();
+        long sourceId = baseAdapter.getCursor().getLong( sourceKeyFieldIdx );
 
         int initialTargetPos = targetAdapter.getIdxOfCurrent();
         int targetPos;
@@ -495,67 +500,46 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     * will change current adapter to appropriate one
      */
     public void onNotesTap(View v) {
-        Log.v(APP_NAME, "tapped notes");
+        Log.v(APP_NAME, "WorkoutJournal :: onNotesTap");
         String headText;
-        int isExercise = 0;
-        Cursor noteParent;
+
         String targetId;
+        WorkoutDataAdapter subjAdapter;
 
         switch (v.getId()) {
             case R.id.exerciseNoteTv:
-                noteParent = (Cursor) exerciseLogAdapter.getItem(exerciseLogAdapter.getIdxOfCurrent());
+                subjAdapter = exerciseLogAdapter;
 
-                Log.v(APP_NAME, "tapped notes: exercise section. current item: " + exerciseLogAdapter.getIdxOfCurrent());
-                if (exerciseLogAdapter.getIdxOfCurrent() == -1) {
-
-                    Log.v(APP_NAME, "tapped notes: doing nothing since no item selected");
-                    return;
-                }
-                Log.v(APP_NAME, "tapped notes: exercise section. current item: " + exerciseLogAdapter.getIdxOfCurrent());
-
-                headText = exerciseLogAdapter.getNameForCurrent();
-                targetId = headText;
-
-                isExercise = 1;
+                targetId = exerciseLogAdapter.getNameForCurrent();
+                headText = targetId;
                 break;
             case R.id.setNoteTv:
-                noteParent = (Cursor) setsLogAdapter.getItem(setsLogAdapter.getIdxOfCurrent());
+                subjAdapter = setsLogAdapter;
 
-                //if no sets
-                if (setsLogAdapter == null) {
-                    Log.v(APP_NAME, "tapped notes: doing nothing since adapter dont exist");
-                    return;
-                }
-
-                if (setsLogAdapter.getIdxOfCurrent() == -1) {
-                    Log.v(APP_NAME, "tapped notes: doing nothing since no item selected");
-                    return;
-                }
-                Log.v(APP_NAME, "tapped notes: sets section. current item: " + setsLogAdapter.getIdxOfCurrent());
-
-                //if ( ((Cursor) setsLogAdapter.getItem(setsLogAdapter.getIdxOfCurrent())).getCount() == 0)
-                //    return;// here need other check for case when no set selected (when navogating after exercise lv tapped)
-                targetId=  noteParent.getString(noteParent.getColumnIndex(DBClass.KEY_ID));
-
+                targetId =  String.valueOf( setsLogAdapter.getIdForCurrent() );
                 headText = exerciseLogAdapter.getNameForCurrent() + "  " + setsLogAdapter.getNameForCurrent();
                 break;
             default:
                 return;
         }
 
-        if ( noteParent.getCount() != 0) {
-            String note =  noteParent.getString(noteParent.getColumnIndex(DBClass.KEY_NOTE));
-            Log.v(APP_NAME, " note: " + note);
-
-            Intent dialogIntent = new Intent(this, NotesDialog.class);
-            dialogIntent.putExtra("targetId", targetId);
-            dialogIntent.putExtra("headText", headText);
-            dialogIntent.putExtra("note", note);
-            // id is exercise name or sets id
-
-            startActivityForResult(dialogIntent, isExercise);
-            Log.v(APP_NAME, "after  startActivity");
+        if (subjAdapter == null || subjAdapter.getCount() == 0 || subjAdapter.getIdxOfCurrent() == -1 ) {
+            Log.v(APP_NAME, "WorkoutJournal :: onNotesTap : doing nothing since no source for note exist");
+            return;
         }
+
+        String note =  subjAdapter.getNoteForCurrent();
+        Log.v(APP_NAME, "WorkoutJournal :: onNotesTap : subj: "+subjAdapter.getSubject().toString()+" current: "+subjAdapter.getIdxOfCurrent()+ " note: " + note);
+
+        Intent dialogIntent = new Intent(this, NotesDialog.class);
+        dialogIntent.putExtra("targetId", targetId);
+        dialogIntent.putExtra("headText", headText);
+        dialogIntent.putExtra("note", note);
+        // id is exercise name or sets id
+
+        startActivityForResult(dialogIntent, (subjAdapter.getSubject() == Subject.EXERCISES) ? 1 : 0);
+        Log.v(APP_NAME, "after  startActivity");
+
     }
 
     /*
@@ -777,6 +761,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
      */
     public void updateNoteView( WorkoutDataAdapter sourceAdapter ) {
         Log.v(APP_NAME, "WorkoutJournal :: updateNoteView" );
+
+        if ( sourceAdapter.getIdxOfCurrent() == -1 ) {
+            return;
+        }
+
         String newNoteHint;
         TextView targetTV;
 
@@ -835,7 +824,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 exerciseLogAdapter.setIdxOfCurrent( exerciseLogAdapter.getIdxOfCurrent() ); //this will move new cursor to initial position
 
                 Log.v(APP_NAME, "exerciseLogAdapter.getIdxOfCurrent() "+exerciseLogAdapter.getIdxOfCurrent());
-                //data.moveToFirst();
 
                 //always empty notes box for sets since we lost focus from sets. Added: only when selected was changed/prev changed deleted
                 setNoteTv.setText("");
@@ -846,20 +834,21 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     moveToSelected(Subject.EXERCISES, true);
                 }
 
+                if (exerciseLogAdapter.getCount() != 0) {
+                    updateNoteView( exerciseLogAdapter ); //TODO NIRABOTAIT
+                }
+
                 setsListDataLoader.renewTargetEx( (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getIdxOfCurrent() ));
                 exUpTrigger = TriggerEvent.NONE;
                 break;
 
             case SETS:
 
-                //if ( data != null ) {
-
-                int current = 0;
-                if ( setsLogAdapter != null )  {
+                int current = -1;
+                if ( setsLogAdapter != null && ( setsUpTrigger == TriggerEvent.ADD || setsUpTrigger == TriggerEvent.DELETE || setsUpTrigger == TriggerEvent.NOTEADD  ) )  {
                     current = setsLogAdapter.getIdxOfCurrent();
                 }
 
-                DatabaseUtils.dumpCursor( data);
                 setsLv.setAdapter( setsLogAdapter = new WorkoutDataAdapter(this, data, WorkoutDataAdapter.Subject.SETS) );
                 setsLogAdapter.setIdxOfCurrent(current);
 
@@ -869,13 +858,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 } else {
 
                     //sync positions
-                    if (setsLv.getCount() != 0) {
+                    if (setsLogAdapter.getCount() != 0) {
                         syncListPositions( Subject.SETS );
-                    }
-
-                    //update note
-                    DatabaseUtils.dumpCursor(setsLogAdapter.getCursor());
-                    if ( data.getCount() != 0) {
                         updateNoteView( setsLogAdapter );
                     }
 

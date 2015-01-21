@@ -219,9 +219,15 @@ public class WorkoutDataAdapter extends CursorAdapter {
      * Return text representation of current entry (ex.name for exercise, rep-weight pairfor set)
      */
     public String getNameForCurrent() {
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent : subj : "+currSubj.toString());
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent : subj : "+currSubj.toString() + " currentIndex: "+currentIndex);
 
         String name = "";
+
+        if ( currentIndex == -1 ) {
+            Log.d( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent : doing nothing since current index is "+currentIndex);
+            return name;
+        }
+
         switch ( currSubj ) {
             case EXERCISES:
                 name = ( (Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_EX_NAME) );
@@ -241,27 +247,14 @@ public class WorkoutDataAdapter extends CursorAdapter {
     }
 
     public long getIdForCurrent() {
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : subj : "+currSubj.toString() );
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : subj : "+currSubj.toString()+" index of current: "+currentIndex );
 
-        long id;
-        String targetField;
-
-
-        switch ( currSubj ) {
-            case EXERCISES:
-                targetField = DBClass.KEY_ID;
-                break;
-
-            case SETS:
-                targetField = DBClass.KEY_EX_LOG_ID;
-                break;
-
-            default:
-                Log.e(APP_NAME, "WorkoutDataAdapter :: getIdForCurrent ::unexpected subject : "+currSubj );
-                return -1;
+        if ( currentIndex == -1 ) {
+            Log.d( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : doing nothing since current index is "+currentIndex);
+            return currentIndex;
         }
 
-        id = ( (Cursor)getItem( currentIndex ) ).getLong( getCursor().getColumnIndex( targetField ));
+        long  id = ( (Cursor)getItem( currentIndex ) ).getLong( getCursor().getColumnIndex( DBClass.KEY_ID ));
         Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent :: id of current : "+id+" subj : "+currSubj.toString());
 
         return id;
