@@ -103,11 +103,17 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                     ctxEditExField.setVisibility(View.VISIBLE);
                     ctxEditRepsField.setVisibility(View.GONE);
                     ctxEditWeightField.setVisibility(View.GONE);
+
+                    ctxEditExField.setText( entry.getString( entry.getColumnIndex( DBClass.KEY_NAME ) ) );
                 } else {
                     ctxEditExField.setVisibility(View.GONE);
                     ctxEditRepsField.setVisibility(View.VISIBLE);
                     ctxEditWeightField.setVisibility(View.VISIBLE);
+
+                    ctxEditRepsField.setText( entry.getString( entry.getColumnIndex( DBClass.KEY_REPS ) ) );
+                    ctxEditWeightField.setText( entry.getString( entry.getColumnIndex( DBClass.KEY_WEIGHT ) ) );
                 }
+
 
                 break;
 
@@ -251,6 +257,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     public void onDeleteExPressed() {
         Log.v(APP_NAME, "WJContext :: onDeleteExPressed");
+        //empty are restricted
     }
 
     public void onEditRenamePressed() {

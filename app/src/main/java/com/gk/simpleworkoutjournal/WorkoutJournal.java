@@ -835,7 +835,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 }
 
                 if (exerciseLogAdapter.getCount() != 0) {
-                    updateNoteView( exerciseLogAdapter ); //TODO NIRABOTAIT
+                    updateNoteView( exerciseLogAdapter );
                 }
 
                 setsListDataLoader.renewTargetEx( (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getIdxOfCurrent() ));
