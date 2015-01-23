@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.gk.datacontrol.DBClass;
 
@@ -39,6 +40,8 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     ActionMode thisActionMode;
 
+    String idOfSelected;
+
     WJContext(WorkoutJournal activity, WorkoutDataAdapter.Subject subj)
     {
         super();
@@ -55,6 +58,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         ctxEditWeightField = (EditText)activity.findViewById(R.id.ctx_editWeight);
 
         ctxEditExField = (AutoCompleteTextView) activity.findViewById(R.id.ctx_editExerciseACTV);
+
     }
 
 
@@ -89,6 +93,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         Integer sequenceNumber = (Integer)currAdapter.getIdsOfCtxChecked().toArray()[0];
         Cursor entry = (Cursor)currLv.getItemAtPosition( sequenceNumber );
 
+
         //launch appropriate action for this entry
         switch( menuItem.getItemId() )
         {
@@ -104,14 +109,18 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                     ctxEditRepsField.setVisibility(View.GONE);
                     ctxEditWeightField.setVisibility(View.GONE);
 
-                    ctxEditExField.setText( entry.getString( entry.getColumnIndex( DBClass.KEY_NAME ) ) );
+                    ctxEditExField.setText( entry.getString( entry.getColumnIndex( DBClass.KEY_EX_NAME ) ) );
+
+                    idOfSelected = entry.getString( entry.getColumnIndex( DBClass.KEY_EX_NAME ));
                 } else {
                     ctxEditExField.setVisibility(View.GONE);
                     ctxEditRepsField.setVisibility(View.VISIBLE);
                     ctxEditWeightField.setVisibility(View.VISIBLE);
 
-                    ctxEditRepsField.setText( entry.getString( entry.getColumnIndex( DBClass.KEY_REPS ) ) );
+                    ctxEditRepsField.setText( entry.getString(entry.getColumnIndex(DBClass.KEY_REPS)) );
                     ctxEditWeightField.setText( entry.getString( entry.getColumnIndex( DBClass.KEY_WEIGHT ) ) );
+
+                    idOfSelected = entry.getString( entry.getColumnIndex( DBClass.KEY_ID ));
                 }
 
 
@@ -182,6 +191,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                 break;
         }
 
+        idOfSelected = "";
 
     }
 
@@ -258,6 +268,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     public void onDeleteExPressed() {
         Log.v(APP_NAME, "WJContext :: onDeleteExPressed");
         //empty are restricted
+        idOfSelected = "";
     }
 
     public void onEditRenamePressed() {
@@ -389,7 +400,56 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     }
 
     public void onAddEditedBtnPressed() {
-        Log.v(APP_NAME, "WJContext :: onAddEditedBtnPressed");
+        Log.v(APP_NAME, "WJContext :: onAddEditedBtnPressed "+ctxEditExField.getText().toString() );
+
+        if ( idOfSelected.isEmpty() ) {
+            Log.e(APP_NAME, "WJContext :: onAddEditedBtnPressed : ID of selected item is unknown");
+            return;
+        }
+
+        String newName   = ctxEditExField.getText().toString().trim();
+        String newReps   = ctxEditRepsField.getText().toString().trim();
+        String newWeight = ctxEditWeightField.getText().toString().trim();
+
+        boolean haveError = false;
+        if ( (contextSubj == WorkoutDataAdapter.Subject.EXERCISES && newName.isEmpty() )  )
+        {
+            haveError = true;
+        }
+        else if ( contextSubj == WorkoutDataAdapter.Subject.SETS && ( newReps.isEmpty() || newWeight.isEmpty() ) )
+        {
+            haveError = true;
+        }
+
+        if ( haveError ) {
+            Toast.makeText( activity, "Empty fields are not allowed", Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
+        }
+
+        if ( !haveError ) {
+
+            switch ( contextSubj ) {
+                case EXERCISES:
+
+                    if ( !activity.dbmediator.updateExercise( idOfSelected, newName ) ) {
+                        Log.d(APP_NAME, "Cannot rename: exercise with this name already exist (orig: "+idOfSelected+" new: " +newName+")");
+                        haveError = true;
+                        Toast.makeText( activity, "Cannot rename: exercise with this name already exist", Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
+                    }
+                    break;
+
+                case SETS:
+                    activity.dbmediator.updateSetLog( idOfSelected, Integer.parseInt( newReps ), Integer.parseInt( newWeight ) );
+                    break;
+            }
+
+            if ( !haveError ) {
+                activity.initiateListUpdate( contextSubj, WorkoutJournal.TriggerEvent.NOTEADD ); //TODO: need other, separate event?
+                onCancelEditBtnPressed();
+            }
+        }
+
+
+        idOfSelected = "";
     }
 
     private void deleteSelectedExercise() {

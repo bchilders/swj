@@ -228,16 +228,15 @@ public class DBClass  {
 
 		 return mCursor;
 	 }
-	 
+
+
 	 public boolean addExercise(String exercise) {
 		 Log.v(APP_NAME, "DBClass :: addExercise for '"+exercise+"'");
 		 long result = -1;
 		 values.put(KEY_NAME, exercise);
 		 
 		 //check if there already exist an exercise like this
-
 		 Cursor tmpcs = realdb.rawQuery("SELECT "+KEY_NAME+" FROM "+ TABLE_EXERCISES + " WHERE "+KEY_NAME+ " = \"" + exercise + "\"", null );
-
 
 		 if (tmpcs.getCount() == 0)
 			 result = realdb.insert(TABLE_EXERCISES, null, values);
@@ -285,6 +284,45 @@ public class DBClass  {
          return ( setsWithExId.getCount() > 0 );
      }
 
+    public boolean updateExercise( String origName, String newName) {
+        Log.v(APP_NAME, "DBClass :: updateExercise . original name: "+ origName + " new name: "+newName);
+
+        values.put( KEY_NAME, newName );
+        if ( !addExercise( newName ) ) {
+            Log.v(APP_NAME, "DBClass :: updateExercise . cannot rename since exercise '"+newName+"' already exist");
+            return false;
+        }
+
+        values.clear();
+        values.put( KEY_EX_NAME, newName );
+        int changedSets = realdb.update( TABLE_SETS_LOG,     values, KEY_EX_NAME+"='"+origName+"'", null );
+        int changedExs  = realdb.update( TABLE_EXERCISE_LOG, values, KEY_EX_NAME+"='"+origName+"'", null );
+        values.clear();
+
+        Log.v(APP_NAME, "DBClass :: updateExercise . done. Affected exercise entries: "+ changedExs + "  Affected set entries: "+changedSets);
+        return true;
+    }
+
+    public boolean updateSetLog( String id, int reps, int weight ) {
+        Log.v(APP_NAME, "DBClass :: updateSetLog . id: "+ id + " reps: "+reps+" weight: "+weight);
+
+        values.put(KEY_REPS, reps);
+        values.put(KEY_WEIGHT, weight);
+
+        int res = realdb.update( TABLE_SETS_LOG, values, KEY_ID+"="+id,null  );
+
+        values.clear();
+
+        if ( res == 0 ) {
+            Log.e(APP_NAME, "DBClass :: updateSetLog . No rows affected");
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+
 	 private class DBHelper extends SQLiteOpenHelper {
 	
 		    public DBHelper(Context context) {
@@ -309,7 +347,9 @@ public class DBClass  {
 				
 			}
 	  }
-	  
+
+
+
 	  public long getUnixDay() {
 		  long now = System.currentTimeMillis();
 		  return now  - (now % MS_IN_A_DAY) ;
