@@ -29,13 +29,14 @@ public class SetDataCursorLoader extends CursorLoader {
     }
 
     public void renewTargetEx(String exName) {
+        Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: new target exercise : \""+exName+"\"" );
         this.targetEx = exName;
     }
 
     @Override
     public Cursor loadInBackground() {
         //get sets/exercises
-        Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: id "+this.getId() );
+        Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: id "+this.getId()+" exercise: \""+targetEx+"\"" );
         Cursor  cursor = db.fetchSetsForExercise( targetEx );
         DatabaseUtils.dumpCursor(cursor);
         return cursor;

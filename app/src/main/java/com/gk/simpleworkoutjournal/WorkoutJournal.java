@@ -837,6 +837,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 if (exerciseLogAdapter.getCount() != 0) {
                     updateNoteView( exerciseLogAdapter );
+                } else {
+                    exerciseNoteTv.setText("");
+                    exerciseNoteTv.setHint( R.string.workout_exercise_no_note_hint );
                 }
 
                 setsListDataLoader.renewTargetEx( (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getIdxOfCurrent() ));

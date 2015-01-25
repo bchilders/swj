@@ -291,7 +291,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
         if ( currAdapter.getcheckedAmount() != 1)
         {
-            Log.v(APP_NAME, "WJContext :: onEditRenamePressed one ckecked item expected, while there are more");
+            Log.v(APP_NAME, "WJContext :: onEditRenamePressed : one ckecked item expected, while there are more");
         }
 
        // HashSet<Integer> onlyItem = currAdapter.getIdsOfCtxChecked();
@@ -299,7 +299,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     }
 
     public void onDeleteLogEntriesPressed() {
-        Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed :: active context subject: "+contextSubj.toString() );
+        Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : active context subject: "+contextSubj.toString() );
 
         if ( contextSubj  == WorkoutDataAdapter.Subject.EXERCISES ) {
 
@@ -307,14 +307,22 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
             int affectedSetEntries = 0;
             int affectedExEntries = 0;
+            String newEx = "";
+
             Cursor entry;
             for (Integer id : ids) {
-                Log.v(APP_NAME, "WJContext :: following checked ex ID of item in list view to delete: " + id);
+                Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : following checked ex ID of item in list view to delete: " + id);
                 entry = (Cursor) activity.exercisesLv.getItemAtPosition(id);
 
                 long exId = entry.getLong( entry.getColumnIndex( DBClass.KEY_ID ) );
                 affectedSetEntries += activity.dbmediator.rmExLogEntry( exId, 1 );
                 affectedExEntries++;
+
+                if ( id == activity.exerciseLogAdapter.getIdxOfCurrent() ) {
+                    Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : current to be deleted, renewing target ex of sets loader.");
+                    newEx = activity.exerciseLogAdapter.getNameForCurrent();
+                }
+
             }
 
             int newMaxIdx = activity.setsLogAdapter.getCount() - affectedSetEntries - 1;
@@ -322,10 +330,13 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                 activity.setsLogAdapter.setIdxOfCurrent(newMaxIdx);
 
             newMaxIdx = activity.exerciseLogAdapter.getCount() - affectedExEntries - 1;
-            if (activity.exerciseLogAdapter.getIdxOfCurrent() > newMaxIdx)
+            if (activity.exerciseLogAdapter.getIdxOfCurrent() > newMaxIdx) {
                 activity.exerciseLogAdapter.setIdxOfCurrent(newMaxIdx);
+                newEx = activity.exerciseLogAdapter.getNameForCurrent();
+            }
 
-            if (affectedSetEntries > 0)
+            if (affectedSetEntries > 0 || !newEx.isEmpty() )
+                activity.setsListDataLoader.renewTargetEx( newEx );
                 activity.initiateListUpdate(WorkoutDataAdapter.Subject.SETS, WorkoutJournal.TriggerEvent.DELETE);
             if (affectedExEntries > 0)
                 activity.initiateListUpdate(WorkoutDataAdapter.Subject.EXERCISES, WorkoutJournal.TriggerEvent.DELETE);
@@ -339,7 +350,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             HashSet<Integer> exIds = new  HashSet<Integer>();
             Cursor entry;
             for (Integer id : setIds) {
-                Log.v(APP_NAME, "WJContext :: following checked set ID of item in list view to delete: " + id);
+                Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : following checked set ID of item in list view to delete: " + id);
                 entry = (Cursor) activity.setsLv.getItemAtPosition(id);
 
                 exIds.add( entry.getInt(entry.getColumnIndex(DBClass.KEY_EX_LOG_ID)) );
@@ -379,7 +390,6 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         }
 
         thisActionMode.finish();
-
     }
 
     public void onCancelEditBtnPressed() {
