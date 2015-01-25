@@ -454,32 +454,45 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     private void deleteSelectedExercise() {
 
-        Integer sequenceNumber = (Integer)activity.exerciseLogAdapter.getIdsOfCtxChecked().toArray()[0];
-        activity.dbmediator.deleteEx( (Cursor)activity.exercisesLv.getItemAtPosition( sequenceNumber ) );
+        Integer idOfChecked = (Integer)activity.exerciseLogAdapter.getIdsOfCtxChecked().toArray()[0];
+        int deletedExLogs = activity.dbmediator.deleteEx( (Cursor)activity.exercisesLv.getItemAtPosition( idOfChecked ) );
 
-        switch ( activity.adjustAfterExDeleted( sequenceNumber ) ) {
-            case 0: // no need to change anything (will focus on the next element got this idx)
-                //activity.exerciseLogAdapter.invertCtxChecked( sequenceNumber );
-                break;
+        if ( deletedExLogs != 0 ) {
+            int newMaxIdx = activity.exerciseLogAdapter.getCount() - deletedExLogs - 1;
 
-            case 1: // first was deleted
-                //activity.exerciseLogAdapter.invertCtxChecked( sequenceNumber );
+            //handle idx of current
+            if (activity.exerciseLogAdapter.getIdxOfCurrent() > newMaxIdx)
+                activity.exerciseLogAdapter.setIdxOfCurrent(newMaxIdx);
 
-                break;
+            ///handle idx of checked
+            if ( idOfChecked > newMaxIdx ) {
+                activity.exerciseLogAdapter.invertCtxChecked( newMaxIdx ); //select
+                activity.exerciseLogAdapter.invertCtxChecked( idOfChecked ); //deselect
 
-            case 2: // need to move invert CtxCheckedselected lower
-                activity.exerciseLogAdapter.invertCtxChecked( sequenceNumber - 1); //select
-                activity.exerciseLogAdapter.invertCtxChecked( sequenceNumber ); //deselect
-                break;
+            }
 
-            case 3: // no items left
-            default:
-                Log.v(APP_NAME, "WJContext :: deleteSelectedExercise: exiting after no items left or unexpected return from deleteSelectedExercise()" );
-                thisActionMode.finish();
+            //show renewed data for exercises
+            activity.initiateListUpdate(WorkoutDataAdapter.Subject.EXERCISES, WorkoutJournal.TriggerEvent.DELETE);
+
+            //make sure exercise edit is active
+            actionModeZone.setVisibility( View.GONE );
+            activity.showEditsForSubject(WorkoutDataAdapter.Subject.EXERCISES);
+
+            //empty hint box for set since we have chosen other exercise
+            activity.setNoteTv.setHint(activity.getString(R.string.workout_set_no_note_hint));
+            activity.setNoteTv.setText("");
+
+            //now take care of sets
+            if ( newMaxIdx == -1 ) {
+                activity.setsLv.setAdapter(null);
+                return;
+            }
+
+            //update sets list view accordingly
+            activity.initiateListUpdate( WorkoutDataAdapter.Subject.SETS, WorkoutJournal.TriggerEvent.DELETE );
+
         }
 
-        //activity.exerciseLogAdapter.changeCursor(activity.allExCursor);
-        //activity.currAdapter.notifyDataSetChanged();
     }
 
     @Override

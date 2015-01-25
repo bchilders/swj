@@ -559,7 +559,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             switch (requestCode) {
 
                 case 1: //exercise
-                    Log.v(APP_NAME, "gonna insert note '" + note + "' for ex  " + exerciseLogAdapter.getNameForCurrent() );
+                    Log.v(APP_NAME, "gonna insert note \"" + note + "\" for ex  " + exerciseLogAdapter.getNameForCurrent() );
                     dbmediator.insertExerciseNote( targetId, note);
                     exerciseNoteTv.setText(note);
 
@@ -699,6 +699,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         switch ( subj ) {
             case EXERCISES:
+                exerciseTextView.clearAnimation();
                 exerciseTextView.setVisibility(View.VISIBLE);
                 repsEdit.setVisibility(View.GONE);
                 weightEdit.setVisibility(View.GONE);

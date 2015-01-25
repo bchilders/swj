@@ -97,12 +97,12 @@ public class DBClass  {
 
         String exToDelete = exCursor.getString( exCursor.getColumnIndex("exercise_name") );
 
-        int affectedSum = realdb.delete(TABLE_SETS_LOG,     KEY_EX_NAME + " = '" + exToDelete + "'", null);
-        affectedSum    += realdb.delete(TABLE_EXERCISE_LOG, KEY_EX_NAME + " = '" + exToDelete + "'", null);
-        affectedSum    += realdb.delete(TABLE_EXERCISES,    KEY_NAME    + " = '" + exToDelete + "'", null);
+        realdb.delete(TABLE_SETS_LOG,     KEY_EX_NAME + " = \"" + exToDelete + "\"", null);
+        int affectedExLogs = realdb.delete(TABLE_EXERCISE_LOG, KEY_EX_NAME + " = \"" + exToDelete + "\"", null);
+        realdb.delete(TABLE_EXERCISES,    KEY_NAME    + " = \"" + exToDelete + "\"", null);
 
-        Log.v(APP_NAME, "DBClass :: deleteEx :: sum of deleted: "+ affectedSum );
-        return affectedSum;
+        Log.v(APP_NAME, "DBClass :: deleteEx :: deleted ex log entries: "+ affectedExLogs );
+        return affectedExLogs;
 
     }
 
@@ -206,9 +206,9 @@ public class DBClass  {
 		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for "+exerciseName);
 
          Cursor setsCursor = realdb.rawQuery("SELECT * FROM "+ TABLE_SETS_LOG +
-				 							 " WHERE "+KEY_EX_NAME+" = '"+exerciseName+"' ORDER BY "+KEY_TIME, null );
+				 							 " WHERE "+KEY_EX_NAME+" = \""+exerciseName+"\" ORDER BY "+KEY_TIME, null );
 
-		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for '"+exerciseName+"' complete.");
+		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for \""+exerciseName+"\" complete.");
 		 return setsCursor;
 	 }
 
@@ -231,7 +231,7 @@ public class DBClass  {
 
 
 	 public boolean addExercise(String exercise) {
-		 Log.v(APP_NAME, "DBClass :: addExercise for '"+exercise+"'");
+		 Log.v(APP_NAME, "DBClass :: addExercise for \""+exercise+"\"");
 		 long result = -1;
 		 values.put(KEY_NAME, exercise);
 		 
@@ -260,7 +260,7 @@ public class DBClass  {
 	 }
 
 	 public boolean logExercise(String exercise, long time ) {
-		 Log.v(APP_NAME, "DBClass :: logExercise begin for '"+exercise+"', time "+millisToDate( time ) );
+		 Log.v(APP_NAME, "DBClass :: logExercise begin for \""+exercise+"\", time "+millisToDate( time ) );
 		 
 		 //we use full timestamp
 		 values.put(KEY_EX_NAME, exercise);
@@ -289,14 +289,14 @@ public class DBClass  {
 
         values.put( KEY_NAME, newName );
         if ( !addExercise( newName ) ) {
-            Log.v(APP_NAME, "DBClass :: updateExercise . cannot rename since exercise '"+newName+"' already exist");
+            Log.v(APP_NAME, "DBClass :: updateExercise . cannot rename since exercise \""+newName+"\" already exist");
             return false;
         }
 
         values.clear();
         values.put( KEY_EX_NAME, newName );
-        int changedSets = realdb.update( TABLE_SETS_LOG,     values, KEY_EX_NAME+"='"+origName+"'", null );
-        int changedExs  = realdb.update( TABLE_EXERCISE_LOG, values, KEY_EX_NAME+"='"+origName+"'", null );
+        int changedSets = realdb.update( TABLE_SETS_LOG,     values, KEY_EX_NAME+"=\""+origName+"\"", null );
+        int changedExs  = realdb.update( TABLE_EXERCISE_LOG, values, KEY_EX_NAME+"=\""+origName+"\"", null );
         values.clear();
 
         Log.v(APP_NAME, "DBClass :: updateExercise . done. Affected exercise entries: "+ changedExs + "  Affected set entries: "+changedSets);
