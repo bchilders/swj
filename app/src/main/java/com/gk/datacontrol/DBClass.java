@@ -328,7 +328,7 @@ public class DBClass  {
 		    public DBHelper(Context context) {
 		      super(context, DB_NAME, null, DB_VERSION);
 		      //DEV-ONLY
-		      context.deleteDatabase(DB_NAME);
+		      //context.deleteDatabase(DB_NAME);
 		    }
 	
 		    @Override

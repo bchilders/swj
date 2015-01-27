@@ -842,7 +842,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     exerciseNoteTv.setHint( R.string.workout_exercise_no_note_hint );
                 }
 
-                setsListDataLoader.renewTargetEx( (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getIdxOfCurrent() ));
+                //if no exercises left - enforce ex adding toolbar
+                if ( exerciseLogAdapter.getCount() == 0 ) {
+                    showEditsForSubject( Subject.EXERCISES );
+                }
+
+                if ( exerciseLogAdapter.getIdxOfCurrent() != -1 ) {
+                    setsListDataLoader.renewTargetEx((Cursor) exerciseLogAdapter.getItem(exerciseLogAdapter.getIdxOfCurrent()));
+                }
+
                 exUpTrigger = TriggerEvent.NONE;
                 break;
 
