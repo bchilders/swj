@@ -14,26 +14,26 @@
         android:text="@string/main_menu_btn_start" />
 
     <Button
-        android:id="@+id/buttonMmPresets"
+        android:id="@+id/buttonMmSettings"
         style="@style/MainMenuButtonStyle"
-        android:text="@string/main_menu_btn_presets" />
+        android:text="@string/main_menu_btn_settings" />
+    <!--
+        <Button
+            android:id="@+id/buttonMmExercises"
+            style="@style/MainMenuButtonStyle"
+            android:text="@string/main_menu_btn_exercises" />
 
-    <Button
-        android:id="@+id/buttonMmExercises"
-        style="@style/MainMenuButtonStyle"
-        android:text="@string/main_menu_btn_exercises" />
 
 
-    
-    <Button
-        android:id="@+id/buttonMmBody"
-        style="@style/MainMenuButtonStyle"
-        android:text="@string/main_menu_btn_body" />
-    
-    <Button
-        android:id="@+id/buttonMmReports"
-        style="@style/MainMenuButtonStyle"
-        android:text="@string/main_menu_btn_reports" />
+        <Button
+            android:id="@+id/buttonMmBody"
+            style="@style/MainMenuButtonStyle"
+            android:text="@string/main_menu_btn_body" />
+
+        <Button
+            android:id="@+id/buttonMmReports"
+            style="@style/MainMenuButtonStyle"
+            android:text="@string/main_menu_btn_reports" /> -->
 
 </LinearLayout>
 
