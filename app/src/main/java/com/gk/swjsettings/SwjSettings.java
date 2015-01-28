@@ -1,73 +1,33 @@
 package com.gk.swjsettings;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
-import com.gk.simpleworkoutjournal.R;
+public class SwjSettings extends Activity {
+    public static final String APP_NAME = "SWJournal";
 
-public class SwjSettings extends Activity implements SwjSettingsFragment.OnFragmentInteractionListener {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_swj_settings);
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new SwjSettingsFragment())
-                    .commit();
+
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new SwjSettingsFragment()).commit();
+
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        Log.v(APP_NAME, "SwjSettingsFragment :: onDestroy(): erase switch state: " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_erase_all", false));
+
+        if ( PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_erase_all", false) ) {
+            //delete databases
+
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("pref_erase_all", false).commit();
         }
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_swj_settings, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_swj_settings, container, false);
-            return rootView;
-        }
-    }
 }
