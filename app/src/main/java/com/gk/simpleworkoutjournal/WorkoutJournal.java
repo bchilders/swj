@@ -7,6 +7,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -95,7 +96,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         Log.d(APP_NAME, "onCreate :: creating adapter for exercises from db");
         dbmediator = new DBClass(this);
-        dbmediator.open();
 
         Cursor exCursor = dbmediator.fetchExerciseHistory();
         exerciseLogAdapter = new WorkoutDataAdapter(this, exCursor, WorkoutDataAdapter.Subject.EXERCISES);

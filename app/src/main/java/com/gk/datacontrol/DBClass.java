@@ -65,10 +65,11 @@ public class DBClass  {
 	private ContentValues values;
 	
 	public DBClass(Context context) {
+        Log.v(APP_NAME, "DBClass :: DBHelper(Context context)");
 		dbHelper = new DBHelper(context);
 		values =  new ContentValues();
         open();
-		Log.v(APP_NAME, "DBClass :: DBHelper(Context context");
+
 		
 	}
 
@@ -215,7 +216,6 @@ public class DBClass  {
 	 public Cursor fetchExerciseHistory() {
 		 Log.v(APP_NAME, "DBClass :: fetchExerciseHistory begin");
 
-
          Cursor mCursor = realdb.rawQuery( "SELECT " +KEY_ID +"," + KEY_EX_NAME + "," + KEY_TIME + "," + TABLE_EXERCISES+"."+KEY_NOTE + " FROM " + TABLE_EXERCISE_LOG +
                  " LEFT OUTER JOIN "+TABLE_EXERCISES+" ON "
                  +TABLE_EXERCISE_LOG+ "." +KEY_EX_NAME+ " = "+TABLE_EXERCISES+"."+KEY_NAME +
@@ -322,6 +322,16 @@ public class DBClass  {
 
     }
 
+    public void cleanAllTables() {
+        Log.v(APP_NAME, "DBClass :: dropAllTables : called");
+        realdb.execSQL("DROP TABLE "+TABLE_SETS_LOG     );
+        realdb.execSQL("DROP TABLE "+TABLE_EXERCISE_LOG );
+        realdb.execSQL("DROP TABLE "+TABLE_EXERCISES    );
+
+        realdb.execSQL(CREATE_EXERCISES_TABLE);
+        realdb.execSQL(CREATE_EXERCISE_LOG_TABLE);
+        realdb.execSQL(CREATE_SETS_LOG_TABLE);
+    }
 
 	 private class DBHelper extends SQLiteOpenHelper {
 	
