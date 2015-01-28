@@ -18,10 +18,6 @@
         <item name="android:src">@drawable/ic_custom_overflow_btn_circles</item>
     </style>
 
-    <style name="AppBaseTheme.MyMainBg">
-        <item name="android:windowBackground">@drawable/main_background</item>
-    </style>
-
     <style name="AppBaseTheme.MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
         <item name="android:background">@color/baseColor</item>
         <item name="android:titleTextStyle">@style/AppBaseTheme.MyActionBar.MyActionBarTitleText</item>
