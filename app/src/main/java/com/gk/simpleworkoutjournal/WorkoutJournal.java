@@ -175,7 +175,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             Log.v( APP_NAME, "WorkoutJournal :: initiateListUpdate : incoming parameters are messed" );
             return;
         }
-
+//TODO move all triggers for other lists to onloadfinished!!!
         switch ( trigEvent ) {
             case INIT:
                 getLoaderManager().initLoader( EXERCISES, null, this);
@@ -247,7 +247,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             String incomingName = exerciseTextView.getText().toString();
             incomingName = incomingName.trim();
 
-            Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed(). Exercise in edit text: " + incomingName + " Amount of exercises before btn pressed: "+exerciseLogAdapter.getCount() );
+            Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed(). Exercise in edit text: \"" + incomingName + "\" Amount of exercises before btn pressed: "+exerciseLogAdapter.getCount() );
 
             if (incomingName.length() == 0) {
                 Toast.makeText(this, "Empty fields are not allowed", Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
@@ -256,6 +256,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
             dbmediator.addExercise(incomingName); // may fail since exercise is in db - it's ok
             dbmediator.logExercise(incomingName);
+
+            exerciseTextView.setText("");
 
             //populate list view with renewed data
             exerciseLogAdapter.setIdxOfCurrent(exerciseLogAdapter.getCount()); //no need to decrement since item is not renewed in the list yet: count will be larger
@@ -300,7 +302,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
      */
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Log.v(APP_NAME, "WorkoutJournal :: onItemClick :: position: " + position + " id: " + (id == 0 ? "EXERCISES" : "SETS") + " (" + id + ")");
+        Log.v(APP_NAME, "WorkoutJournal :: onItemClick :: position: " + position + " id: "+id + " view ID: "+view.getId() );
 
         switch (view.getId()) {
             case R.id.exercise_entry_container:
@@ -327,11 +329,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     initiateListUpdate( Subject.SETS, TriggerEvent.EX_CLICK );
 
                     exerciseLogAdapter.notifyDataSetChanged();
-
-                    if (setsLv.getCount() != 0) {
-                        syncListPositions( Subject.EXERCISES );
-                    }
-
                 }
 
                 showEditsForSubject( Subject.SETS );
@@ -344,12 +341,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 //same code for exs and sets. update note
                 String noteSet =  setsLogAdapter.getNoteForCurrent();
                 Log.v(APP_NAME, "WorkoutJournal :: onItemClick :: note : " + noteSet);
-                if (noteSet == null || noteSet.isEmpty() ) {
-                    setNoteTv.setHint( getString(R.string.workout_set_newnote_hint) );
+                if ( noteSet == null || noteSet.isEmpty() ) {
+                    setNoteTv.setHint( getString(R.string.workout_set_no_note_hint) );
                     setNoteTv.setText( "" );
                 } else {
                     setNoteTv.setText(noteSet);
                 }
+
+                weightEdit.setText( setsLogAdapter.getWeightForCurrent() );
+                repsEdit.setText( setsLogAdapter.getRepsForCurrent() );
 
                 // show required exercise for selected date
                 //PROBLEM possibly set if is not set at that moment
@@ -388,7 +388,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     }
 
     public void syncListPositions( Subject baseSubject ) {
-        Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: base subject: " + baseSubject.toString() );
+        Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: started. base subject: " + baseSubject.toString() );
 
         WorkoutDataAdapter baseAdapter, targetAdapter;
         Integer sourceKeyFieldIdx, targetKeyFieldIdx;
@@ -413,23 +413,28 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             return;
         }
 
-        if ( baseAdapter.getIdxOfCurrent() == -1 || targetAdapter.getIdxOfCurrent() == -1 ) {
+        if ( baseAdapter.getIdxOfCurrent() == -1  ) {
             Log.d(APP_NAME, "WorkoutJournal :: syncListPositions :: doing nothing since current for one of the adapters is not set" );
             return;
         }
 
+        Log.v(APP_NAME, "*** exercise cursor with current "+exerciseLogAdapter.getIdxOfCurrent() +" actual pos: "+exerciseLogAdapter.getCursor().getPosition());
+        DatabaseUtils.dumpCursor(exerciseLogAdapter.getCursor());
+        Log.v(APP_NAME, "*** sets cursor with current "+setsLogAdapter.getIdxOfCurrent() +" actual pos: "+setsLogAdapter.getCursor().getPosition());
+        DatabaseUtils.dumpCursor(setsLogAdapter.getCursor());
+
+        baseAdapter.getCursor().moveToPosition( baseAdapter.getIdxOfCurrent() );
         long sourceId = baseAdapter.getCursor().getLong( sourceKeyFieldIdx );
 
         int initialTargetPos = targetAdapter.getIdxOfCurrent();
         int targetPos;
 
-        DatabaseUtils.dumpCursor( baseAdapter.getCursor() );
-        DatabaseUtils.dumpCursor( targetAdapter.getCursor() );
-
         Cursor trgtCs = targetAdapter.getCursor();
         trgtCs.moveToFirst();
 
         for ( ; !trgtCs.isAfterLast() ; trgtCs.moveToNext() ) {
+
+            Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: sourceId: "+sourceId+" targetId:"+trgtCs.getInt( targetKeyFieldIdx ) );
 
             if ( trgtCs.getInt( targetKeyFieldIdx ) == sourceId ){
                 targetPos = trgtCs.getPosition();
@@ -439,7 +444,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 Subject targetSubject = (baseSubject == Subject.EXERCISES) ? Subject.SETS : baseSubject;
                 moveToSelected( targetSubject, true );
 
-                Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: target found. Exercise Log Id: "+sourceId+" Target moved from "+initialTargetPos+ " to "+targetPos );
+                Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: target found. SourceId: "+sourceId+" Target moved from "+initialTargetPos+ " to "+targetPos );
                 return;
             }
         }
@@ -449,52 +454,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         return;
 
     }
-    /*
-	 * Get position of list view based on the time stamp of checked item in other list view.
-	 */
-    /*public int syncPositionsBasedOnDate(ListView primaryLv, ListView secondaryLv) {
-        Log.e(APP_NAME, "syncPositionsBasedOnDate is obsolette, should change to syncListPositions ")
-        // move cursor to this position  in order to get values from there
-        WorkoutDataAdapter primaryAdapter = (WorkoutDataAdapter) primaryLv.getAdapter();
-        Cursor srcCursor = primaryAdapter.getCursor();
-
-        WorkoutDataAdapter secondaryAdapter = (WorkoutDataAdapter) secondaryLv.getAdapter();
-        Cursor dstCursor = secondaryAdapter.getCursor();
-
-        //srcCursor.moveToPosition(srcPosition);
-        Log.v(APP_NAME, "syncPositions: current src-dst pos (" + primaryAdapter.getIdxOfCurrent() + "-" + secondaryAdapter.getIdxOfCurrent() + ")");
-        srcCursor.moveToPosition(primaryAdapter.getIdxOfCurrent());
-
-        DatabaseUtils.dumpCursor(srcCursor);
-        long baseDate = srcCursor.getLong(srcCursor.getColumnIndex(DBClass.KEY_TIME));   // and get  time
-        long curDate; // =  dstCursor.getColumnIndex(DBClass.KEY_TIME);
-        boolean found = false;
-        int max = secondaryAdapter.getCount();
-        int min = 0;
-        int timeColumnIdx = dstCursor.getColumnIndex(DBClass.KEY_TIME);
-        while (!found) {
-            dstCursor.moveToPosition((min + max) / 2);
-            curDate = dstCursor.getLong(timeColumnIdx);
-            Log.v(APP_NAME, "syncPositions: search source date " + baseDate + " in dst cursor (range [" + min + "-" + max + "]). Current dst: " + dstCursor.getPosition() + " with date " + curDate);
-
-            switch (setsLogAdapter.compareDates(curDate, baseDate)) {
-                case 1:
-                    max = dstCursor.getPosition();
-                    break;
-                case -1:
-                    min = dstCursor.getPosition();
-                    break;
-                case 0:
-                    found = true;
-                    break;
-            }
-            // no reason to search if only few items left
-            if ((max - min) < 3) break;
-        }
-        //if (min == setCur.getPosition()) return setCur.getCount()-1; // take last position
-        Log.v(APP_NAME, "WorkoutJournal :: syncPositions : set to " + dstCursor.getPosition());
-        return dstCursor.getPosition();
-    }*/
 
     /*
     * will change current adapter to appropriate one
@@ -538,8 +497,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         // id is exercise name or sets id
 
         startActivityForResult(dialogIntent, (subjAdapter.getSubject() == Subject.EXERCISES) ? 1 : 0);
-        Log.v(APP_NAME, "after  startActivity");
-
     }
 
     /*
@@ -547,26 +504,23 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(APP_NAME, "onActivityResult");
+        Log.v(APP_NAME, "WorkoutJournal :: onActivityResult");
 
         if (resultCode == RESULT_OK) {
             //currCursor.moveToPosition(currAdapter.getIdxOfCurrent());
             String note = data.getStringExtra("note");
             String targetId = data.getStringExtra("targetId");
 
-            Log.v(APP_NAME, "onActivityResult once got item");
+            Log.v(APP_NAME, "WorkoutJournal :: onActivityResult once got item");
 
             switch (requestCode) {
 
                 case 1: //exercise
-                    Log.v(APP_NAME, "gonna insert note \"" + note + "\" for ex  " + exerciseLogAdapter.getNameForCurrent() );
+                    Log.v(APP_NAME, "WorkoutJournal :: onActivityResult : gonna insert note \"" + note + "\" for ex  \"" + exerciseLogAdapter.getNameForCurrent()+"\"" );
                     dbmediator.insertExerciseNote( targetId, note);
                     exerciseNoteTv.setText(note);
 
                     initiateListUpdate( Subject.EXERCISES, TriggerEvent.NOTEADD );
-
-                    Log.v(APP_NAME, "onActivityResult once fetched exercise history after inserting note");
-
                     break;
 
                 case 0: //set
@@ -575,7 +529,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     setNoteTv.setText(note);
 
                     initiateListUpdate(Subject.SETS, TriggerEvent.NOTEADD);
-
                     break;
             }
 
@@ -634,7 +587,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             1
             0 if no extra actions required
      */
-    public int adjustAfterExDeleted( int idxOfDeleted ) {
+    /*public int adjustAfterExDeleted( int idxOfDeleted ) {
         Log.v(APP_NAME, "WorkoutJournal :: adjustAfterExDeleted");
         int retCode = 0;
 
@@ -693,7 +646,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
 
         return retCode;
-    }
+    }*/
 
     public void showEditsForSubject( Subject subj ) {
 
@@ -753,7 +706,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         updateNoteView( targetAdapter );
 
         if ( needToScroll ) {
-            targetLv.smoothScrollToPosition( targetAdapter.getIdxOfCurrent() );
+            targetLv.setSelection( targetAdapter.getIdxOfCurrent() );
         }
     }
 
@@ -761,7 +714,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
      * Will update note text view based on the info in cursor of adapter. Appropriate position must be set prior.
      */
     public void updateNoteView( WorkoutDataAdapter sourceAdapter ) {
-        Log.v(APP_NAME, "WorkoutJournal :: updateNoteView" );
+        Log.v(APP_NAME, "WorkoutJournal :: updateNoteView for "+sourceAdapter.getSubject().toString() );
 
         if ( sourceAdapter.getIdxOfCurrent() == -1 ) {
             return;
@@ -786,7 +739,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 return;
         }
 
-        DatabaseUtils.dumpCursor( sourceAdapter.getCursor() );
         String noteString = sourceAdapter.getNoteForCurrent();
         if ( noteString == null || noteString.isEmpty()) {
             targetTV.setHint( newNoteHint );
@@ -824,11 +776,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 exerciseLogAdapter.swapCursor( data );
                 exerciseLogAdapter.setIdxOfCurrent( exerciseLogAdapter.getIdxOfCurrent() ); //this will move new cursor to initial position
 
-                Log.v(APP_NAME, "exerciseLogAdapter.getIdxOfCurrent() "+exerciseLogAdapter.getIdxOfCurrent());
-
-                //always empty notes box for sets since we lost focus from sets. Added: only when selected was changed/prev changed deleted
-                setNoteTv.setText("");
-                setNoteTv.setHint( R.string.workout_set_no_note_hint );
+                // empty notes box for sets since we might lost focus from sets.
+                if ( exUpTrigger != TriggerEvent.NOTEADD ) {
+                    setNoteTv.setText("");
+                    setNoteTv.setHint(R.string.workout_set_no_note_hint);
+                }
 
                 // if add button clicked
                 if ( exUpTrigger == TriggerEvent.ADD ) {
@@ -863,6 +815,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 setsLv.setAdapter( setsLogAdapter = new WorkoutDataAdapter(this, data, WorkoutDataAdapter.Subject.SETS) );
                 setsLogAdapter.setIdxOfCurrent(current);
+
+                if (setsUpTrigger == TriggerEvent.ADD ) {
+                    setsLv.setSelection( setsLv.getCount() -1 );
+                } else if ( setsUpTrigger == TriggerEvent.EX_CLICK && setsLv.getCount() != 0) {
+                    syncListPositions( Subject.EXERCISES );
+                }
 
                 if ( setsUpTrigger == TriggerEvent.ADD ) {
                     //just move and update note
