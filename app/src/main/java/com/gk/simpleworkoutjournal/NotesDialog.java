@@ -15,7 +15,7 @@ public class NotesDialog extends Activity {
 		
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
-			Log.v(APP_NAME, "Creating NotesDialog");
+			Log.v(APP_NAME, "NotesDialog :: creating NotesDialog");
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.note_edit_dialog);
 	        
@@ -34,7 +34,7 @@ public class NotesDialog extends Activity {
 		}
 		
 		public void noteButtonClick(View v) {
-			Log.v(APP_NAME, "button pressed in note edit");
+			Log.v(APP_NAME, "NotesDialog :: noteButtonClick");
 			String newNote = noteEdit.getText().toString();
 			if ( ( v.getId() == R.id.note_dialog_OK ) && newNote != note ) {
 				notesIntent.putExtra( "note", newNote );

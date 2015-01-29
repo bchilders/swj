@@ -25,7 +25,7 @@ public class ExerciseDataCursorLoader extends CursorLoader {
         Log.v(APP_NAME, "ExerciseDataCursorLoader :: loadInBackground :: id "+this.getId() );
 
         Cursor cursor = db.fetchExerciseHistory();
-        Log.v(APP_NAME, "ExerciseDataCursorLoader :: XXX :: updating cursor ");
+        Log.v(APP_NAME, "ExerciseDataCursorLoader :: updating cursor ");
 
         return cursor;
     }

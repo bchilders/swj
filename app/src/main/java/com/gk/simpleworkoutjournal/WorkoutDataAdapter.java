@@ -184,7 +184,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
     }
 
 	public void setIdxOfCurrent(int position) {
-		Log.d(APP_NAME, "WorkoutDataAdapter :: setIdxOfCurrent:  new current for subj "+currSubj.toString()+": "+position);
+		Log.d(APP_NAME, "WorkoutDataAdapter :: setIdxOfCurrent:  set current for subj "+currSubj.toString()+" to "+position);
         getCursor().moveToPosition( position );
 		currentIndex = position;
 
@@ -244,6 +244,28 @@ public class WorkoutDataAdapter extends CursorAdapter {
         Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent :: name of current : "+name +" subj: "+currSubj.toString());
 
         return name;
+    }
+
+    public String getWeightForCurrent() {
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent");
+
+        if ( currSubj != Subject.SETS ) {
+            Log.e( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent :: called on inappropriate subject "+currSubj.toString());
+            return "";
+        }
+
+        return  ((Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_WEIGHT) );
+    }
+
+    public String getRepsForCurrent() {
+        Log.v( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent");
+
+        if ( currSubj != Subject.SETS ) {
+            Log.e( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent :: called on inappropriate subject "+currSubj.toString());
+            return "";
+        }
+
+        return  ((Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_REPS) );
     }
 
     public long getIdForCurrent() {
