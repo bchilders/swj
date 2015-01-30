@@ -704,7 +704,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         updateNoteView( targetAdapter );
 
         if ( needToScroll ) {
-            targetLv.setSelection( targetAdapter.getIdxOfCurrent() );
+            targetLv.setSelection( targetAdapter.getIdxOfCurrent() )
         }
     }
 
