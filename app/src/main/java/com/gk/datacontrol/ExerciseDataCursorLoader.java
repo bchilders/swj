@@ -30,4 +30,3 @@ public class ExerciseDataCursorLoader extends CursorLoader {
         return cursor;
     }
 }
-

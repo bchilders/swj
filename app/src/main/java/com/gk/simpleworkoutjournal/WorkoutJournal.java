@@ -7,7 +7,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,7 +30,7 @@ import com.gk.datacontrol.SetDataCursorLoader;
 import static com.gk.simpleworkoutjournal.WorkoutDataAdapter.*;
 
 public class WorkoutJournal extends Activity implements  OnItemClickListener, OnTouchListener, LoaderManager.LoaderCallbacks<Cursor> {
-    public enum TriggerEvent { NONE, INIT, ADD, DELETE, NOTEADD, EX_CLICK, SET_CLICK }
+    public enum TriggerEvent { NONE, INIT, ADD, DELETE, NOTEADD, EX_CLICK_OR_ADD, SET_CLICK }
 
     public static final String APP_NAME = "SWJournal";
 
@@ -185,40 +184,19 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             case SET_CLICK:
                 break;
 
-            case EX_CLICK:
+            case EX_CLICK_OR_ADD:
                 //no need to do anything with exercises, but should renew sets
                 if ( trigSubj == Subject.SETS ) {
                     getLoaderManager().getLoader( SETS ).forceLoad();
                 }
                 break;
 
-            case NOTEADD:
-                getLoaderManager().getLoader( subject ).forceLoad();
-                break;
-
-            case ADD: // ex added - should renew both since focus changed. set added - only set lv to update
-                if ( trigSubj == Subject.EXERCISES ) {
-                    getLoaderManager().getLoader( EXERCISES ).forceLoad();
-
-                    //set list behavior for add is the same as for ex click
-                    setsUpTrigger = TriggerEvent.EX_CLICK;
-                    getLoaderManager().getLoader(SETS).forceLoad();
-                }
-                if ( trigSubj == Subject.SETS ) {
-                    getLoaderManager().getLoader(SETS).forceLoad();
-                }
-                break;
-
             case DELETE: // set update may be not required if deleted ex is not current
-                if ( trigSubj == Subject.EXERCISES ) {
-                    getLoaderManager().getLoader( EXERCISES ).forceLoad();
-                }
-                if ( trigSubj == Subject.SETS ) {
-                    getLoaderManager().getLoader(SETS).forceLoad();
-                }
-
+            case NOTEADD:
+            case ADD: // ex added - should renew both since focus changed. set added - only set lv to update
+                 getLoaderManager().getLoader( subject ).forceLoad();
                 break;
-        }
+            }
     }
 
     public void onBackButtonPressed(View v) {
@@ -326,7 +304,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                     //need to update sets according to new item
                     setsListDataLoader.renewTargetEx( (Cursor) exerciseLogAdapter.getItem( exerciseLogAdapter.getIdxOfCurrent() ) );
-                    initiateListUpdate( Subject.SETS, TriggerEvent.EX_CLICK );
+                    initiateListUpdate( Subject.SETS, TriggerEvent.EX_CLICK_OR_ADD);
 
                     exerciseLogAdapter.notifyDataSetChanged();
                 }
@@ -355,7 +333,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 //PROBLEM possibly set if is not set at that moment
                 setsLogAdapter.notifyDataSetChanged();
 
-                syncListPositions( Subject.SETS );
+                if ( syncListPositions( Subject.SETS ) ) {
+                    exerciseLogAdapter.notifyDataSetChanged();
+                }
 
                 break;
         }
@@ -387,12 +367,14 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         return false;
     }
 
-    public void syncListPositions( Subject baseSubject ) {
+    /*
+     * return false if new position is not set, true if set
+     */
+    public boolean syncListPositions( Subject baseSubject ) {
         Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: started. base subject: " + baseSubject.toString() );
 
         WorkoutDataAdapter baseAdapter, targetAdapter;
         Integer sourceKeyFieldIdx, targetKeyFieldIdx;
-        ListView targetLv;
 
         if ( baseSubject  == Subject.EXERCISES ) {
             baseAdapter = exerciseLogAdapter;
@@ -410,18 +392,19 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         } else {
             Log.e(APP_NAME, "WorkoutJournal :: syncListPositions :: unexpected subject: " + baseSubject.toString() );
-            return;
+            return false;
         }
 
         if ( baseAdapter.getIdxOfCurrent() == -1  ) {
             Log.d(APP_NAME, "WorkoutJournal :: syncListPositions :: doing nothing since current for one of the adapters is not set" );
-            return;
+            return false;
         }
         Log.v(APP_NAME, "*** exercise cursor with current "+exerciseLogAdapter.getIdxOfCurrent() +" actual pos: "+exerciseLogAdapter.getCursor().getPosition());
         DatabaseUtils.dumpCursor(exerciseLogAdapter.getCursor());
         Log.v(APP_NAME, "*** sets cursor with current "+setsLogAdapter.getIdxOfCurrent() +" actual pos: "+setsLogAdapter.getCursor().getPosition());
         DatabaseUtils.dumpCursor(setsLogAdapter.getCursor());
 
+        baseAdapter.getCursor().moveToPosition( baseAdapter.getIdxOfCurrent() );
         long sourceId = baseAdapter.getCursor().getLong( sourceKeyFieldIdx );
 
         int initialTargetPos = targetAdapter.getIdxOfCurrent();
@@ -443,13 +426,14 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 moveToSelected( targetSubject, true );
 
                 Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: target found. SourceId: "+sourceId+" Target moved from "+initialTargetPos+ " to "+targetPos );
-                return;
+                return true;
             }
         }
 
         trgtCs.moveToPosition( initialTargetPos );
+
         Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: target not found ( sourceId: "+sourceId+")" );
-        return;
+        return false;
 
     }
 
@@ -783,7 +767,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 // if add button clicked
                 if ( exUpTrigger == TriggerEvent.ADD ) {
                     moveToSelected(Subject.EXERCISES, true);
+
+                    //set list behavior for add is the same as for ex click
+                    setsUpTrigger = TriggerEvent.EX_CLICK_OR_ADD;
+                    getLoaderManager().getLoader(SETS).forceLoad();
                 }
+
+                //set list behavior for add is the same as for ex click
+                setsUpTrigger = TriggerEvent.EX_CLICK_OR_ADD;
+                getLoaderManager().getLoader(SETS).forceLoad();
 
                 if (exerciseLogAdapter.getCount() != 0) {
                     updateNoteView( exerciseLogAdapter );
@@ -816,18 +808,19 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 if (setsUpTrigger == TriggerEvent.ADD ) {
                     setsLv.setSelection( setsLv.getCount() -1 );
-                } else if ( setsUpTrigger == TriggerEvent.EX_CLICK && setsLv.getCount() != 0) {
+                }
+
+                if (  ( setsUpTrigger == TriggerEvent.EX_CLICK_OR_ADD || setsUpTrigger == TriggerEvent.DELETE ) && setsLv.getCount() != 0) {
                     syncListPositions( Subject.EXERCISES );
                 }
 
                 if ( setsUpTrigger == TriggerEvent.ADD ) {
-                    //just move and update note
+                    //move and update note
                     moveToSelected(Subject.SETS, true);
                 } else {
 
-                    //sync positions
+                    //only update note if not an add event
                     if (setsLogAdapter.getCount() != 0) {
-                        syncListPositions( Subject.SETS );
                         updateNoteView( setsLogAdapter );
                     }
 

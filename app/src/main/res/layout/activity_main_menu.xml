@@ -23,8 +23,6 @@
             style="@style/MainMenuButtonStyle"
             android:text="@string/main_menu_btn_exercises" />
 
-
-
         <Button
             android:id="@+id/buttonMmBody"
             style="@style/MainMenuButtonStyle"
