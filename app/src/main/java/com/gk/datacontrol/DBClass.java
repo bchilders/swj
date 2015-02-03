@@ -299,6 +299,16 @@ public class DBClass  {
         int changedExs  = realdb.update( TABLE_EXERCISE_LOG, values, KEY_EX_NAME+"=\""+origName+"\"", null );
         values.clear();
 
+        //copy note
+        Cursor noteCursor = realdb.rawQuery("SELECT "+KEY_NOTE+" FROM "+TABLE_EXERCISES+" WHERE "+KEY_NAME+"=\""+origName+"\"", null);
+        if ( noteCursor.getCount() != 0 ) {
+            noteCursor.moveToFirst();
+            insertExerciseNote( newName, noteCursor.getString( noteCursor.getColumnIndex(KEY_NOTE)) );
+        }
+
+        //delete original exercise
+        realdb.delete(TABLE_EXERCISES,KEY_NAME+"=\""+origName+"\"", null);
+
         Log.v(APP_NAME, "DBClass :: updateExercise . done. Affected exercise entries: "+ changedExs + "  Affected set entries: "+changedSets);
         return true;
     }

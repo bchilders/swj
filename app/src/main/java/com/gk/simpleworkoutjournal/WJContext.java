@@ -271,8 +271,8 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         idOfSelected = "";
     }
 
-    public void onEditRenamePressed() {
-        Log.v(APP_NAME, "WJContext :: onEditRenamePressed");
+    public void onEditRenamePressed() { //TODO: unused?
+        Log.e(APP_NAME, "WJContext :: onEditRenamePressed. OBSOLETTE");
 
         WorkoutDataAdapter currAdapter;
         switch ( this.contextSubj )
@@ -410,7 +410,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     }
 
     public void onAddEditedBtnPressed() {
-        Log.v(APP_NAME, "WJContext :: onAddEditedBtnPressed "+ctxEditExField.getText().toString() );
+        Log.v(APP_NAME, "WJContext :: onAddEditedBtnPressed \""+ctxEditExField.getText().toString()+"\"" );
 
         if ( idOfSelected.isEmpty() ) {
             Log.e(APP_NAME, "WJContext :: onAddEditedBtnPressed : ID of selected item is unknown");
@@ -460,6 +460,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
 
         idOfSelected = "";
+        thisActionMode.finish();
     }
 
     private void deleteSelectedExercise() {

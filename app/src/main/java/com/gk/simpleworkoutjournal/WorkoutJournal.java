@@ -399,11 +399,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             Log.d(APP_NAME, "WorkoutJournal :: syncListPositions :: doing nothing since current for one of the adapters is not set" );
             return false;
         }
-        Log.v(APP_NAME, "*** exercise cursor with current "+exerciseLogAdapter.getIdxOfCurrent() +" actual pos: "+exerciseLogAdapter.getCursor().getPosition());
+
+       /* Log.v(APP_NAME, "*** exercise cursor with current "+exerciseLogAdapter.getIdxOfCurrent() +" actual pos: "+exerciseLogAdapter.getCursor().getPosition());
         DatabaseUtils.dumpCursor(exerciseLogAdapter.getCursor());
         Log.v(APP_NAME, "*** sets cursor with current "+setsLogAdapter.getIdxOfCurrent() +" actual pos: "+setsLogAdapter.getCursor().getPosition());
         DatabaseUtils.dumpCursor(setsLogAdapter.getCursor());
-
+*/
         baseAdapter.getCursor().moveToPosition( baseAdapter.getIdxOfCurrent() );
         long sourceId = baseAdapter.getCursor().getLong( sourceKeyFieldIdx );
 
