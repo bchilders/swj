@@ -268,15 +268,15 @@ public class WorkoutDataAdapter extends CursorAdapter {
         return  ((Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_REPS) );
     }
 
-    public long getIdForCurrent() {
+    public String getIdForCurrent() {
         Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : subj : "+currSubj.toString()+" index of current: "+currentIndex );
 
         if ( currentIndex == -1 ) {
             Log.d( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : doing nothing since current index is "+currentIndex);
-            return currentIndex;
+            return String.valueOf(currentIndex);
         }
 
-        long  id = ( (Cursor)getItem( currentIndex ) ).getLong( getCursor().getColumnIndex( DBClass.KEY_ID ));
+        String  id = ( (Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex( DBClass.KEY_ID ));
         Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent :: id of current : "+id+" subj : "+currSubj.toString());
 
         return id;

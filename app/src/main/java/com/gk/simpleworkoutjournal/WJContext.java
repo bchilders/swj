@@ -93,7 +93,6 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         Integer sequenceNumber = (Integer)currAdapter.getIdsOfCtxChecked().toArray()[0];
         Cursor entry = (Cursor)currLv.getItemAtPosition( sequenceNumber );
 
-
         //launch appropriate action for this entry
         switch( menuItem.getItemId() )
         {
@@ -209,7 +208,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         Log.v(APP_NAME, "WJContext :: onItemCheckedStateChanged subject: " + contextSubj + " int: " + index + " long " + arg2 + " bool: " + isChecked);
 
         //reset buttons and editTexts
-        onCancelEditBtnPressed();
+        onRestoreContextLookBtnPressed();
 
         String actionBarText;
         WorkoutDataAdapter currAdapter;
@@ -263,39 +262,6 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
         actionBarText += currAdapter.getcheckedAmount();
         actMode.setTitle( actionBarText );
-    }
-
-    public void onDeleteExPressed() {
-        Log.v(APP_NAME, "WJContext :: onDeleteExPressed");
-        //empty are restricted
-        idOfSelected = "";
-    }
-
-    public void onEditRenamePressed() { //TODO: unused?
-        Log.e(APP_NAME, "WJContext :: onEditRenamePressed. OBSOLETTE");
-
-        WorkoutDataAdapter currAdapter;
-        switch ( this.contextSubj )
-        {
-            case EXERCISES:
-                currAdapter = activity.exerciseLogAdapter;
-                break;
-
-            case SETS:
-                currAdapter = activity.setsLogAdapter;
-                break;
-
-            default:
-                return;
-        }
-
-        if ( currAdapter.getcheckedAmount() != 1)
-        {
-            Log.v(APP_NAME, "WJContext :: onEditRenamePressed : one ckecked item expected, while there are more");
-        }
-
-       // HashSet<Integer> onlyItem = currAdapter.getIdsOfCtxChecked();
-
     }
 
     public void onDeleteLogEntriesPressed() {
@@ -392,8 +358,8 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         thisActionMode.finish();
     }
 
-    public void onCancelEditBtnPressed() {
-        Log.v(APP_NAME, "WJContext :: onCancelEditBtnPressed");
+    public void onRestoreContextLookBtnPressed() {
+        Log.v(APP_NAME, "WJContext :: onRestoreContextLookBtnPressed");
 
         ctxCancelBtn.setVisibility(View.GONE);
         ctxAddBtn.setVisibility(View.GONE);
@@ -448,19 +414,21 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                     break;
 
                 case SETS:
-                    activity.dbmediator.updateSetLog( idOfSelected, Integer.parseInt( newReps ), Integer.parseInt( newWeight ) );
+                    activity.dbmediator.updateSetLog( idOfSelected,  newReps,  (newWeight == ".") ? "0" : newWeight);
                     break;
             }
 
             if ( !haveError ) {
-                activity.initiateListUpdate( contextSubj, WorkoutJournal.TriggerEvent.NOTEADD ); //TODO: need other, separate event?
-                onCancelEditBtnPressed();
+                activity.initiateListUpdate( contextSubj, WorkoutJournal.TriggerEvent.EDIT ); //TODO: need other, separate event?
+                activity.exerciseLogAdapter.notifyDataSetChanged();
+                onRestoreContextLookBtnPressed();
             }
         }
 
-
-        idOfSelected = "";
-        thisActionMode.finish();
+        if( !haveError ) {
+            idOfSelected = "";
+            thisActionMode.finish();
+        }
     }
 
     private void deleteSelectedExercise() {

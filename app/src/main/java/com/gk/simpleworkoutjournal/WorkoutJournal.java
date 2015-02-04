@@ -30,7 +30,7 @@ import com.gk.datacontrol.SetDataCursorLoader;
 import static com.gk.simpleworkoutjournal.WorkoutDataAdapter.*;
 
 public class WorkoutJournal extends Activity implements  OnItemClickListener, OnTouchListener, LoaderManager.LoaderCallbacks<Cursor> {
-    public enum TriggerEvent { NONE, INIT, ADD, DELETE, NOTEADD, EX_CLICK_OR_ADD, SET_CLICK }
+    public enum TriggerEvent { NONE, INIT, ADD, DELETE, NOTEADD, EX_CLICK_OR_ADD, SET_CLICK, EDIT }
 
     public static final String APP_NAME = "SWJournal";
 
@@ -181,9 +181,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 getLoaderManager().initLoader( SETS, null, this);
                 break;
 
-            case SET_CLICK:
-                break;
-
             case EX_CLICK_OR_ADD:
                 //no need to do anything with exercises, but should renew sets
                 if ( trigSubj == Subject.SETS ) {
@@ -191,11 +188,16 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 }
                 break;
 
+            case EDIT:
             case DELETE: // set update may be not required if deleted ex is not current
             case NOTEADD:
             case ADD: // ex added - should renew both since focus changed. set added - only set lv to update
                  getLoaderManager().getLoader( subject ).forceLoad();
                 break;
+
+            default:
+                Log.e( APP_NAME, "WorkoutJournal :: initiateListUpdate : unexpected trigger event: "+trigEvent.toString() );
+                return;
             }
     }
 
@@ -256,15 +258,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 return;
             }
 
-            int newRep = Integer.parseInt(repString);
-            Float newWei = Float.parseFloat(weiString);
-
             Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed(). current exercise: "+ exerciseLogAdapter.getIdxOfCurrent());
 
             String exerciseName = exerciseLogAdapter.getNameForCurrent();
-            Long exerciseLogId = exerciseLogAdapter.getIdForCurrent();
+            String exerciseLogId = exerciseLogAdapter.getIdForCurrent();
 
-            dbmediator.insertSet( exerciseName, exerciseLogId, newRep, newWei);
+            dbmediator.insertSet( exerciseName, exerciseLogId, repString, ( weiString == "," ) ? "0" : weiString);
 
             //refresh cursor
             initiateListUpdate(Subject.SETS, TriggerEvent.ADD);
@@ -332,7 +331,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 // show required exercise for selected date
                 //PROBLEM possibly set if is not set at that moment
                 setsLogAdapter.notifyDataSetChanged();
-
+                DatabaseUtils.dumpCursor(setsLogAdapter.getCursor());
                 if ( syncListPositions( Subject.SETS ) ) {
                     exerciseLogAdapter.notifyDataSetChanged();
                 }
@@ -458,7 +457,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             case R.id.setNoteTv:
                 subjAdapter = setsLogAdapter;
 
-                targetId =  String.valueOf( setsLogAdapter.getIdForCurrent() );
+                targetId =  setsLogAdapter.getIdForCurrent();
                 headText = exerciseLogAdapter.getNameForCurrent() + "  " + setsLogAdapter.getNameForCurrent();
                 break;
             default:
@@ -539,20 +538,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
 
         switch (contextualActionButton.getId()) {
-            case R.id.context_action_delete_ex:
-                cmcb.onDeleteExPressed();
-                break;
-
-            case R.id.context_action_rename_edit_single:
-                cmcb.onEditRenamePressed();
-                break;
-
             case R.id.ctx_deleteLogEntriesBtn:
                 cmcb.onDeleteLogEntriesPressed();
                 break;
 
             case R.id.ctx_cancelBtn:
-                cmcb.onCancelEditBtnPressed();
+                cmcb.onRestoreContextLookBtnPressed();
                 break;
 
             case R.id.ctx_addEditedBtn:
@@ -760,23 +751,21 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 exerciseLogAdapter.setIdxOfCurrent( exerciseLogAdapter.getIdxOfCurrent() ); //this will move new cursor to initial position
 
                 // empty notes box for sets since we might lost focus from sets.
-                if ( exUpTrigger != TriggerEvent.NOTEADD ) {
+                if ( exUpTrigger != TriggerEvent.NOTEADD && exUpTrigger != TriggerEvent.EDIT ) {
                     setNoteTv.setText("");
                     setNoteTv.setHint(R.string.workout_set_no_note_hint);
                 }
 
                 // if add button clicked
-                if ( exUpTrigger == TriggerEvent.ADD ) {
+                if ( exUpTrigger == TriggerEvent.ADD || exUpTrigger == TriggerEvent.EDIT ) {
                     moveToSelected(Subject.EXERCISES, true);
+                }
 
+                if ( exUpTrigger != TriggerEvent.NOTEADD && exUpTrigger != TriggerEvent.EDIT ) {
                     //set list behavior for add is the same as for ex click
                     setsUpTrigger = TriggerEvent.EX_CLICK_OR_ADD;
                     getLoaderManager().getLoader(SETS).forceLoad();
                 }
-
-                //set list behavior for add is the same as for ex click
-                setsUpTrigger = TriggerEvent.EX_CLICK_OR_ADD;
-                getLoaderManager().getLoader(SETS).forceLoad();
 
                 if (exerciseLogAdapter.getCount() != 0) {
                     updateNoteView( exerciseLogAdapter );
@@ -800,7 +789,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             case SETS:
 
                 int current = -1;
-                if ( setsLogAdapter != null && ( setsUpTrigger == TriggerEvent.ADD || setsUpTrigger == TriggerEvent.DELETE || setsUpTrigger == TriggerEvent.NOTEADD  ) )  {
+                if ( setsLogAdapter != null && ( setsUpTrigger == TriggerEvent.ADD || setsUpTrigger == TriggerEvent.DELETE || setsUpTrigger == TriggerEvent.NOTEADD || setsUpTrigger == TriggerEvent.EDIT  ) )  {
                     current = setsLogAdapter.getIdxOfCurrent();
                 }
 

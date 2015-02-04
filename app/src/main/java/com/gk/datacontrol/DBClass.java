@@ -159,7 +159,7 @@ public class DBClass  {
 		return res;
 	}
 
-	public long insertSet( String exName, long exLogId, int reps, float weight) {
+	public long insertSet( String exName, String exLogId, String reps, String weight) {
 		 long time = System.currentTimeMillis();
 		 if (setsInDay % 3 == 0) {
 			 setDays++;
@@ -171,7 +171,7 @@ public class DBClass  {
 		return insertSet( exName, exLogId, null, reps, weight, time );
 	}
 	
-	public long insertSet( String exName, long exLogId, String setNote, int reps, float weight, long time) {
+	public long insertSet( String exName, String exLogId, String setNote, String reps, String weight, long time) {
         Log.v(APP_NAME, "DBClass :: insertSet :: exName:  "+ exName);
         Log.v(APP_NAME, "DBClass :: insertSet :: exLogId: "+ exLogId);
 		Log.v(APP_NAME, "DBClass :: insertSet :: setNote: "+ setNote);
@@ -309,11 +309,11 @@ public class DBClass  {
         //delete original exercise
         realdb.delete(TABLE_EXERCISES,KEY_NAME+"=\""+origName+"\"", null);
 
-        Log.v(APP_NAME, "DBClass :: updateExercise . done. Affected exercise entries: "+ changedExs + "  Affected set entries: "+changedSets);
+        Log.v(APP_NAME, "DBClass :: updateExercise : done. Affected exercise entries: "+ changedExs + "  Affected set entries: "+changedSets);
         return true;
     }
 
-    public boolean updateSetLog( String id, int reps, int weight ) {
+    public boolean updateSetLog( String id, String reps, String weight ) {
         Log.v(APP_NAME, "DBClass :: updateSetLog . id: "+ id + " reps: "+reps+" weight: "+weight);
 
         values.put(KEY_REPS, reps);
