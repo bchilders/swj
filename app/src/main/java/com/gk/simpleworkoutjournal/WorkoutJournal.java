@@ -408,7 +408,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         long sourceId = baseAdapter.getCursor().getLong( sourceKeyFieldIdx );
 
         int initialTargetPos = targetAdapter.getIdxOfCurrent();
-        int targetPos;
+        int targetPos = -1;
 
         Cursor trgtCs = targetAdapter.getCursor();
         trgtCs.moveToFirst();
@@ -417,23 +417,34 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
             Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: sourceId: "+sourceId+" targetId:"+trgtCs.getInt( targetKeyFieldIdx ) );
 
+            //may be several appropriate items in a sequence
             if ( trgtCs.getInt( targetKeyFieldIdx ) == sourceId ){
                 targetPos = trgtCs.getPosition();
+                Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: intermediate position of target: "+targetPos );
+                continue;
+            }
 
-                targetAdapter.setIdxOfCurrent( targetPos );
-
-                Subject targetSubject = (baseSubject == Subject.EXERCISES) ? Subject.SETS : baseSubject;
-                moveToSelected( targetSubject, true );
-
-                Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: target found. SourceId: "+sourceId+" Target moved from "+initialTargetPos+ " to "+targetPos );
-                return true;
+            //no need to iterate further since we already got target pos
+            if ( targetPos != -1) {
+                break;
             }
         }
 
-        trgtCs.moveToPosition( initialTargetPos );
+        //move to new pos if found target or just restore initial
+        if (targetPos != -1) {
+            targetAdapter.setIdxOfCurrent( targetPos );
 
-        Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: target not found ( sourceId: "+sourceId+")" );
-        return false;
+            Subject targetSubject = (baseSubject == Subject.EXERCISES) ? Subject.SETS : baseSubject;
+            moveToSelected( targetSubject, true );
+
+            Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: resulting target found. SourceId: "+sourceId+" Target moved from "+initialTargetPos+ " to "+targetPos );
+            return true;
+        } else {
+            trgtCs.moveToPosition( initialTargetPos );
+
+            Log.v(APP_NAME, "WorkoutJournal :: syncListPositions :: target not found ( sourceId: "+sourceId+")" );
+            return false;
+        }
 
     }
 
