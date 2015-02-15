@@ -189,9 +189,9 @@ public class WorkoutDataAdapter extends CursorAdapter {
 		currentIndex = position;
 
 	}
-	
+
 	public int getIdxOfCurrent() { return currentIndex; }
-	
+
 	/*
 	 *  1 if 1st  > 2nd
 	 * -1 if 1st  < 2nd

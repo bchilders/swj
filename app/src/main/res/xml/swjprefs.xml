@@ -8,4 +8,9 @@
         android:summary="Erase all training data on exit from settings"
         android:title="Delete all" />
 
+    <Preference android:title="Contact developer"
+        android:summary="For bug reports or recommendations"
+        android:key="writemail"/>
+
+
 </PreferenceScreen>

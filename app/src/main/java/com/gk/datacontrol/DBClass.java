@@ -1,7 +1,6 @@
 package com.gk.datacontrol;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -9,7 +8,6 @@ import java.util.TimeZone;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;

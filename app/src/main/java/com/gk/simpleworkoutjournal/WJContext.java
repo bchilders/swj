@@ -274,7 +274,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             int affectedSetEntries = 0;
             int affectedExEntries = 0;
             String newEx = "";
-
+            boolean needUpdateSets = false;
             Cursor entry;
             for (Integer id : ids) {
                 Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : following checked ex ID of item in list view to delete: " + id);
@@ -283,12 +283,6 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                 long exId = entry.getLong( entry.getColumnIndex( DBClass.KEY_ID ) );
                 affectedSetEntries += activity.dbmediator.rmExLogEntry( exId, 1 );
                 affectedExEntries++;
-
-                if ( id == activity.exerciseLogAdapter.getIdxOfCurrent() ) {
-                    Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : current to be deleted, renewing target ex of sets loader.");
-                    newEx = activity.exerciseLogAdapter.getNameForCurrent();
-                }
-
             }
 
             int newMaxIdx = activity.setsLogAdapter.getCount() - affectedSetEntries - 1;
@@ -298,12 +292,8 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             newMaxIdx = activity.exerciseLogAdapter.getCount() - affectedExEntries - 1;
             if (activity.exerciseLogAdapter.getIdxOfCurrent() > newMaxIdx) {
                 activity.exerciseLogAdapter.setIdxOfCurrent(newMaxIdx);
-                newEx = activity.exerciseLogAdapter.getNameForCurrent();
             }
 
-            if (affectedSetEntries > 0 || !newEx.isEmpty() )
-                activity.setsListDataLoader.renewTargetEx( newEx );
-                activity.initiateListUpdate(WorkoutDataAdapter.Subject.SETS, WorkoutJournal.TriggerEvent.DELETE);
             if (affectedExEntries > 0)
                 activity.initiateListUpdate(WorkoutDataAdapter.Subject.EXERCISES, WorkoutJournal.TriggerEvent.DELETE);
 

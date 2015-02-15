@@ -3,7 +3,6 @@ package com.gk.datacontrol;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.util.Log;
 
 /**

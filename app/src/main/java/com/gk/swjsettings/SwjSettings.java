@@ -1,7 +1,6 @@
 package com.gk.swjsettings;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -15,7 +14,6 @@ public class SwjSettings extends Activity {
 
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SwjSettingsFragment()).commit();
-
     }
 
     public void onDestroy() {
