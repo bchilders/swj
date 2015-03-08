@@ -49,6 +49,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     TextView exerciseNoteTv, setNoteTv;
     WorkoutDataAdapter exerciseLogAdapter, setsLogAdapter;
 
+    SetDataCursorLoader setsListDataLoader;
+    ExerciseDataCursorLoader exListDataLoader;
+
     ImageButton switchBtn;
     boolean inContextMode;
 
@@ -58,8 +61,16 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     boolean notesShowed = false;
     DBClass dbmediator;
 
-    SetDataCursorLoader setsListDataLoader;
-    ExerciseDataCursorLoader exListDataLoader;
+    int initExPos;
+    int initSetPos;
+
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("exPos", exerciseLogAdapter.getIdxOfCurrent());
+        outState.putInt("setPos", setsLogAdapter.getIdxOfCurrent());
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,7 +123,17 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         inContextMode = false;
         Log.d("WorkoutJournal", "INIT");
 
+        if ( savedInstanceState != null ) {
+            initExPos= savedInstanceState.getInt("exPos");
+            initSetPos = savedInstanceState.getInt("setPos");
+        } else {
+            initExPos = -1;
+            initSetPos = -1;
+        }
+
         initiateListUpdate( Subject.ALL, TriggerEvent.INIT );
+
+
     }
 
     @Override
@@ -769,7 +790,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             case EXERCISES:
 
                 if ( exUpTrigger == TriggerEvent.INIT ) {
-                    current = exerciseLogAdapter.getCount() - 1;
+
+                    //on orientation change position my be not last before
+                    if ( initExPos != -1) {
+                        current = initExPos;
+                        initExPos = -1;
+                    } else {
+                        current = exerciseLogAdapter.getCount() - 1;
+                    }
+
                 } else {
                     current = exerciseLogAdapter.getIdxOfCurrent();
                 }
@@ -833,7 +862,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 setsLogAdapter.setIdxOfCurrent(current);
 
                 if (  ( setsUpTrigger == TriggerEvent.TRIG_BY_EX || setsUpTrigger == TriggerEvent.DELETE ) && setsLv.getCount() != 0) {
-                    syncListPositions( Subject.EXERCISES );
+
+                    //on orientation change position is known
+                    if ( initSetPos != -1 ) {
+                        setsLogAdapter.setIdxOfCurrent( initSetPos );
+                        initSetPos = -1;
+                    } else {
+                        syncListPositions( Subject.EXERCISES );
+                    }
+
                 }
 
                 if ( setsUpTrigger == TriggerEvent.ADD  || setsUpTrigger == TriggerEvent.INIT ) {

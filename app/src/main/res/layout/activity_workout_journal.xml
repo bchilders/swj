@@ -180,7 +180,8 @@
                 android:inputType="number"
                 android:maxLength="2"
                 android:hint="@string/workout_edit_reps_hint"
-                android:visibility="gone" 
+                android:visibility="gone"
+                android:imeOptions="flagNoExtractUi"
                 />
 
             <EditText
@@ -190,7 +191,8 @@
                 android:inputType="numberDecimal"
                 android:maxLength="5"
                 android:hint="@string/workout_edit_weight_hint"
-                android:visibility="gone" 
+                android:visibility="gone"
+                android:imeOptions="flagNoExtractUi"
                 />
 
             <AutoCompleteTextView
@@ -199,6 +201,7 @@
                 android:layout_weight="4"
                 android:hint="@string/workout_exercise_textview_hint"
                 android:maxLength="64"
+                android:imeOptions="flagNoExtractUi"
                  />
             
             <ImageButton

@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import com.gk.simpleworkoutjournal.R;
 import com.gk.simpleworkoutjournal.WorkoutJournal;
 import com.gk.swjsettings.SwjSettings;
@@ -29,6 +32,10 @@ public class MainMenu extends Activity implements OnClickListener {
 
         settingsBtn = (Button) findViewById(R.id.buttonMmSettings);
         settingsBtn.setOnClickListener(this);
+
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
     
     @Override
