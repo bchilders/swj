@@ -260,7 +260,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed(). Exercise in edit text: \"" + incomingName + "\" Amount of exercises before btn pressed: "+exerciseLogAdapter.getCount() );
 
             if (incomingName.length() == 0) {
-                Toast.makeText(this, "Empty fields are not allowed", Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
+                Toast.makeText(this, R.string.empty_not_allowed, Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
                 return;
             }
 
@@ -284,7 +284,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             setsLogAdapter.setIdxOfCurrent(setsLogAdapter.getCount());  //no need to decrement since item is not renewed in the list yet: count will be larger
 
             if (repString.trim().length() == 0 || weiString.trim().length() == 0) {
-                Toast.makeText(this, "Empty fields are not allowed", Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
+                Toast.makeText(this, R.string.empty_not_allowed, Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
                 return;
             }
 

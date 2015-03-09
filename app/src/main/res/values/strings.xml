@@ -24,6 +24,15 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_swj_settings_fragment">Settings</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete_log_entries">Delete log entries</string>
+    <string name="note_mark">note mark</string>
+    <string name="sets_chosen">Sets chosen: </string>
+    <string name="exercises_chosen">Exercises chosen: </string>
+    <string name="delete_everything_related_to_ex">Delete everything related to this exercise?</string>
+    <string name="empty_not_allowed">Empty fields are not allowed</string>
+    <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
 
 </resources>

@@ -115,7 +115,7 @@
                 style="@style/WorkoutEditButtonStyle_complementary"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                android:text="Delete log entries"
+                android:text="@string/delete_log_entries"
                 android:paddingLeft="15sp"
                 android:drawableLeft="@drawable/ic_custom_circledtrashbin"
                 android:onClick="onContextButtonPressed"

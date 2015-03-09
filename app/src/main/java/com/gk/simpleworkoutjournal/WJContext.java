@@ -137,10 +137,10 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
                 //some dialog over here
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder( this.activity );
-                alertBuilder.setPositiveButton( "Delete", this );
-                alertBuilder.setNegativeButton( "Cancel", this );
+                alertBuilder.setPositiveButton( R.string.delete, this );
+                alertBuilder.setNegativeButton( R.string.cancel, this );
                 alertBuilder.setTitle(exToDelete);
-                alertBuilder.setMessage("Delete everything related to this exercise?");
+                alertBuilder.setMessage( activity.getResources().getString( R.string.delete_everything_related_to_ex ));
 
                 AlertDialog alert = alertBuilder.create();
 
@@ -219,7 +219,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             case EXERCISES:
                 //if changed from other listview
                 if ( activity.setsLv.isEnabled() ) activity.setsLv.setEnabled( false );
-                actionBarText = "Exercises chosen: ";
+                actionBarText = activity.getString( R.string.exercises_chosen );
 
                 currAdapter = activity.exerciseLogAdapter;
 
@@ -227,7 +227,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             case SETS:
                 //if changed from other listview
                 if ( activity.exercisesLv.isEnabled() ) activity.exercisesLv.setEnabled( false );
-                actionBarText =  "Sets chosen: ";
+                actionBarText =  activity.getString( R.string.sets_chosen );
 
                 currAdapter = activity.setsLogAdapter;
 
@@ -273,8 +273,6 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
             int affectedSetEntries = 0;
             int affectedExEntries = 0;
-            String newEx = "";
-            boolean needUpdateSets = false;
             Cursor entry;
             for (Integer id : ids) {
                 Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : following checked ex ID of item in list view to delete: " + id);
@@ -404,7 +402,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                     break;
 
                 case SETS:
-                    activity.dbmediator.updateSetLog( idOfSelected,  newReps,  (newWeight == ".") ? "0" : newWeight);
+                    activity.dbmediator.updateSetLog( idOfSelected,  newReps,  newWeight.equals(".") ? "0" : newWeight);
                     break;
             }
 
