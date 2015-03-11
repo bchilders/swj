@@ -9,13 +9,14 @@ import android.widget.EditText;
 
 public class NotesDialog extends Activity {
 		public static final  String APP_NAME = "SWJournal";
+        private static boolean DEBUG_FLAG = false;
 		EditText noteEdit;
 		Intent notesIntent;
 		String note;
 		
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
-			Log.v(APP_NAME, "NotesDialog :: creating NotesDialog");
+			if ( DEBUG_FLAG ) Log.v(APP_NAME, "NotesDialog :: creating NotesDialog");
 	        super.onCreate(savedInstanceState);
 	        setContentView(R.layout.note_edit_dialog);
 	        
@@ -34,7 +35,7 @@ public class NotesDialog extends Activity {
 		}
 		
 		public void noteButtonClick(View v) {
-			Log.v(APP_NAME, "NotesDialog :: noteButtonClick");
+			if ( DEBUG_FLAG ) Log.v(APP_NAME, "NotesDialog :: noteButtonClick");
 			String newNote = noteEdit.getText().toString();
 			if ( ( v.getId() == R.id.note_dialog_OK ) && newNote != note ) {
 				notesIntent.putExtra( "note", newNote );

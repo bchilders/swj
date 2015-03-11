@@ -17,8 +17,8 @@ import android.widget.TextView;
 import com.gk.datacontrol.DBClass;
 
 public class WorkoutDataAdapter extends CursorAdapter {
-	public static final String APP_NAME = "SWJournal";
-	
+	private static final String APP_NAME = "SWJournal";
+    private static boolean DEBUG_FLAG = false;
 	public enum Subject { NONE, EXERCISES, SETS, ALL }
 
 	private Subject currSubj;
@@ -53,7 +53,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	    formattedDate.setTimeInMillis( timestamp );
 	    
 	    // check if we need to highlight current position
-        //Log.v(APP_NAME, " pos: "+ cursor.getPosition()+" contains in checked: "+ctxCheckedItems.contains( cursor.getPosition() ));
+        //if ( DEBUG_FLAG ) Log.v(APP_NAME, " pos: "+ cursor.getPosition()+" contains in checked: "+ctxCheckedItems.contains( cursor.getPosition() ));
 	    if ( ctxCheckedItems.contains( cursor.getPosition() ) ) {
             view.setBackgroundColor( ctx.getResources().getColor(R.color.baseColor_lightest_complementary) );
 	    } else if ( cursor.getPosition() == currentIndex ) {
@@ -98,13 +98,13 @@ public class WorkoutDataAdapter extends CursorAdapter {
     	        	dateHeader.setVisibility(View.INVISIBLE);
     	        }
 
-	            Log.v(APP_NAME, "WorkoutDataAdapter :: bindView : exercise case. name: "+entryMainText);
+	            if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutDataAdapter :: bindView : exercise case. name: "+entryMainText);
        			break;
        		case SETS:
-       			Log.v(APP_NAME, "WorkoutDataAdapter :: bindView : entry of sets type binding started");
+       			if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutDataAdapter :: bindView : entry of sets type binding started");
 	       		int setReps = cursor.getInt(cursor.getColumnIndex(DBClass.KEY_REPS));
 	       		float setWeight = cursor.getFloat(cursor.getColumnIndex(DBClass.KEY_WEIGHT));
-	       		
+
 	       		repsTv = (TextView) view.findViewById(R.id.workout_reps_textview);
 	       		repsTv.setText(String.valueOf(setReps));
 
@@ -120,7 +120,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 
 	       		weightTv = (TextView) view.findViewById(R.id.workout_weight_textview);
 	       		weightTv.setText(String.valueOf(setWeight));
-	       		
+
       			// we need to always show date for sets. Add date if it is not as in previous entry
 	       		dateString = "";
 	       		dateHeader.setVisibility(View.VISIBLE);
@@ -128,7 +128,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
            		    dateString = formattedDate.get(Calendar.DAY_OF_MONTH)  +" "+
       		    			 monthNames[formattedDate.get(Calendar.MONTH)] +" "+
       		    			 formattedDate.get(Calendar.YEAR) + "   ";
-    	        } 
+    	        }
     	        dateString += String.format("%02d:%02d", formattedDate.get(Calendar.HOUR_OF_DAY), formattedDate.get(Calendar.MINUTE));//formattedDate.get(Calendar.HOUR_OF_DAY) + ":" + formattedDate.get(Calendar.);
 
 
@@ -184,7 +184,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
     }
 
 	public void setIdxOfCurrent(int position) {
-		Log.d(APP_NAME, "WorkoutDataAdapter :: setIdxOfCurrent:  set current for subj "+currSubj.toString()+" to "+position);
+		if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutDataAdapter :: setIdxOfCurrent:  set current for subj "+currSubj.toString()+" to "+position);
         getCursor().moveToPosition( position );
 		currentIndex = position;
 
@@ -211,7 +211,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	}
 
     public String getNoteForCurrent() {
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getNoteForCurrent");
+        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getNoteForCurrent");
         return ( (Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_NOTE) );
     }
 
@@ -219,7 +219,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
      * Return text representation of current entry (ex.name for exercise, rep-weight pairfor set)
      */
     public String getNameForCurrent() {
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent : subj : "+currSubj.toString() + " currentIndex: "+currentIndex);
+        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent : subj : "+currSubj.toString() + " currentIndex: "+currentIndex);
 
         String name = "";
 
@@ -241,13 +241,13 @@ public class WorkoutDataAdapter extends CursorAdapter {
 
         }
 
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent :: name of current : "+name +" subj: "+currSubj.toString());
+        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getNameForCurrent :: name of current : "+name +" subj: "+currSubj.toString());
 
         return name;
     }
 
     public String getWeightForCurrent() {
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent");
+        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent");
 
         if ( currSubj != Subject.SETS ) {
             Log.e( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent :: called on inappropriate subject "+currSubj.toString());
@@ -258,7 +258,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
     }
 
     public String getRepsForCurrent() {
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent");
+        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent");
 
         if ( currSubj != Subject.SETS ) {
             Log.e( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent :: called on inappropriate subject "+currSubj.toString());
@@ -269,7 +269,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
     }
 
     public String getIdForCurrent() {
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : subj : "+currSubj.toString()+" index of current: "+currentIndex );
+        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : subj : "+currSubj.toString()+" index of current: "+currentIndex );
 
         if ( currentIndex == -1 ) {
             Log.d( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : doing nothing since current index is "+currentIndex);
@@ -277,7 +277,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
         }
 
         String  id = ( (Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex( DBClass.KEY_ID ));
-        Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent :: id of current : "+id+" subj : "+currSubj.toString());
+        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent :: id of current : "+id+" subj : "+currSubj.toString());
 
         return id;
     }

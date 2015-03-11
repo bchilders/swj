@@ -9,14 +9,15 @@ import android.util.Log;
  * Created by Georgeek on 30.12.2014.
  */
 public class SetDataCursorLoader extends CursorLoader {
-    public static final String APP_NAME = "SWJournal";
+    private static final String APP_NAME = "SWJournal";
+    private static boolean DEBUG_FLAG = false;
     DBClass db;
     String targetEx;
 
     public SetDataCursorLoader(Context context, DBClass db, Cursor currCursor) {
         super( context );
 
-        Log.v(APP_NAME, "SetDataCursorLoader :: SetDataCursorLoader");
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "SetDataCursorLoader :: SetDataCursorLoader");
         renewTargetEx( currCursor );
         this.db = db;
     }
@@ -28,14 +29,14 @@ public class SetDataCursorLoader extends CursorLoader {
     }
 
     public void renewTargetEx(String exName) {
-        Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: new target exercise : \""+exName+"\"" );
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: new target exercise : \""+exName+"\"" );
         this.targetEx = exName;
     }
 
     @Override
     public Cursor loadInBackground() {
         //get sets/exercises
-        Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: id "+this.getId()+" exercise: \""+targetEx+"\"" );
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: id "+this.getId()+" exercise: \""+targetEx+"\"" );
         Cursor  cursor = db.fetchSetsForExercise( targetEx );
         return cursor;
     }

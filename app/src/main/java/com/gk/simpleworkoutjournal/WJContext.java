@@ -22,8 +22,9 @@ import com.gk.datacontrol.DBClass;
 
 import java.util.HashSet;
 
-class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.OnClickListener  {
-    public static final String APP_NAME = "SWJournal";
+public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.OnClickListener  {
+    private static final String APP_NAME = "SWJournal";
+    private static boolean DEBUG_FLAG = false;
     WorkoutJournal activity;
     WorkoutDataAdapter.Subject contextSubj;
 
@@ -64,7 +65,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     @Override
     public boolean onActionItemClicked(ActionMode actMode, MenuItem menuItem) {
-        Log.v(APP_NAME, "WJContext :: onActionItemClicked mode: " + actMode + " item: " + menuItem);
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onActionItemClicked mode: " + actMode + " item: " + menuItem);
 
         WorkoutDataAdapter currAdapter;
         ListView currLv;
@@ -97,7 +98,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
         switch( menuItem.getItemId() )
         {
             case R.id.context_action_rename_edit_single:
-                Log.v(APP_NAME, "WJContext :: onActionItemClicked case: edit/rename");
+               if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onActionItemClicked case: edit/rename");
 
                 ctxDeleteLogBtn.setVisibility(View.GONE);
                 ctxCancelBtn.setVisibility(View.VISIBLE);
@@ -131,7 +132,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                 ctxCancelBtn.setVisibility(View.GONE);
                 ctxAddBtn.setVisibility(View.GONE);
 
-                Log.v(APP_NAME, "WJContext :: onActionItemClicked case: delete ex");
+               if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onActionItemClicked case: delete ex");
 
                 String exToDelete = entry.getString( entry.getColumnIndex("exercise_name") );
 
@@ -160,7 +161,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     @Override
     public boolean onCreateActionMode(ActionMode actMode, Menu menu) {
-        Log.v(APP_NAME, "WJContext :: onCreateActionMode mode: "+actMode+" menu: "+menu);
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onCreateActionMode mode: "+actMode+" menu: "+menu);
         activity.currSubj = contextSubj;
 
         actionModeZone.setVisibility( View.VISIBLE );
@@ -173,7 +174,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     @Override
     public void onDestroyActionMode(ActionMode actMode) {
-        Log.v(APP_NAME, "WJContext :: onDestroyActionMode mode: "+actMode);
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onDestroyActionMode mode: "+actMode);
         actionModeZone.setVisibility( View.GONE );
 
         if ( !activity.setsLv.isEnabled() ) activity.setsLv.setEnabled( true );
@@ -196,7 +197,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     @Override
     public boolean onPrepareActionMode(ActionMode arg0, Menu arg1) {
-        Log.v(APP_NAME, "WJContext :: onPrepareActionMode mode: "+arg0+ " menu: "+arg1);
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onPrepareActionMode mode: "+arg0+ " menu: "+arg1);
         // TODO Auto-generated method stub
         return true;
     }
@@ -205,7 +206,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     @Override
     public void onItemCheckedStateChanged(ActionMode actMode, int index, long arg2, boolean isChecked ) {
         //contextMode =  startActionMode( this ); //required to set title later //TODO: check if need reduce scope of context mode.
-        Log.v(APP_NAME, "WJContext :: onItemCheckedStateChanged subject: " + contextSubj + " int: " + index + " long " + arg2 + " bool: " + isChecked);
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onItemCheckedStateChanged subject: " + contextSubj + " int: " + index + " long " + arg2 + " bool: " + isChecked);
 
         //reset buttons and editTexts
         onRestoreContextLookBtnPressed();
@@ -265,7 +266,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     }
 
     public void onDeleteLogEntriesPressed() {
-        Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : active context subject: "+contextSubj.toString() );
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : active context subject: "+contextSubj.toString() );
 
         if ( contextSubj  == WorkoutDataAdapter.Subject.EXERCISES ) {
 
@@ -275,7 +276,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             int affectedExEntries = 0;
             Cursor entry;
             for (Integer id : ids) {
-                Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : following checked ex ID of item in list view to delete: " + id);
+               if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : following checked ex ID of item in list view to delete: " + id);
                 entry = (Cursor) activity.exercisesLv.getItemAtPosition(id);
 
                 long exId = entry.getLong( entry.getColumnIndex( DBClass.KEY_ID ) );
@@ -304,7 +305,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
             HashSet<Integer> exIds = new  HashSet<Integer>();
             Cursor entry;
             for (Integer id : setIds) {
-                Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : following checked set ID of item in list view to delete: " + id);
+               if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onDeleteLogEntriesPressed : following checked set ID of item in list view to delete: " + id);
                 entry = (Cursor) activity.setsLv.getItemAtPosition(id);
 
                 exIds.add( entry.getInt(entry.getColumnIndex(DBClass.KEY_EX_LOG_ID)) );
@@ -347,7 +348,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     }
 
     public void onRestoreContextLookBtnPressed() {
-        Log.v(APP_NAME, "WJContext :: onRestoreContextLookBtnPressed");
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onRestoreContextLookBtnPressed");
 
         ctxCancelBtn.setVisibility(View.GONE);
         ctxAddBtn.setVisibility(View.GONE);
@@ -364,7 +365,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
     }
 
     public void onAddEditedBtnPressed() {
-        Log.v(APP_NAME, "WJContext :: onAddEditedBtnPressed \""+ctxEditExField.getText().toString()+"\"" );
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onAddEditedBtnPressed \""+ctxEditExField.getText().toString()+"\"" );
 
         if ( idOfSelected.isEmpty() ) {
             Log.e(APP_NAME, "WJContext :: onAddEditedBtnPressed : ID of selected item is unknown");
@@ -395,7 +396,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
                 case EXERCISES:
 
                     if ( !activity.dbmediator.updateExercise( idOfSelected, newName ) ) {
-                        Log.d(APP_NAME, "Cannot rename: exercise with this name already exist (orig: "+idOfSelected+" new: " +newName+")");
+                        Log.w(APP_NAME, "Cannot rename: exercise with this name already exist (orig: "+idOfSelected+" new: " +newName+")");
                         haveError = true;
                         Toast.makeText( activity, "Cannot rename: exercise with this name already exist", Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
                     }
@@ -464,7 +465,7 @@ class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.
 
     @Override
     public void onClick(DialogInterface dialog, int which) {
-        Log.v(APP_NAME, "WJContext :: onClick of alert dialog pressed. dialog: "+dialog+ " which: "+which );
+       if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onClick of alert dialog pressed. dialog: "+dialog+ " which: "+which );
 
         switch ( which )  {
             case -1: // Delete button

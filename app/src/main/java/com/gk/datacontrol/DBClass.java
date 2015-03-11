@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DBClass  {
+    private static boolean DEBUG_FLAG = false;
 	private int exercisesInDay = 0, exerciseDays = 0, setsInDay = 0, setDays = 0; // used for simulating date change situation\
 	public static final  String APP_NAME = "SWJournal";
 	
@@ -63,24 +64,22 @@ public class DBClass  {
 	private ContentValues values;
 	
 	public DBClass(Context context) {
-        Log.v(APP_NAME, "DBClass :: DBHelper(Context context)");
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: DBHelper(Context context)");
 		dbHelper = new DBHelper(context);
 		values =  new ContentValues();
         open();
-
-		
 	}
 
 
 	public void close() {
 		if (dbHelper!=null) dbHelper.close();
 	}
-	
+
 	public void open() {
 		realdb = dbHelper.getWritableDatabase();
 		realdb.execSQL("PRAGMA foreign_keys=ON;");
 	}
-	
+
 	public String millisToDate( long milliTime ) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.US);
         GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("US/Central"));
@@ -92,7 +91,7 @@ public class DBClass  {
    * Will delete all logs related to exercise and exercise itself
    */
     public int deleteEx( Cursor exCursor ) {
-        Log.v(APP_NAME, "DBClass :: deleteEx started");
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: deleteEx started");
 
         String exToDelete = exCursor.getString( exCursor.getColumnIndex("exercise_name") );
 
@@ -100,7 +99,7 @@ public class DBClass  {
         int affectedExLogs = realdb.delete(TABLE_EXERCISE_LOG, KEY_EX_NAME + " = \"" + exToDelete + "\"", null);
         realdb.delete(TABLE_EXERCISES,    KEY_NAME    + " = \"" + exToDelete + "\"", null);
 
-        Log.v(APP_NAME, "DBClass :: deleteEx :: deleted ex log entries: "+ affectedExLogs );
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: deleteEx :: deleted ex log entries: "+ affectedExLogs );
         return affectedExLogs;
 
     }
@@ -109,23 +108,23 @@ public class DBClass  {
      * @param[in] subject affects only on retval: in case of 0 will return affected ex amount, in case of 1 - sets amount
      */
     public int rmExLogEntry( long exLogId, int subject ) {
-        Log.v(APP_NAME, "DBClass :: rmExLogEntry started. ex id passed: "+ exLogId );
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: rmExLogEntry started. ex id passed: "+ exLogId );
 
         int affectedSets = realdb.delete(TABLE_SETS_LOG,  KEY_EX_LOG_ID +" = "+exLogId, null);
         int affectedExs = realdb.delete(TABLE_EXERCISE_LOG, KEY_ID        +" = "+exLogId, null);
 
-        Log.v(APP_NAME, "DBClass :: rmExLogEntry :: affected sets entries: "+ affectedSets+ " affected ex entries: "+affectedExs );
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: rmExLogEntry :: affected sets entries: "+ affectedSets+ " affected ex entries: "+affectedExs );
         return ( subject == 0 ) ? affectedExs : affectedSets;
     }
 
     public int rmSetLogEntry( Cursor setLogEntry ) {
-        Log.v(APP_NAME, "DBClass :: rmSetLogEntry started" );
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: rmSetLogEntry started" );
 
         Long setLogId = setLogEntry.getLong( setLogEntry.getColumnIndex( KEY_ID ) );
 
         int affectedSets = realdb.delete(TABLE_SETS_LOG,  KEY_ID +" = "+setLogId, null);
 
-        Log.v(APP_NAME, "DBClass :: rmExLogEntry :: affected sets entries: "+ affectedSets );
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: rmExLogEntry :: affected sets entries: "+ affectedSets );
         return affectedSets;
     }
 
@@ -137,7 +136,7 @@ public class DBClass  {
 		if (res != 1) {
 			Log.e(APP_NAME, "DBClass :: insertNote for exercise :: failed. (name: "+exercise+")" );
 		} else {
-			Log.v(APP_NAME, "DBClass :: insertNote for exercise :: success for exercise "+exercise);
+			if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: insertNote for exercise :: success for exercise "+exercise);
 		}
 		values.clear();
 		return res;
@@ -158,24 +157,29 @@ public class DBClass  {
 	}
 
 	public long insertSet( String exName, String exLogId, String reps, String weight) {
-		 long time = System.currentTimeMillis();
-		 if (setsInDay % 3 == 0) {
-			 setDays++;
-			 setsInDay = 0;
-		 }		  
-		 time += (MS_IN_A_DAY * setDays); // number - ms in day
-		 setsInDay++;
-		 
+		long time = System.currentTimeMillis();
+
+        if ( DEBUG_FLAG ) {
+            if (setsInDay % 3 == 0) {
+                setDays++;
+                setsInDay = 0;
+            }
+            time += (MS_IN_A_DAY * setDays); // number - ms in day
+            setsInDay++;
+        }
+
 		return insertSet( exName, exLogId, null, reps, weight, time );
 	}
-	
+
 	public long insertSet( String exName, String exLogId, String setNote, String reps, String weight, long time) {
-        Log.v(APP_NAME, "DBClass :: insertSet :: exName:  "+ exName);
-        Log.v(APP_NAME, "DBClass :: insertSet :: exLogId: "+ exLogId);
-		Log.v(APP_NAME, "DBClass :: insertSet :: setNote: "+ setNote);
-		Log.v(APP_NAME, "DBClass :: insertSet :: reps: "+ reps);
-		Log.v(APP_NAME, "DBClass :: insertSet :: weight: "+ weight);
-		Log.v(APP_NAME, "DBClass :: insertSet :: time: "+ millisToDate(time) );
+        if ( DEBUG_FLAG ) {
+            Log.v(APP_NAME, "DBClass :: insertSet :: exName:  "+ exName);
+            Log.v(APP_NAME, "DBClass :: insertSet :: exLogId: "+ exLogId);
+            Log.v(APP_NAME, "DBClass :: insertSet :: setNote: "+ setNote);
+            Log.v(APP_NAME, "DBClass :: insertSet :: reps: "+ reps);
+            Log.v(APP_NAME, "DBClass :: insertSet :: weight: "+ weight);
+            Log.v(APP_NAME, "DBClass :: insertSet :: time: "+ millisToDate(time) );
+        }
 
         values.put(KEY_EX_NAME, exName);
     	values.put(KEY_EX_LOG_ID, exLogId);
@@ -196,23 +200,23 @@ public class DBClass  {
 																"; weight: "+weight+
 																")" );
 		} else {
-			Log.v(APP_NAME, "DBClass :: insertSet :: success");
+			if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: insertSet :: success");
 		}
 		return res;
 	}
 
 	 public Cursor fetchSetsForExercise( String exerciseName ) {
-		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for "+exerciseName);
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for "+exerciseName);
 
          Cursor setsCursor = realdb.rawQuery("SELECT * FROM "+ TABLE_SETS_LOG +
 				 							 " WHERE "+KEY_EX_NAME+" = \""+exerciseName+"\" ORDER BY "+KEY_TIME, null );
 
-		 Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for \""+exerciseName+"\" complete.");
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: fetchSetsForExercise for \""+exerciseName+"\" complete.");
 		 return setsCursor;
 	 }
 
 	 public Cursor fetchExerciseHistory() {
-		 Log.v(APP_NAME, "DBClass :: fetchExerciseHistory begin");
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: fetchExerciseHistory begin");
 
          Cursor mCursor = realdb.rawQuery( "SELECT " +KEY_ID +"," + KEY_EX_NAME + "," + KEY_TIME + "," + TABLE_EXERCISES+"."+KEY_NOTE + " FROM " + TABLE_EXERCISE_LOG +
                  " LEFT OUTER JOIN "+TABLE_EXERCISES+" ON "
@@ -222,17 +226,17 @@ public class DBClass  {
 		 if (mCursor != null) {
 			 mCursor.moveToFirst();
 		 }
-		 Log.v(APP_NAME, "DBClass :: fetchExerciseHistory complete");
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: fetchExerciseHistory complete");
 
 		 return mCursor;
 	 }
 
 
 	 public boolean addExercise(String exercise) {
-		 Log.v(APP_NAME, "DBClass :: addExercise for \""+exercise+"\"");
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: addExercise for \""+exercise+"\"");
 		 long result = -1;
 		 values.put(KEY_NAME, exercise);
-		 
+
 		 //check if there already exist an exercise like this
 		 Cursor tmpcs = realdb.rawQuery("SELECT "+KEY_NAME+" FROM "+ TABLE_EXERCISES + " WHERE "+KEY_NAME+ " = \"" + exercise + "\"", null );
 
@@ -240,54 +244,57 @@ public class DBClass  {
 			 result = realdb.insert(TABLE_EXERCISES, null, values);
 
 		 values.clear();
-		 Log.v(APP_NAME, "DBClass :: addExercise done");
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: addExercise done");
 		 return (result != -1);
 	 }
-	 
+
 	 public boolean logExercise(String exercise) {
-		 
+
 		 long time = System.currentTimeMillis();
-		 if (exercisesInDay % 3 == 0) {
-			 exerciseDays++;
-			 exercisesInDay = 0;
-		 }		  
-		 time += (MS_IN_A_DAY * exerciseDays); // number - ms in day
-		 exercisesInDay++;
-		 
+
+         if ( DEBUG_FLAG ) {
+             if (exercisesInDay % 3 == 0) {
+                 exerciseDays++;
+                 exercisesInDay = 0;
+             }
+             time += (MS_IN_A_DAY * exerciseDays); // number - ms in day
+             exercisesInDay++;
+         }
+
 		 return logExercise(exercise, time);
 	 }
 
 	 public boolean logExercise(String exercise, long time ) {
-		 Log.v(APP_NAME, "DBClass :: logExercise begin for \""+exercise+"\", time "+millisToDate( time ) );
-		 
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: logExercise begin for \""+exercise+"\", time "+millisToDate( time ) );
+
 		 //we use full timestamp
 		 values.put(KEY_EX_NAME, exercise);
 		 values.put(KEY_TIME, time);
 		 //DEV-ONLY
-		 
+
 		 //values.put(KEY_TIME, getUnixDay() );
 
 		 long result = realdb.insert(TABLE_EXERCISE_LOG, null, values);
 
 		 values.clear();
-		 Log.v(APP_NAME, "DBClass :: logExercise done");
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: logExercise done");
 		 return (result != -1);
-		 
+
 	 }
 
 	 public boolean haveSetsWithExId( long exId ) {
-         Log.v(APP_NAME, "DBClass :: haveSetsWithExId . id: "+ exId);
+         if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: haveSetsWithExId . id: "+ exId);
          Cursor setsWithExId = realdb.rawQuery( "SELECT "+KEY_ID+" FROM "+TABLE_SETS_LOG+" WHERE "+KEY_EX_LOG_ID+" = "+exId, null);
 
          return ( setsWithExId.getCount() > 0 );
      }
 
     public boolean updateExercise( String origName, String newName) {
-        Log.v(APP_NAME, "DBClass :: updateExercise . original name: "+ origName + " new name: "+newName);
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: updateExercise . original name: "+ origName + " new name: "+newName);
 
         values.put( KEY_NAME, newName );
         if ( !addExercise( newName ) ) {
-            Log.v(APP_NAME, "DBClass :: updateExercise . cannot rename since exercise \""+newName+"\" already exist");
+            if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: updateExercise . cannot rename since exercise \""+newName+"\" already exist");
             return false;
         }
 
@@ -307,12 +314,12 @@ public class DBClass  {
         //delete original exercise
         realdb.delete(TABLE_EXERCISES,KEY_NAME+"=\""+origName+"\"", null);
 
-        Log.v(APP_NAME, "DBClass :: updateExercise : done. Affected exercise entries: "+ changedExs + "  Affected set entries: "+changedSets);
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: updateExercise : done. Affected exercise entries: "+ changedExs + "  Affected set entries: "+changedSets);
         return true;
     }
 
     public boolean updateSetLog( String id, String reps, String weight ) {
-        Log.v(APP_NAME, "DBClass :: updateSetLog . id: "+ id + " reps: "+reps+" weight: "+weight);
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: updateSetLog . id: "+ id + " reps: "+reps+" weight: "+weight);
 
         values.put(KEY_REPS, reps);
         values.put(KEY_WEIGHT, weight);
@@ -331,7 +338,7 @@ public class DBClass  {
     }
 
     public void cleanAllTables() {
-        Log.v(APP_NAME, "DBClass :: dropAllTables : called");
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: dropAllTables : called");
         realdb.execSQL("DROP TABLE "+TABLE_SETS_LOG     );
         realdb.execSQL("DROP TABLE "+TABLE_EXERCISE_LOG );
         realdb.execSQL("DROP TABLE "+TABLE_EXERCISES    );
@@ -353,9 +360,9 @@ public class DBClass  {
 			public void onCreate(SQLiteDatabase db) {
 				db.execSQL(CREATE_EXERCISES_TABLE);
 				db.execSQL(CREATE_SETS_LOG_TABLE);
-				Log.v(APP_NAME, "DBClass :: onCreate :: sets table created");
+				if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: onCreate :: sets table created");
 				db.execSQL(CREATE_EXERCISE_LOG_TABLE);
-				Log.v(APP_NAME, "DBClass :: onCreate :: exersises log table created");
+				if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: onCreate :: exersises log table created");
 			}
 
 			@Override

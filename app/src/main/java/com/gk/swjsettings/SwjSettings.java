@@ -7,8 +7,8 @@ import android.util.Log;
 import com.gk.datacontrol.DBClass;
 
 public class SwjSettings extends Activity {
-    public static final String APP_NAME = "SWJournal";
-
+    private static final String APP_NAME = "SWJournal";
+    private static boolean DEBUG_FLAG = false;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -19,7 +19,7 @@ public class SwjSettings extends Activity {
     public void onDestroy() {
         super.onDestroy();
 
-        Log.v(APP_NAME, "SwjSettingsFragment :: onDestroy(): erase switch state: " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_erase_all", false));
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "SwjSettingsFragment :: onDestroy(): erase switch state: " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_erase_all", false));
 
         if ( PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_erase_all", false) ) {
             //delete databases

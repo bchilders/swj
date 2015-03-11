@@ -17,14 +17,15 @@ import com.gk.simpleworkoutjournal.WorkoutJournal;
 import com.gk.swjsettings.SwjSettings;
 
 public class MainMenu extends Activity implements OnClickListener {
-	public static final String APP_NAME = "SWJournal";
+	private static final String APP_NAME = "SWJournal";
+    private static boolean DEBUG_FLAG = false;
 	Button startWorkoutBtn;
     Button settingsBtn;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-    	Log.v(APP_NAME, "MainMenu :: onCreate()");
-    	
+    	if ( DEBUG_FLAG ) Log.v(APP_NAME, "MainMenu :: onCreate()");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
         startWorkoutBtn = (Button) findViewById(R.id.buttonMmStart);
@@ -37,7 +38,7 @@ public class MainMenu extends Activity implements OnClickListener {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
     }
-    
+
     @Override
     public void onClick(View v) {
     	switch (v.getId()) {
@@ -50,10 +51,10 @@ public class MainMenu extends Activity implements OnClickListener {
                 break;
     	}
     }
-    
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	Log.v(APP_NAME, "MainMenu :: onCreateOptionsMenu()");
+    	if ( DEBUG_FLAG ) Log.v(APP_NAME, "MainMenu :: onCreateOptionsMenu()");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;

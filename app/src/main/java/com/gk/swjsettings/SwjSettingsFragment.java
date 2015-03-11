@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Stack;
 
 public class SwjSettingsFragment extends PreferenceFragment {
-    public static final String APP_NAME = "SWJournal";
+    private static final String APP_NAME = "SWJournal";
     final PreferenceFragment prefFrag = this;
 
     public void onCreate(Bundle savedInstanceState) {
