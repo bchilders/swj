@@ -160,7 +160,7 @@ public class DBClass  {
 		long time = System.currentTimeMillis();
 
         if ( DEBUG_FLAG ) {
-            if (setsInDay % 3 == 0) {
+            if (setsInDay % 4 == 0) {
                 setDays++;
                 setsInDay = 0;
             }
@@ -231,6 +231,18 @@ public class DBClass  {
 		 return mCursor;
 	 }
 
+    public Cursor fetchExerciseNames( CharSequence constr ) {
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: fetchExerciseNames begin");
+
+        Cursor mCursor = realdb.rawQuery( "SELECT " + KEY_NAME  +" as "+KEY_ID+" FROM " + TABLE_EXERCISES + " WHERE " + KEY_ID + " LIKE '%" + constr + "%' ORDER BY "+KEY_ID, null);
+
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: fetchExerciseNames complete");
+
+        return mCursor;
+    }
 
 	 public boolean addExercise(String exercise) {
 		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: addExercise for \""+exercise+"\"");
@@ -253,7 +265,7 @@ public class DBClass  {
 		 long time = System.currentTimeMillis();
 
          if ( DEBUG_FLAG ) {
-             if (exercisesInDay % 3 == 0) {
+             if (exercisesInDay % 4 == 0) {
                  exerciseDays++;
                  exercisesInDay = 0;
              }

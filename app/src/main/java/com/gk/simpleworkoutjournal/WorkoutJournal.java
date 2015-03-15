@@ -15,10 +15,12 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -108,6 +110,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         Cursor exCursor = dbmediator.fetchExerciseHistory();
         exerciseLogAdapter = new WorkoutDataAdapter(this, exCursor, WorkoutDataAdapter.Subject.EXERCISES);
+        exerciseTextView.setAdapter( new ExerciseEntrylistAdapter( this, dbmediator ));
         setsLogAdapter = null;
         //fill the text view now
         exercisesLv.setAdapter(exerciseLogAdapter);
@@ -131,8 +134,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
 
         initiateListUpdate( Subject.ALL, TriggerEvent.INIT );
-
-
     }
 
     @Override
