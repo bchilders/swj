@@ -16,6 +16,7 @@
     android:maxLength="20"
     android:maxLines="1"
     android:textSize="12sp"
+
     />
     
 <TextView
@@ -29,7 +30,7 @@
     android:paddingLeft="5dp"
     android:layout_marginTop="-8dp"
     android:layout_marginBottom="-5dp"
-    android:text="14"
+    android:text=""
     android:textSize="20sp" />
 
 <TextView

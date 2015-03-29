@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SWJournal</string>
+    <string name="action_settings">Настройки</string>
+    <!-- Strings for the buttons in main menu -->
+    <string name="main_menu_btn_start">Тренировка</string>
+    <string name="main_menu_btn_exercises">Упражнения</string>
+    <string name="main_menu_btn_presets">Пресеты</string>
+    <string name="main_menu_btn_body">Body tracking</string>
+    <string name="main_menu_btn_reports">Reports</string>
+    <string name="main_menu_btn_settings">Настройки</string>
+    <string name="main_menu_actionBar_text">SWJ: main</string>
+    <string name="workout_exercise_no_note_hint">Упражнение не выбрано</string>
+    <string name="workout_set_no_note_hint">Подход не выбран</string>
+    <string name="workout_exercise_newnote_hint">Тап для добавления заметки к упражнению</string>
+    <string name="workout_set_newnote_hint">Тап для добавления заметки к подходу</string>
+    <string name="workout_exercise_textview_hint">Добавить упр.</string>
+    <string name="workout_cancel_btn_hint">Отменить редактирование</string>
+    <string name="workout_add_btn_hint">Добавить в список</string>
+    <string name="workout_edit_reps_hint">Повт.</string>
+    <string name="workout_edit_weight_hint">Вес</string>
+    <string name="title_activity_swj_settings">Настройки</string>
+    <string name="delete">Удалить</string>
+    <string name="cancel">Отмена</string>
+    <string name="save">Сохранить</string>
+    <string name="delete_log_entries">Удалить лог</string>
+    <string name="note_mark">Метка заметки</string>
+    <string name="sets_chosen">Выбрано подходов: </string>
+    <string name="exercises_chosen">Выбрано упражнений: </string>
+    <string name="db_copied_to">База скопирована в </string>
+    <string name="db_copy_failed">Копирование не удалось</string>
+    <string name="delete_everything_related_to_ex">Удалить всё связанное с упражнением?</string>
+    <string name="empty_not_allowed">Пустые поля не разрешены</string>
+    <string name="journal">Журнал</string>
+    <string name="restore_backup">Восстановить резервную копию</string>
+    <string name="create_backup">Создать резервную копию</string>
+    <string name="contact_developer">Связаться с разработчиком</string>
+    <string name="delete_all">Удалить всё</string>
+    <string name="delete_all_details">Удалить все данные о тренировках при выходе с экрана</string>
+    <string name="data_management">Управление данными</string>
+    <string name="backup">Резервное копирование</string>
+    <string name="in_path">В /mnt/sdcard/swj.db</string>
+    <string name="from_path">Из /mnt/sdcard/swj.db</string>
+    <string name="for_reports">Для сообщений о ошибках и предложений</string>
+    <string name="send_message">Послать сообщение</string>
+    <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
+
+</resources>

@@ -17,7 +17,7 @@ public class DBClass  {
 	private int exercisesInDay = 0, exerciseDays = 0, setsInDay = 0, setDays = 0; // used for simulating date change situation\
 	public static final  String APP_NAME = "SWJournal";
 	
-	private static final String DB_NAME = "SWJournal";
+	public static final String DB_NAME = "SWJournal";
 	private static final int    DB_VERSION = 1;
 	public static final long MS_IN_A_DAY = 86400000;
 	

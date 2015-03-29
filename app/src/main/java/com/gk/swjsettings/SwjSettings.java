@@ -19,7 +19,7 @@ public class SwjSettings extends Activity {
     public void onDestroy() {
         super.onDestroy();
 
-        if ( DEBUG_FLAG ) Log.v(APP_NAME, "SwjSettingsFragment :: onDestroy(): erase switch state: " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_erase_all", false));
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "SwjSettings :: onDestroy(): erase switch state: " + PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_erase_all", false));
 
         if ( PreferenceManager.getDefaultSharedPreferences(this).getBoolean("pref_erase_all", false) ) {
             //delete databases
