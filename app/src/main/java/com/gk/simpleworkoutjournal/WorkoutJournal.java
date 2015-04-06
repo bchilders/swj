@@ -15,12 +15,10 @@ import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AutoCompleteTextView;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,11 +56,16 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     ImageButton switchBtn;
     boolean inContextMode;
 
+    boolean addSetIfSameDate;
+    String prevExLogId;
+
     WJContext exercisesContextualMode;
     WJContext setsContextualMode;
 
     boolean notesShowed = false;
     DBClass dbmediator;
+
+    WorkoutTimer workoutTimer;
 
     int initExPos;
     int initSetPos;
@@ -125,6 +128,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         setsLv.setMultiChoiceModeListener( setsContextualMode );
         inContextMode = false;
 
+        addSetIfSameDate = false;
+        prevExLogId = "";
+
         if ( savedInstanceState != null ) {
             initExPos= savedInstanceState.getInt("exPos");
             initSetPos = savedInstanceState.getInt("setPos");
@@ -134,6 +140,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
 
         initiateListUpdate( Subject.ALL, TriggerEvent.INIT );
+
     }
 
     @Override
@@ -141,6 +148,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutJournal :: onCreateOptionsMenu()");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.workout_options_menu, menu);
+
+        workoutTimer = new WorkoutTimer( (MenuItem)findViewById( R.id.action_timer) );
+        workoutTimer.enable();
+
+
         return true;
     }
 
@@ -163,6 +175,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
     @Override
     public void onDestroy() {
+        workoutTimer.stop();
 
         setsListDataLoader.reset();
         exListDataLoader.reset();
@@ -260,7 +273,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutJournal :: onAddButtonPressed(). Exercise in edit text: \"" + incomingName + "\" Amount of exercises before btn pressed: "+exerciseLogAdapter.getCount() );
 
             if (incomingName.length() == 0) {
-                Toast.makeText(this, R.string.empty_not_allowed, Toast.LENGTH_SHORT).show(); // TODO: make a string resources for this toast
+                Toast.makeText(this, R.string.empty_not_allowed, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -293,7 +306,22 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             String exerciseName = exerciseLogAdapter.getNameForCurrent();
             String exerciseLogId = exerciseLogAdapter.getIdForCurrent();
 
-            dbmediator.insertSet( exerciseName, exerciseLogId, repString, ( weiString == "," ) ? "0" : weiString);
+            if ( !prevExLogId.equals( exerciseLogId ) )
+            {
+                addSetIfSameDate = false;
+            }
+            prevExLogId = exerciseLogId;
+
+            weiString = ( weiString == "," ) ? "0" : weiString;
+            if ( DBClass.EX_IN_PAST == dbmediator.insertSet( exerciseName, exerciseLogId, repString, weiString, addSetIfSameDate) )
+            {
+                addSetIfSameDate = true;
+                Toast.makeText(this, R.string.press_again_to_confirm, Toast.LENGTH_SHORT).show();
+            }
+            else
+            {
+                addSetIfSameDate = false;
+            }
 
             //refresh cursor
             initiateListUpdate(Subject.SETS, TriggerEvent.ADD);
@@ -367,6 +395,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     exercisesLv.setSelection( exerciseLogAdapter.getIdxOfCurrent() );
 
                 }
+
+                workoutTimer.start();
 
                 break;
         }

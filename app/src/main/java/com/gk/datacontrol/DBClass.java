@@ -20,6 +20,7 @@ public class DBClass  {
 	public static final String DB_NAME = "SWJournal";
 	private static final int    DB_VERSION = 1;
 	public static final long MS_IN_A_DAY = 86400000;
+    public static final int EX_IN_PAST = -2;
 	
 	private static final String TABLE_EXERCISES = "exercises";
 	private static final String TABLE_SETS_LOG = "sets_log";
@@ -80,12 +81,30 @@ public class DBClass  {
 		realdb.execSQL("PRAGMA foreign_keys=ON;");
 	}
 
-	public String millisToDate( long milliTime ) {
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.US);
-        GregorianCalendar calendar = new GregorianCalendar(TimeZone.getTimeZone("US/Central"));
-        calendar.setTimeInMillis(milliTime);
+	public String millisToDate(long time) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
+        GregorianCalendar calendar = new GregorianCalendar(TimeZone.getDefault());
+
+
 		return sdf.format(calendar.getTime());
 	}
+
+    public long maximizeTimeOfDay( long millitime )
+    {
+        GregorianCalendar cal = new GregorianCalendar(TimeZone.getDefault());
+        cal.setTimeInMillis( millitime );
+        cal.set( cal.get( cal.YEAR ), cal.get( cal.MONTH ),cal.get( cal.DATE ), 23, 59  );
+        return cal.getTimeInMillis();
+    }
+
+    public boolean isSameDay(long tm1, long tm2) {
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: isSameDay time1: "+tm1+"time2: "+tm2);
+        String date1 = millisToDate(tm1).split(" ")[0];
+        String date2 = millisToDate(tm2).split(" ")[0];
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: isSameDay time1: "+date1+"time2: "+date2);
+        return false;
+        //return date1.equals( date2 );
+    }
 
    /*
    * Will delete all logs related to exercise and exercise itself
@@ -156,7 +175,21 @@ public class DBClass  {
 		return res;
 	}
 
-	public long insertSet( String exName, String exLogId, String reps, String weight) {
+    public long getTimeForEx( String exLogId ) {
+        Cursor entryCursor = realdb.rawQuery("SELECT "+KEY_TIME+" FROM "+ TABLE_EXERCISE_LOG +
+                " WHERE "+KEY_ID+" = \""+exLogId+"\"", null );
+
+        if ( entryCursor.getCount() != 1 ) {
+            Log.e(APP_NAME, "DBClass :: getTimeForEx unexpected query result." );
+            return -1;
+        } else {
+            entryCursor.moveToFirst();
+            return entryCursor.getLong( entryCursor.getColumnIndex( KEY_TIME ) );
+        }
+    }
+
+    // if dates for set and exercise not match - set will be inserted only if ignoreDateDiff is set. otherwise EX_IN_PAST is returned.
+	public long insertSet( String exName, String exLogId, String reps, String weight, boolean ignoreDateDiff ) {
 		long time = System.currentTimeMillis();
 
         if ( DEBUG_FLAG ) {
@@ -168,7 +201,18 @@ public class DBClass  {
             setsInDay++;
         }
 
-		return insertSet( exName, exLogId, null, reps, weight, time );
+        //if set time is NOW and ex time is not -> we add set for day in the past
+        long res;
+        if ( !isSameDay( getTimeForEx( exLogId ), time ) )
+        {
+            res = (ignoreDateDiff) ? insertSet(exName, exLogId, null, reps, weight,  maximizeTimeOfDay( getTimeForEx( exLogId ) ) ) : EX_IN_PAST;
+        }
+        else
+        {
+            res =  insertSet(exName, exLogId, null, reps, weight, time);
+        }
+
+        return res;
 	}
 
 	public long insertSet( String exName, String exLogId, String setNote, String reps, String weight, long time) {
@@ -195,7 +239,7 @@ public class DBClass  {
 		if (res == -1) {
 			Log.e(APP_NAME, "DBClass :: insertSet :: failed. (exName: "+exName+
                                                                 "exLogId: "+exLogId+
-																"; time: "+millisToDate(time)+
+																"; time: "+ millisToDate(time)+
 																"; reps: "+reps+
 																"; weight: "+weight+
 																")" );
@@ -277,7 +321,7 @@ public class DBClass  {
 	 }
 
 	 public boolean logExercise(String exercise, long time ) {
-		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: logExercise begin for \""+exercise+"\", time "+millisToDate( time ) );
+		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: logExercise begin for \""+exercise+"\", time "+ millisToDate(time) );
 
 		 //we use full timestamp
 		 values.put(KEY_EX_NAME, exercise);

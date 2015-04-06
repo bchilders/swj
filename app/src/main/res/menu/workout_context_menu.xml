@@ -3,13 +3,13 @@
    <item
        android:id="@+id/context_action_rename_edit_single"
        android:showAsAction="never"
-       android:title="Edit"
+       android:title="@string/edit"
        />
 
    <item
        android:id="@+id/context_action_delete_ex"
        android:showAsAction="never"
-       android:title="Delete exercise"
+       android:title="@string/delete_ex"
        />
     <!--
        <item

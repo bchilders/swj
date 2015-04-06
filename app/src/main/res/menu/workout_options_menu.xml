@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <item
+        android:id="@+id/action_timer"
+        android:showAsAction="always"
+        android:title="12:59"
+        />
+
 
     <item
         android:id="@+id/action_moreinfo_icon"
         android:icon="@drawable/ic_action_custom_circledlist"
         android:showAsAction="always"
-        android:title="Notes"
+        android:title="@string/notes"
         />
-    <!--
-       <item
-           android:id="@+id/action_jump_to_date"
-           android:showAsAction="never"
-           android:title="Jump to date"
-           />
 
-   -->
+
+
+
 
        <!-- Disabled while there are no use for this button -->
     <!--

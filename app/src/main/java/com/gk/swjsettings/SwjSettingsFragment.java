@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Parcelable;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -30,7 +31,7 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
     public boolean copyFile( String from, String to ) {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "SwjSettingsFragment :: copyFile" );
 
-        File source  = new File( from );
+        //File source  = new File( from );
         FileInputStream inp = null;
         FileOutputStream out = null;
         int len;
@@ -38,7 +39,7 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
 
         try
         {
-            inp = new FileInputStream( source );
+            inp = new FileInputStream( from );
             out = new FileOutputStream( to );
 
             while ((len = inp.read(buf)) > 0) {
@@ -66,7 +67,7 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
         return true;
     }
 
-    public boolean copyDB( boolean isRestore, String pathArg) {
+    public boolean copyDB( boolean isRestore, String pathArg ) {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "SwjSettingsFragment :: copyDB" );
         //find own DB
         String inAppDbDir = "/data/data/com.gk.simpleworkoutjournal/databases/";
@@ -85,7 +86,7 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
             return false;
         }
 
-        //validate passed path
+        pathArg += "/swj.db";
         File passedFile = new File( pathArg );
         if( passedFile.isDirectory() )
         {
@@ -153,16 +154,20 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
         }
         else if ( pref.getKey().equals("create_backup") )
         {
-            res = copyDB( false, "/mnt/sdcard/swj.db");
+            res = copyDB(false, Environment.getExternalStorageDirectory().getAbsolutePath() );
             if ( !res )
             {
-                Toast.makeText(getActivity(), "Error creating backup", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getText( R.string.backup_create_failed_toast ), Toast.LENGTH_SHORT).show();
             }
 
         }
         else if ( pref.getKey().equals("restore_backup") )
         {
-            res = copyDB( true, "/mnt/sdcard/swj.db");
+            res = copyDB( true, Environment.getExternalStorageDirectory().getAbsolutePath() );
+            if ( !res )
+            {
+                Toast.makeText(getActivity(), getResources().getText( R.string.backup_restore_failed_toast ), Toast.LENGTH_SHORT).show();
+            }
 
         }
 
@@ -170,7 +175,6 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
     }
 
     public void onCreate(Bundle savedInstanceState) {
-        if ( DEBUG_FLAG ) Log.v(APP_NAME, "SwjSettingsFragment :: onCreate" );
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.swjprefs);
 
@@ -178,6 +182,9 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
         Preference mailPref = findPreference("writemail");
         Preference createBackupPref = findPreference("create_backup");
         Preference restoreBackupPref = findPreference("restore_backup");
+
+        createBackupPref.setSummary( getString( R.string.in_path) + Environment.getExternalStorageDirectory().getAbsolutePath() );
+        restoreBackupPref.setSummary( getString( R.string.from_path ) + Environment.getExternalStorageDirectory().getAbsolutePath() );
 
         mailPref.setOnPreferenceClickListener( this );
         createBackupPref.setOnPreferenceClickListener( this );
