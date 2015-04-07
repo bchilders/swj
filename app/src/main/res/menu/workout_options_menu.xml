@@ -4,7 +4,6 @@
     <item
         android:id="@+id/action_timer"
         android:showAsAction="always"
-        android:title="12:59"
         />
 
     <item

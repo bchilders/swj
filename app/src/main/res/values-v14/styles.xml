@@ -6,6 +6,8 @@
         res/values-v11/styles.xml on API 14+ devices.
     -->
     <style name="AppBaseTheme" parent="android:Theme.Holo.Light">
+      <item name="android:actionMenuTextAppearance">@style/AppBaseTheme.MyActionBar.MyContextBarTitleText</item>
+      <item name="android:actionMenuTextColor">@android:color/white</item>
       <item name="android:actionBarStyle">@style/AppBaseTheme.MyActionBar</item>
       <item name="android:actionModeStyle">@style/AppBaseTheme.MyContextBar</item>
       <item name="android:actionModeBackground">@color/baseColor</item>

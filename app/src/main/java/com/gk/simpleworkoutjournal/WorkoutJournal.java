@@ -168,9 +168,13 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     notesLayout.setVisibility(View.VISIBLE);
                     notesShowed = true;
                 }
-            default:
-                return super.onOptionsItemSelected(item);
+                break;
+
+            case R.id.action_timer:
+                Log.v(APP_NAME,"REGISTERED PRESS");
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -328,6 +332,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         }
 
+        workoutTimer.start();
         //set note (possible only for exercise!)
     }
 
@@ -395,8 +400,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     exercisesLv.setSelection( exerciseLogAdapter.getIdxOfCurrent() );
 
                 }
-
-                workoutTimer.start();
 
                 break;
         }

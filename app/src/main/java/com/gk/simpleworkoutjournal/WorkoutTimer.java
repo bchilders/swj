@@ -22,11 +22,16 @@ public class WorkoutTimer {
     WorkoutTimer( Activity parentAct, MenuItem tv) {
         clockView = tv;
         parentActivity = parentAct;
+
+        if (enabled)
+        {
+            drawClock(0,0);
+        }
     }
 
     void drawClock(int minutes, int seconds) {
         Log.v(APP_NAME, "iteration " + minutes + ":" + seconds);
-        clockView.setTitle(minutes + ":" + seconds);
+        clockView.setTitle( String.format("%02d:%02d", minutes, seconds) );
     }
 
 
@@ -51,6 +56,7 @@ public class WorkoutTimer {
     void stop() {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutTimer :: stopping  timer");
         if ( clockThread != null ) clockThread.interrupt();
+        drawClock(0,0);
     }
 
     void reset() {
