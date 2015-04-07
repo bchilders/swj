@@ -149,7 +149,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.workout_options_menu, menu);
 
-        workoutTimer = new WorkoutTimer( (MenuItem)findViewById( R.id.action_timer) );
+        workoutTimer = new WorkoutTimer( this, menu.findItem( R.id.action_timer) );
         workoutTimer.enable();
 
 

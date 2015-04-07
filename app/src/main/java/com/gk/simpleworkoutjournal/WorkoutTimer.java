@@ -1,5 +1,6 @@
 package com.gk.simpleworkoutjournal;
 
+import android.app.Activity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -16,9 +17,11 @@ public class WorkoutTimer {
     Thread clockThread;
 
     MenuItem clockView;
+    Activity parentActivity;
 
-    WorkoutTimer( MenuItem tv) {
+    WorkoutTimer( Activity parentAct, MenuItem tv) {
         clockView = tv;
+        parentActivity = parentAct;
     }
 
     void drawClock(int minutes, int seconds) {
@@ -39,14 +42,15 @@ public class WorkoutTimer {
 
         if (enabled)
         {
-            clockThread = new Thread(new TimeRunner());
+            stop();
+            clockThread = new Thread(new TimeRunner( parentActivity ));
             clockThread.start();
         }
     }
 
     void stop() {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutTimer :: stopping  timer");
-         clockThread.interrupt();
+        if ( clockThread != null ) clockThread.interrupt();
     }
 
     void reset() {
@@ -57,7 +61,30 @@ public class WorkoutTimer {
 
     }
 
+
     class TimeRunner implements Runnable {
+
+
+        class uiTimerUpdater implements Runnable {
+            int m;
+            int s;
+
+            uiTimerUpdater( int m, int s) {
+                this.m = m;
+                this.s = s;
+            }
+
+            @Override
+            public void run() {
+                WorkoutTimer.this.drawClock(m, s);
+            }
+        }
+
+        Activity uiActivity;
+
+        TimeRunner( Activity parAct ) {
+            this.uiActivity = parAct;
+        }
 
         public void run() {
             if (DEBUG_FLAG) Log.v(APP_NAME, "WorkoutTimer :: starting timer");
@@ -78,12 +105,13 @@ public class WorkoutTimer {
                     secs = 0;
                 }
 
-                WorkoutTimer.this.drawClock(mins, secs);
+                uiActivity.runOnUiThread(new uiTimerUpdater( mins, secs));
 
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     if (DEBUG_FLAG) Log.v(APP_NAME, "WorkoutTimer :: timer interrupted");
+                    return;
                 }
             }
         }

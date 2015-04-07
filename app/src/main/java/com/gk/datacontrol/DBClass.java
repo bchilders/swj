@@ -102,8 +102,8 @@ public class DBClass  {
         String date1 = millisToDate(tm1).split(" ")[0];
         String date2 = millisToDate(tm2).split(" ")[0];
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: isSameDay time1: "+date1+"time2: "+date2);
-        return false;
-        //return date1.equals( date2 );
+
+        return date1.equals( date2 );
     }
 
    /*
