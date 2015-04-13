@@ -13,6 +13,7 @@
       <item name="android:actionModeBackground">@color/baseColor</item>
       <item name="android:actionModeCloseDrawable">@drawable/ic_custom_arrowback</item>
       <item name="android:actionOverflowButtonStyle">@style/AppBaseTheme.MyOverflowButton</item>
+      <item name="android:actionButtonStyle">@style/actionBarButton</item>
     </style>
 
     <style name="AppBaseTheme.MyOverflowButton">
@@ -48,6 +49,10 @@
 		<item name="android:textSize">24sp</item> 
 		<item name="android:textColor">@android:color/white</item> 
 		<item name="android:background">@drawable/button_mmenu</item>
+    </style>
+
+    <style name="actionBarButton">
+        <item name="android:background">@drawable/pressed_or_not</item>
     </style>
 
     <style name="WorkoutEditButtonStyle" parent="@android:style/Widget.Button.Small">

@@ -13,10 +13,6 @@
         android:title="@string/notes"
         />
 
-
-
-
-
        <!-- Disabled while there are no use for this button -->
     <!--
     <item

@@ -70,6 +70,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     int initExPos;
     int initSetPos;
 
+    boolean secondClick; //require to handle ex.add show on ex double tap
+
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -131,6 +133,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         addSetIfSameDate = false;
         prevExLogId = "";
 
+        secondClick = false;
+
         if ( savedInstanceState != null ) {
             initExPos= savedInstanceState.getInt("exPos");
             initSetPos = savedInstanceState.getInt("setPos");
@@ -171,7 +175,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 break;
 
             case R.id.action_timer:
-                Log.v(APP_NAME,"REGISTERED PRESS");
+                workoutTimer.nextStep();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -179,7 +183,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
     @Override
     public void onDestroy() {
-        workoutTimer.stop();
+        workoutTimer.stop( true );
 
         setsListDataLoader.reset();
         exListDataLoader.reset();
@@ -332,7 +336,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         }
 
-        workoutTimer.start();
         //set note (possible only for exercise!)
     }
 
@@ -353,6 +356,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 // obtain sets for this exercise
                 // fetch new sets only if exercise entry changed
+
+                int origExPosition = exerciseLogAdapter.getIdxOfCurrent();
+
                 if (exerciseLogAdapter.getIdxOfCurrent() == position) {
                     if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutJournal :: onItemClick :: same item clicked, nothing to do.");
                 } else {
@@ -371,7 +377,20 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     exerciseLogAdapter.notifyDataSetChanged();
                 }
 
-                showEditsForSubject( Subject.SETS );
+                //on double tap show ex.add field with tapped ex name. but only once
+                exerciseTextView.setText("");
+                if ( origExPosition == position && !secondClick )
+                {
+                    exerciseTextView.setText( exerciseLogAdapter.getNameForCurrent() );
+                    showEditsForSubject(Subject.EXERCISES);
+                    secondClick = true;
+                }
+                else
+                {
+                    secondClick = false;
+                    showEditsForSubject( Subject.SETS );
+                }
+
                 break;
             case R.id.set_entry_container:
                 currSubj = Subject.SETS;

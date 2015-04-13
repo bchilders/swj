@@ -83,10 +83,7 @@ public class DBClass  {
 
 	public String millisToDate(long time) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.getDefault());
-        GregorianCalendar calendar = new GregorianCalendar(TimeZone.getDefault());
-
-
-		return sdf.format(calendar.getTime());
+		return sdf.format(time);
 	}
 
     public long maximizeTimeOfDay( long millitime )

@@ -11,52 +11,54 @@ import android.widget.TextView;
 public class WorkoutTimer {
 
     public static final  String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = true;
+    private static boolean DEBUG_FLAG = false;
 
-    private static boolean enabled = false;
+    enum timerState  { DISABLED, STOPPED, TICKING, PAUSED };
     Thread clockThread;
 
     MenuItem clockView;
     Activity parentActivity;
 
+    private static timerState state;
+
     WorkoutTimer( Activity parentAct, MenuItem tv) {
+        state = timerState.STOPPED;
         clockView = tv;
         parentActivity = parentAct;
 
-        if (enabled)
+        if ( state != timerState.DISABLED )
         {
             drawClock(0,0);
         }
     }
 
     void drawClock(int minutes, int seconds) {
-        Log.v(APP_NAME, "iteration " + minutes + ":" + seconds);
         clockView.setTitle( String.format("%02d:%02d", minutes, seconds) );
     }
 
 
     public static void enable() {
-        enabled = true;
+        state = timerState.STOPPED;
     }
 
     public static void disable() {
-        enabled = false;
+        state = timerState.DISABLED;
     }
 
-    void start() {
+    void start( int min, int sec) {
 
-        if (enabled)
+        if ( state != timerState.DISABLED )
         {
-            stop();
-            clockThread = new Thread(new TimeRunner( parentActivity ));
+            stop( true );
+            clockThread = new Thread(new TimeRunner( parentActivity, min, sec ));
             clockThread.start();
         }
     }
 
-    void stop() {
+    void stop( boolean nullClock ) {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutTimer :: stopping  timer");
         if ( clockThread != null ) clockThread.interrupt();
-        drawClock(0,0);
+        if ( nullClock ) drawClock(0,0);
     }
 
     void reset() {
@@ -67,9 +69,31 @@ public class WorkoutTimer {
 
     }
 
+    void nextStep() {
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutTimer :: setting next timer step");
+
+        switch ( state ) {
+            case DISABLED:
+                break;
+
+            case PAUSED:
+            case STOPPED:
+                state = timerState.TICKING;
+                start( 0,0 );
+                break;
+
+            case TICKING:
+                state = timerState.PAUSED;
+                stop( false );
+                break;
+
+        }
+
+    }
+
 
     class TimeRunner implements Runnable {
-
+        int minutes, seconds;
 
         class uiTimerUpdater implements Runnable {
             int m;
@@ -88,36 +112,36 @@ public class WorkoutTimer {
 
         Activity uiActivity;
 
-        TimeRunner( Activity parAct ) {
+        TimeRunner( Activity parAct, int min, int sec ) {
             this.uiActivity = parAct;
+            this.minutes = min;
+            this.seconds = sec;
+
         }
 
         public void run() {
             if (DEBUG_FLAG) Log.v(APP_NAME, "WorkoutTimer :: starting timer");
 
-            int mins = 0;
-            int secs = 0;
-
             while (true) {
 
-                if (!enabled) {
+                if ( state == timerState.DISABLED ) {
                     break;
                 }
 
-                secs++;
-
-                if (secs == 60) {
-                    mins++;
-                    secs = 0;
-                }
-
-                uiActivity.runOnUiThread(new uiTimerUpdater( mins, secs));
+                uiActivity.runOnUiThread(new uiTimerUpdater( minutes, seconds));
 
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     if (DEBUG_FLAG) Log.v(APP_NAME, "WorkoutTimer :: timer interrupted");
                     return;
+                }
+
+                seconds++;
+
+                if (seconds == 60) {
+                    minutes++;
+                    seconds = 0;
                 }
             }
         }
