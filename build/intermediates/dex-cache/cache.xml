@@ -2,25 +2,39 @@
 <items version="2" >
 
     <item
-        jar="D:\android-all\AndroidstudioProjects\SimpleWorkoutJournal\app\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\libs\internal_impl-20.0.0.jar"
+        jar="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-base\6.5.87\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="e40b3078e3fbd353c9f44da8df25a8fc0078209d">
-        <dex dex="D:\android-all\AndroidstudioProjects\SimpleWorkoutJournal\app\build\intermediates\pre-dexed\debug\internal_impl-20.0.0-ef1a9c2830077f1171e6f3c36c52062ccb9c8e1e.jar" />
+        sha1="95482e7c792a7c0d5a9d5461e97726bd54fe9549">
+        <dex dex="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\pre-dexed\debug\classes-0187a1273def364d305273f304fc3051e0327a96.jar" />
     </item>
     <item
-        jar="D:\android-all\android-sdk\extras\android\m2repository\com\android\support\support-annotations\20.0.0\support-annotations-20.0.0.jar"
+        jar="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\exploded-aar\com.google.android.gms\play-services-ads\6.5.87\classes.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="9d9013e9ff35fc3756411e62873c363c70c638fa">
-        <dex dex="D:\android-all\AndroidstudioProjects\SimpleWorkoutJournal\app\build\intermediates\pre-dexed\debug\support-annotations-20.0.0-dd8410c092746b191a1e7d95f5b1a1bf69973f65.jar" />
+        sha1="41aa21f9c5d9ea9aab32c0b8e33d0c13364063a9">
+        <dex dex="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\pre-dexed\debug\classes-d5dfffc5a78ee7a6b1f7e85c26e3bf2fb847ddc8.jar" />
     </item>
     <item
-        jar="D:\android-all\AndroidstudioProjects\SimpleWorkoutJournal\app\build\intermediates\exploded-aar\com.android.support\support-v4\20.0.0\classes.jar"
+        jar="C:\Users\George\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.3\support-annotations-21.0.3.jar"
         jumboMode="false"
         revision="20.0.0"
-        sha1="8694693636ab36910c8100ce527c258ff3ebece0">
-        <dex dex="D:\android-all\AndroidstudioProjects\SimpleWorkoutJournal\app\build\intermediates\pre-dexed\debug\classes-9b65860923c9184bf68cea2ce7c0dda782a0f8fb.jar" />
+        sha1="4b74cefe1f0c1b819e7260c8627a14674e37fd35">
+        <dex dex="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.3-c11f502003dfb09a0a37f83eb25dfba75c758ed0.jar" />
+    </item>
+    <item
+        jar="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\libs\internal_impl-21.0.3.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="01ec05bfbafcc07646ba813000bf2ef11742dd03">
+        <dex dex="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.3-c82795cdc67b316ce30c4bba68ee4afb16fc9b3c.jar" />
+    </item>
+    <item
+        jar="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\classes.jar"
+        jumboMode="false"
+        revision="20.0.0"
+        sha1="2c91c949a45a21cdecf26e03951e46c7beec9ad8">
+        <dex dex="C:\Users\George\Documents\androidspace\SimpleWorkoutJournal\app\build\intermediates\pre-dexed\debug\classes-6ff7c4073e0bd19644db82530cfdbd61c6b830ea.jar" />
     </item>
 
 </items>
