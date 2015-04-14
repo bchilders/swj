@@ -19,12 +19,6 @@ public class ExerciseReportContainer extends Activity
 
         ActionBar actionBar = getActionBar();
 
-        // Screen handling while hiding ActionBar icon.
-        actionBar.setDisplayShowHomeEnabled(false);
-
-        // Screen handling while hiding Actionbar title.
-        actionBar.setDisplayShowTitleEnabled(false);
-
         // Creating ActionBar tabs.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
@@ -44,7 +38,7 @@ public class ExerciseReportContainer extends Activity
         };
 
         // Add 3 tabs, specifying the tab's text and TabListener
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             actionBar.addTab(
                     actionBar.newTab()
                             .setText("Tab " + (i + 1))
