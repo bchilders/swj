@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,11 +29,13 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	private Calendar formattedDate = Calendar.getInstance();
 	private int currentIndex = -1;
 	private String dateString;
+    private Cursor subjCursor;
 
 	public WorkoutDataAdapter(Context context, Cursor c, Subject subject) {
 		super(context, c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER );
         ctxCheckedItems = new HashSet<Integer>();
 		currSubj = subject;
+        subjCursor = c;
 
 	}
 	
@@ -173,7 +176,7 @@ public class WorkoutDataAdapter extends CursorAdapter {
 
     }
 
-    public HashSet<Integer> getIdsOfCtxChecked() { return ctxCheckedItems; }
+    public HashSet<Integer> getListIdsOfCtxChecked() { return ctxCheckedItems; }
 
     public int getcheckedAmount() {
         return ctxCheckedItems.size();
@@ -280,5 +283,22 @@ public class WorkoutDataAdapter extends CursorAdapter {
         if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent :: id of current : "+id+" subj : "+currSubj.toString());
 
         return id;
+    }
+
+    public HashSet< String > listIdsToExNames(HashSet<Integer> listIds) {
+        Log.v( APP_NAME, "WorkoutDataAdapter :: listIdsToExNames :: got listIds with size of "+listIds.size() );
+
+        HashSet< String > exNames = new HashSet< String >();
+        if (currSubj != Subject.EXERCISES)
+        {
+            return exNames;
+        }
+
+        for ( int id : listIds ) {
+            subjCursor.moveToPosition( id );
+            exNames.add( subjCursor.getString( subjCursor.getColumnIndex( DBClass.KEY_EX_NAME )  ) );
+        }
+
+        return exNames;
     }
 }

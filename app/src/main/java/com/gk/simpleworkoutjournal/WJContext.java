@@ -2,7 +2,9 @@ package com.gk.simpleworkoutjournal;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -86,12 +88,12 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
         }
 
         //get the only possible entry to work with
-        if ( currAdapter.getcheckedAmount() != 1 ) {
+        if ( currAdapter.getcheckedAmount() != 1 && menuItem.getItemId() != R.id.context_action_show_ex_report ) {
             Log.e(APP_NAME, "WJContext :: onActionItemClicked: one checked expected, other amount is actually checked: "+currAdapter.getcheckedAmount());
             return false;
         }
 
-        Integer sequenceNumber = (Integer)currAdapter.getIdsOfCtxChecked().toArray()[0];
+        Integer sequenceNumber = (Integer)currAdapter.getListIdsOfCtxChecked().toArray()[0];
         Cursor entry = (Cursor)currLv.getItemAtPosition( sequenceNumber );
 
         //launch appropriate action for this entry
@@ -148,6 +150,15 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
                 alert.show();
                 //rest of work will be done by alert handler
 
+
+                break;
+
+            case R.id.context_action_show_ex_report:
+
+                Bundle dataBundle = new Bundle();
+                HashSet<String> exsSet = activity.exerciseLogAdapter.listIdsToExNames(currAdapter.getListIdsOfCtxChecked());
+                dataBundle.putStringArray("exs", exsSet.toArray(new String[exsSet.size()]));
+                this.activity.startActivity(new Intent( this.activity, ExerciseReportContainer.class).putExtras(dataBundle));
 
                 break;
 
@@ -252,8 +263,10 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
 
             if ( this.contextSubj == WorkoutDataAdapter.Subject.EXERCISES ) {
                 actMode.getMenu().getItem(1).setVisible(true); // delete exercise btn
+                actMode.getMenu().getItem(2).setVisible(true); // show report btn
             } else {
                 actMode.getMenu().getItem( 1 ).setVisible( false );
+                actMode.getMenu().getItem( 2 ).setVisible( false );
             }
 
         } else {
@@ -270,7 +283,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
 
         if ( contextSubj  == WorkoutDataAdapter.Subject.EXERCISES ) {
 
-            HashSet<Integer> ids = activity.exerciseLogAdapter.getIdsOfCtxChecked();
+            HashSet<Integer> ids = activity.exerciseLogAdapter.getListIdsOfCtxChecked();
 
             int affectedSetEntries = 0;
             int affectedExEntries = 0;
@@ -298,7 +311,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
 
         } else if ( contextSubj  == WorkoutDataAdapter.Subject.SETS ) {
 
-            HashSet<Integer> setIds = activity.setsLogAdapter.getIdsOfCtxChecked();
+            HashSet<Integer> setIds = activity.setsLogAdapter.getListIdsOfCtxChecked();
 
             int affectedSetEntries = 0;
 
@@ -422,7 +435,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
 
     private void deleteSelectedExercise() {
 
-        Integer idOfChecked = (Integer)activity.exerciseLogAdapter.getIdsOfCtxChecked().toArray()[0];
+        Integer idOfChecked = (Integer)activity.exerciseLogAdapter.getListIdsOfCtxChecked().toArray()[0];
         int deletedExLogs = activity.dbmediator.deleteEx( (Cursor)activity.exercisesLv.getItemAtPosition( idOfChecked ) );
 
         if ( deletedExLogs != 0 ) {

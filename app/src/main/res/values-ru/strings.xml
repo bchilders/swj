@@ -50,6 +50,8 @@
     <string name="notes">Заметки</string>
     <string name="edit">Редактировать</string>
     <string name="delete_ex">Удалить упражнение</string>
+    <string name="show_ex_report">Отчет</string>
+    <string name="title_activity_exercise_report">Отчет</string>
     <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
 
 </resources>

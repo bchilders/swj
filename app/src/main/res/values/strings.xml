@@ -50,6 +50,9 @@
     <string name="notes">Notes</string>
     <string name="edit">Edit</string>
     <string name="delete_ex">Delete exercise</string>
+    <string name="show_ex_report">Report</string>
     <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
+    <string name="title_activity_exercise_report">Exercise report</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

@@ -2,6 +2,7 @@ package com.gk.datacontrol;
 
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -432,5 +433,4 @@ public class DBClass  {
 		  long now = System.currentTimeMillis();
 		  return now  - (now % MS_IN_A_DAY) ;
 	  }
-		    
 }
