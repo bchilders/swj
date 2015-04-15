@@ -37,13 +37,19 @@ public class ExerciseReportContainer extends Activity
             }
         };
 
-        // Add 3 tabs, specifying the tab's text and TabListener
-        for (int i = 0; i < 2; i++) {
-            actionBar.addTab(
+         actionBar.addTab(
                     actionBar.newTab()
-                            .setText("Tab " + (i + 1))
+                            .setText("Stats")
                             .setTabListener(tabListener));
-        }
+
+        actionBar.addTab(
+                actionBar.newTab()
+                        .setText("Graph")
+                        .setTabListener(tabListener));
+
+
+
+
 
     }
 }

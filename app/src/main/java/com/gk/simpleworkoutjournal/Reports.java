@@ -4,20 +4,24 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import com.gk.datacontrol.DBClass;
 
 /**
  * Created by gkurockins on 15/04/2015.
  */
-public class Reports extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class Reports extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
     private static final String APP_NAME = "SWJournal";
     private static boolean DEBUG_FLAG = true;
 
@@ -39,8 +43,21 @@ public class Reports extends Activity implements LoaderManager.LoaderCallbacks<C
 
         exList = (ListView) findViewById(R.id.exNamesReportList);
         exList.setAdapter(exNameAdapter);
+        exList.setOnItemClickListener(this);
 
         getLoaderManager().initLoader(0, null, this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "Reports::onItemClick");
+        String ex = ((TextView)view.findViewById(R.id.exNameToReport)).getText().toString();
+
+        Log.v(APP_NAME, "Reports::onItemClick: "+ex);
+
+        Intent reportForExIntent = new Intent( this, ExerciseReportContainer.class );
+        reportForExIntent.putExtra( "exName", ex);
+        startActivity( reportForExIntent );
     }
 
     @Override
