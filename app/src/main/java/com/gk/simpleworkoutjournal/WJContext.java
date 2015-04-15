@@ -254,10 +254,8 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
 
             if ( this.contextSubj == WorkoutDataAdapter.Subject.EXERCISES ) {
                 actMode.getMenu().getItem(1).setVisible(true); // delete exercise btn
-                actMode.getMenu().getItem(2).setVisible(true); // show report btn
             } else {
                 actMode.getMenu().getItem( 1 ).setVisible( false );
-                actMode.getMenu().getItem( 2 ).setVisible( false );
             }
 
         } else {
