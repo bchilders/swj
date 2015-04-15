@@ -8,7 +8,7 @@
     <string name="main_menu_btn_exercises">Упражнения</string>
     <string name="main_menu_btn_presets">Пресеты</string>
     <string name="main_menu_btn_body">Body tracking</string>
-    <string name="main_menu_btn_reports">Reports</string>
+    <string name="main_menu_btn_reports">Отчеты</string>
     <string name="main_menu_btn_settings">Настройки</string>
     <string name="main_menu_actionBar_text">SWJ: main</string>
     <string name="workout_exercise_no_note_hint">Упражнение не выбрано</string>
@@ -50,7 +50,6 @@
     <string name="notes">Заметки</string>
     <string name="edit">Редактировать</string>
     <string name="delete_ex">Удалить упражнение</string>
-    <string name="show_ex_report">Отчет</string>
     <string name="title_activity_exercise_report">Отчет</string>
     <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
 

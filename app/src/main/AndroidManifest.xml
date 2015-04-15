@@ -37,6 +37,10 @@
             android:label="@string/journal"
             android:windowSoftInputMode="stateHidden" />
         <activity
+            android:name=".Reports"
+            android:label="@string/main_menu_btn_reports" >
+        </activity>
+        <activity
             android:name=".NotesDialog"
             android:label="Edit note"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
@@ -44,10 +48,7 @@
             android:name="com.gk.swjsettings.SwjSettings"
             android:label="@string/title_activity_swj_settings" >
         </activity>
-        <activity
-            android:name="com.gk.swjsettings.SwjSettingsFragment"
-            android:label="@string/title_activity_swj_settings" >
-        </activity>
+
         <!-- Include the AdActivity configChanges and theme. -->
         <activity
             android:name="com.google.android.gms.ads.AdActivity"

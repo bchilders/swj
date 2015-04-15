@@ -88,7 +88,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
         }
 
         //get the only possible entry to work with
-        if ( currAdapter.getcheckedAmount() != 1 && menuItem.getItemId() != R.id.context_action_show_ex_report ) {
+        if ( currAdapter.getcheckedAmount() != 1 ) {
             Log.e(APP_NAME, "WJContext :: onActionItemClicked: one checked expected, other amount is actually checked: "+currAdapter.getcheckedAmount());
             return false;
         }
@@ -150,15 +150,6 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
                 alert.show();
                 //rest of work will be done by alert handler
 
-
-                break;
-
-            case R.id.context_action_show_ex_report:
-
-                Bundle dataBundle = new Bundle();
-                HashSet<String> exsSet = activity.exerciseLogAdapter.listIdsToExNames(currAdapter.getListIdsOfCtxChecked());
-                dataBundle.putStringArray("exs", exsSet.toArray(new String[exsSet.size()]));
-                this.activity.startActivity(new Intent( this.activity, ExerciseReportContainer.class).putExtras(dataBundle));
 
                 break;
 

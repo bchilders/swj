@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
+import com.gk.simpleworkoutjournal.Reports;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -19,8 +20,6 @@ import com.gk.swjsettings.SwjSettings;
 public class MainMenu extends Activity implements OnClickListener {
 	private static final String APP_NAME = "SWJournal";
     private static boolean DEBUG_FLAG = false;
-	Button startWorkoutBtn;
-    Button settingsBtn;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +27,10 @@ public class MainMenu extends Activity implements OnClickListener {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
-        startWorkoutBtn = (Button) findViewById(R.id.buttonMmStart);
-        startWorkoutBtn.setOnClickListener(this);
 
-        settingsBtn = (Button) findViewById(R.id.buttonMmSettings);
-        settingsBtn.setOnClickListener(this);
+        (findViewById(R.id.buttonMmStart   )).setOnClickListener(this);
+        (findViewById(R.id.buttonMmSettings)).setOnClickListener(this);
+        (findViewById(R.id.buttonMmReports )).setOnClickListener(this);
 
         AdView mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -48,6 +46,10 @@ public class MainMenu extends Activity implements OnClickListener {
 
             case R.id.buttonMmSettings:
                 startActivity(new Intent(this, SwjSettings.class) );
+                break;
+
+            case R.id.buttonMmReports:
+                startActivity(new Intent(this, Reports.class));
                 break;
     	}
     }
