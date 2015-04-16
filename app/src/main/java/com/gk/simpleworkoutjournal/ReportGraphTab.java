@@ -63,17 +63,20 @@ public class ReportGraphTab extends Fragment {
             weight = allsets.getInt( allsets.getColumnIndex( DBClass.KEY_WEIGHT ) );
             time = allsets.getLong( allsets.getColumnIndex( DBClass.KEY_TIME ) );
 
-            weightPoints[ pos ] = new DataPoint( time, reps);
-            repsPoints[ pos ] = new DataPoint( time, weight);
+            weightPoints[ pos ] = new DataPoint( time, weight);
+            //repsPoints[ pos ] = new DataPoint( time, reps);
         }
 
         GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
 
         LineGraphSeries<DataPoint> seriesW = new LineGraphSeries<DataPoint>(weightPoints);
-        LineGraphSeries<DataPoint> seriesR = new LineGraphSeries<DataPoint>(repsPoints);
+        seriesW.setDataPointsRadius( 4 );
+        seriesW.setDrawDataPoints( true );
+      //  LineGraphSeries<DataPoint> seriesR = new LineGraphSeries<DataPoint>(repsPoints);
+
 
         graph.addSeries(seriesW);
-        graph.addSeries(seriesR);
+      //  graph.addSeries(seriesR);
 
         return rootView;
     }
