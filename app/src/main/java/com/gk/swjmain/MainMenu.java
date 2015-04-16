@@ -7,9 +7,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 
-import com.gk.simpleworkoutjournal.Reports;
+import com.gk.simpleworkoutjournal.ListOfReports;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -49,7 +48,7 @@ public class MainMenu extends Activity implements OnClickListener {
                 break;
 
             case R.id.buttonMmReports:
-                startActivity(new Intent(this, Reports.class));
+                startActivity(new Intent(this, ListOfReports.class));
                 break;
     	}
     }

@@ -21,7 +21,7 @@ import com.gk.datacontrol.DBClass;
 /**
  * Created by gkurockins on 15/04/2015.
  */
-public class Reports extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
+public class ListOfReports extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
     private static final String APP_NAME = "SWJournal";
     private static boolean DEBUG_FLAG = true;
 

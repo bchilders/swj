@@ -37,7 +37,7 @@
             android:label="@string/journal"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".Reports"
+            android:name=".ListOfReports"
             android:label="@string/main_menu_btn_reports" >
         </activity>
         <activity
