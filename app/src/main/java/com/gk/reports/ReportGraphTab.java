@@ -1,18 +1,18 @@
-package com.gk.simpleworkoutjournal;
+package com.gk.reports;
 
-import android.app.ActionBar;
+
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.gk.datacontrol.DBClass;
+import com.gk.simpleworkoutjournal.R;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -21,6 +21,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 public class ReportGraphTab extends Fragment {
     private static final String APP_NAME = "SWJournal";
     private static boolean DEBUG_FLAG = true;
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -38,38 +39,41 @@ public class ReportGraphTab extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_ex_graph, container, false);
 
-        Bundle exBundle = getActivity().getIntent().getExtras();
+        //get passed data
+        Bundle exBundle = getArguments();
         String exName = exBundle.getString("exName");
-        Log.v(APP_NAME, "ReportGraphTab :: first ex : "+exName);
+        boolean isWeight = exBundle.getBoolean("isWeight");
+        int months = exBundle.getInt("month");
+
+        ((TextView)rootView.findViewById( R.id.exercise_name_in_report )).setText( exName );
+
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "ReportGraphTab :: first ex : "+exName);
 
         //draw graph
         DBClass swjDb = new DBClass( getActivity() );
 
         Cursor allsets = swjDb.fetchSetsForExercise(exName);
 
-        DataPoint[] weightPoints = new DataPoint[ allsets.getCount() ];
-        DataPoint[] repsPoints  = new DataPoint[ allsets.getCount() ];
+        DataPoint[] dataPoints = new DataPoint[ allsets.getCount() ];
 
-        int pos;
-        int reps;
-        int weight;
-        long time;
+        int pos, value;
+        long time ;
+
+        String dbKey = isWeight ? DBClass.KEY_WEIGHT : DBClass.KEY_REPS;
 
         for ( allsets.moveToFirst(); !allsets.isAfterLast() ; allsets.moveToNext()  ) {
 
             pos =  allsets.getPosition();
 
-            reps = allsets.getInt( allsets.getColumnIndex( DBClass.KEY_REPS ) );
-            weight = allsets.getInt( allsets.getColumnIndex( DBClass.KEY_WEIGHT ) );
+            value = allsets.getInt( allsets.getColumnIndex( dbKey ) );
             time = allsets.getLong( allsets.getColumnIndex( DBClass.KEY_TIME ) );
 
-            weightPoints[ pos ] = new DataPoint( time, weight);
-            //repsPoints[ pos ] = new DataPoint( time, reps);
+            dataPoints[ pos ] = new DataPoint( time, value);
         }
 
         GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
 
-        LineGraphSeries<DataPoint> seriesW = new LineGraphSeries<DataPoint>(weightPoints);
+        LineGraphSeries<DataPoint> seriesW = new LineGraphSeries<DataPoint>(dataPoints);
         seriesW.setDataPointsRadius( 4 );
         seriesW.setDrawDataPoints( true );
       //  LineGraphSeries<DataPoint> seriesR = new LineGraphSeries<DataPoint>(repsPoints);

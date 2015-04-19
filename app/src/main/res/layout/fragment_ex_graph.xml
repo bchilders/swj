@@ -5,9 +5,12 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/exercise_name_in_report"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="test report"/>
+        android:textSize="18sp"
+        android:paddingBottom="3dp"
+        android:paddingTop="3dp"/>
 
     <com.jjoe64.graphview.GraphView
         android:layout_width="match_parent"

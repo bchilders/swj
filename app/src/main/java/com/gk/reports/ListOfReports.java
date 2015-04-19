@@ -1,4 +1,4 @@
-package com.gk.simpleworkoutjournal;
+package com.gk.reports;
 
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -7,7 +7,6 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,13 +16,14 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.gk.datacontrol.DBClass;
+import com.gk.simpleworkoutjournal.R;
 
 /**
  * Created by gkurockins on 15/04/2015.
  */
 public class ListOfReports extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener {
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = true;
+    private static boolean DEBUG_FLAG = false;
 
     ListView exList;
     DBClass dbmediator;
@@ -55,9 +55,9 @@ public class ListOfReports extends Activity implements LoaderManager.LoaderCallb
 
         Log.v(APP_NAME, "Reports::onItemClick: "+ex);
 
-        Intent reportForExIntent = new Intent( this, ExerciseReportContainer.class );
-        reportForExIntent.putExtra( "exName", ex);
-        startActivity( reportForExIntent );
+        Intent periodChooserForExIntent = new Intent( this, ReportPeriodChooser.class );
+        periodChooserForExIntent.putExtra( "exName", ex);
+        startActivity( periodChooserForExIntent );
     }
 
     @Override

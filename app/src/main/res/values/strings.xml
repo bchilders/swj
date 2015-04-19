@@ -50,8 +50,19 @@
     <string name="notes">Notes</string>
     <string name="edit">Edit</string>
     <string name="delete_ex">Delete exercise</string>
+    <string name="choose_period">Choose period</string>
+    <string name="three_months">3 months</string>
+    <string name="six_months">6 months</string>
+    <string name="one_year">1 year</string>
+    <string name="three_months_period_report">3 months report</string>
+    <string name="six_months_period_report">6 months report</string>
+    <string name="one_year_period_report">1 year report</string>
+    <string name="stats_tab">Stats</string>
+    <string name="weights_tab">Weights</string>
+    <string name="reps_tab">Repeats</string>
     <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
     <string name="title_activity_exercise_report">Exercise report</string>
     <string name="hello_world">Hello world!</string>
+
 
 </resources>
