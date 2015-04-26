@@ -14,8 +14,13 @@ import android.widget.TextView;
 import com.gk.datacontrol.DBClass;
 import com.gk.simpleworkoutjournal.R;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 
 public class ReportGraphTab extends Fragment {
@@ -43,7 +48,10 @@ public class ReportGraphTab extends Fragment {
         Bundle exBundle = getArguments();
         String exName = exBundle.getString("exName");
         boolean isWeight = exBundle.getBoolean("isWeight");
-        int months = exBundle.getInt("month");
+        int months = exBundle.getInt("months");
+
+        long minMillis = new Date().getTime();
+        minMillis = minMillis - ( (DBClass.MS_IN_A_DAY * 30)* months);
 
         ((TextView)rootView.findViewById( R.id.exercise_name_in_report )).setText( exName );
 
@@ -54,33 +62,47 @@ public class ReportGraphTab extends Fragment {
 
         Cursor allsets = swjDb.fetchSetsForExercise(exName);
 
-        DataPoint[] dataPoints = new DataPoint[ allsets.getCount() ];
-
-        int pos, value;
-        long time ;
+        ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
 
         String dbKey = isWeight ? DBClass.KEY_WEIGHT : DBClass.KEY_REPS;
 
-        for ( allsets.moveToFirst(); !allsets.isAfterLast() ; allsets.moveToNext()  ) {
+        GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
 
-            pos =  allsets.getPosition();
+        int  value;
+        long time ;
+        int maxVal = 0;
+
+        for ( allsets.moveToFirst(); !allsets.isAfterLast() ; allsets.moveToNext()  ) {
 
             value = allsets.getInt( allsets.getColumnIndex( dbKey ) );
             time = allsets.getLong( allsets.getColumnIndex( DBClass.KEY_TIME ) );
 
-            dataPoints[ pos ] = new DataPoint( time, value);
+            if ( time > minMillis )
+            {
+                dataPoints.add( new DataPoint(new Date(time), value) );
+            }
+
+            if (value > maxVal)
+            {
+                maxVal = value;
+            }
         }
 
-        GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
+        graph.getViewport().setMinY( 0 );
+        graph.getViewport().setMaxY( maxVal );
+        graph.getViewport().setYAxisBoundsManual( true );
 
-        LineGraphSeries<DataPoint> seriesW = new LineGraphSeries<DataPoint>(dataPoints);
-        seriesW.setDataPointsRadius( 4 );
-        seriesW.setDrawDataPoints( true );
-      //  LineGraphSeries<DataPoint> seriesR = new LineGraphSeries<DataPoint>(repsPoints);
+        // set date label formatter
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity() ,  DateFormat.getDateInstance(DateFormat.SHORT) ));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+        graph.getGridLabelRenderer().setNumVerticalLabels(7);
 
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>( dataPoints.toArray( new DataPoint[ dataPoints.size() ] ));
+        series.setDataPointsRadius( 4 );
+        series.setDrawDataPoints( true );
 
-        graph.addSeries(seriesW);
-      //  graph.addSeries(seriesR);
+        series.setColor( getResources().getColor( R.color.baseColor ) );
+        graph.addSeries(series);
 
         return rootView;
     }

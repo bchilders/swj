@@ -51,9 +51,11 @@
     <string name="edit">Edit</string>
     <string name="delete_ex">Delete exercise</string>
     <string name="choose_period">Choose period</string>
+    <string name="one_month">1 month</string>
     <string name="three_months">3 months</string>
     <string name="six_months">6 months</string>
     <string name="one_year">1 year</string>
+    <string name="one_month_period_report">1 month report</string>
     <string name="three_months_period_report">3 months report</string>
     <string name="six_months_period_report">6 months report</string>
     <string name="one_year_period_report">1 year report</string>

@@ -16,6 +16,7 @@ public class ReportPeriodChooser extends Activity implements View.OnClickListene
     private static final String APP_NAME = "SWJournal";
     private static boolean DEBUG_FLAG = false;
 
+    Button one_M_btn;
     Button three_M_btn;
     Button six_M_btn;
     Button one_Y_btn;
@@ -27,10 +28,12 @@ public class ReportPeriodChooser extends Activity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView( R.layout.report_period_chooser );
 
+        one_M_btn = (Button)findViewById( R.id.one_month_btn );
         three_M_btn = (Button)findViewById( R.id.three_months_btn );
         six_M_btn = (Button)findViewById( R.id.six_months_btn );
         one_Y_btn = (Button)findViewById( R.id.one_year_btn );
 
+        one_M_btn.setOnClickListener( this );
         three_M_btn.setOnClickListener( this );
         six_M_btn.setOnClickListener( this );
         one_Y_btn.setOnClickListener( this );
@@ -43,6 +46,9 @@ public class ReportPeriodChooser extends Activity implements View.OnClickListene
 
         int months;
         switch ( v.getId() ) {
+            case R.id.one_month_btn:
+                months = 1;
+                break;
             case R.id.three_months_btn:
                 months = 3;
                 break;

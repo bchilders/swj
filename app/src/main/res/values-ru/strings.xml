@@ -52,9 +52,11 @@
     <string name="delete_ex">Удалить упражнение</string>
     <string name="title_activity_exercise_report">Отчет</string>
     <string name="choose_period">Выберите период</string>
+    <string name="one_month">1 месяц</string>
     <string name="three_months">3 месяца</string>
     <string name="six_months">6 месяцев</string>
     <string name="one_year">1 год</string>
+    <string name="one_month_period_report">Отчет за 1 иесяц</string>
     <string name="three_months_period_report">Отчет за 3 месяца</string>
     <string name="six_months_period_report">Отчет за 6 месяцев</string>
     <string name="one_year_period_report">Отчет за 1 год</string>
