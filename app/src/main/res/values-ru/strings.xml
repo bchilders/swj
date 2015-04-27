@@ -51,7 +51,7 @@
     <string name="edit">Редактировать</string>
     <string name="delete_ex">Удалить упражнение</string>
     <string name="title_activity_exercise_report">Отчет</string>
-    <string name="choose_period">Выберите период</string>
+    <string name="choose_period">Ограничьте период</string>
     <string name="one_month">1 месяц</string>
     <string name="three_months">3 месяца</string>
     <string name="six_months">6 месяцев</string>

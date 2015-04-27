@@ -39,6 +39,10 @@ public class ExerciseReportContainer extends Activity
 
         int titleId;
         switch ( months ) {
+            case 1:
+                titleId = R.string.one_month_period_report;
+                break;
+
             case 3:
                 titleId = R.string.three_months_period_report;
                 break;

@@ -50,7 +50,7 @@
     <string name="notes">Notes</string>
     <string name="edit">Edit</string>
     <string name="delete_ex">Delete exercise</string>
-    <string name="choose_period">Choose period</string>
+    <string name="choose_period">Limit period</string>
     <string name="one_month">1 month</string>
     <string name="three_months">3 months</string>
     <string name="six_months">6 months</string>
