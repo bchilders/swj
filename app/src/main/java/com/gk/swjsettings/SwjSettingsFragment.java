@@ -74,6 +74,7 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
         File[] files = new File( inAppDbDir ).listFiles();
         String inAppDbPath = "";
 
+
         for (File fl : files ) {
             if (fl.isFile() && fl.getName().equals( DBClass.DB_NAME ) ) {
                 inAppDbPath = inAppDbDir + DBClass.DB_NAME;

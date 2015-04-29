@@ -71,7 +71,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     int initSetPos;
 
     boolean secondExClick; //require to handle ex.add show on ex double tap
-    boolean secondSetClick;
+    int potentialNewSetPos;
 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -135,7 +135,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         prevExLogId = "";
 
         secondExClick = false;
-        secondSetClick = false;
+        potentialNewSetPos = -1;
 
         if ( savedInstanceState != null ) {
             initExPos= savedInstanceState.getInt("exPos");
@@ -397,23 +397,22 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             case R.id.set_entry_container:
                 currSubj = Subject.SETS;
                 exerciseTextView.setText("");
-                int origSetPosition = setsLogAdapter.getIdxOfCurrent();
+                int initialPos = setsLogAdapter.getIdxOfCurrent();
                 setsLogAdapter.setIdxOfCurrent(position);
 
-                //only get copy data on first click
-                if ( origSetPosition != position ) {
-                    weightEdit.setText(setsLogAdapter.getWeightForCurrent());
-                    repsEdit.setText(setsLogAdapter.getRepsForCurrent());
+                weightEdit.setText(setsLogAdapter.getWeightForCurrent());
+                repsEdit.setText(setsLogAdapter.getRepsForCurrent());
+
+                //only go further if double clicked
+                boolean newClickedAgain = potentialNewSetPos == position;
+                if ( !newClickedAgain ) {
+
+                    setsLogAdapter.setIdxOfCurrent(initialPos);
                     showEditsForSubject( Subject.SETS );
-
-                    setsLogAdapter.setIdxOfCurrent(origSetPosition);
-                    secondSetClick = true;
-
+                    potentialNewSetPos = position;
                     return;
-                } else {
-                    secondSetClick = false;
-
                 }
+
 
                 //same code for exs and sets. update note
                 String noteSet =  setsLogAdapter.getNoteForCurrent();
@@ -427,9 +426,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 // show required exercise for selected date
                 //PROBLEM possibly set if is not set at that moment
-
-
-
 
                 setsLogAdapter.notifyDataSetChanged();
 
