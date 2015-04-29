@@ -91,12 +91,12 @@ public class WorkoutDataAdapter extends CursorAdapter {
                     dateHeader.setBackgroundResource( R.drawable.date_header_bg );
                 }
 
-       			// we need to show date header if previous entry have different date
+       			// we need to show date header if previous entry has different date
     	        if ( showDate ) {
     	        	dateHeader.setVisibility(View.VISIBLE);
            		    dateString = formattedDate.get(Calendar.DAY_OF_MONTH)  +" "+
       		    			 monthNames[formattedDate.get(Calendar.MONTH)] +" "+
-      		    			 formattedDate.get(Calendar.YEAR)+"  ";
+      		    			 formattedDate.get(Calendar.YEAR)+"    "+formattedDate.get(Calendar.HOUR_OF_DAY)+":"+formattedDate.get(Calendar.MINUTE);
     	        } else { //TODO: date format
     	        	dateHeader.setVisibility(View.INVISIBLE);
     	        }

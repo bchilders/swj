@@ -70,7 +70,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     int initExPos;
     int initSetPos;
 
-    boolean secondClick; //require to handle ex.add show on ex double tap
+    boolean secondExClick; //require to handle ex.add show on ex double tap
+    boolean secondSetClick;
 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -133,7 +134,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         addSetIfSameDate = false;
         prevExLogId = "";
 
-        secondClick = false;
+        secondExClick = false;
+        secondSetClick = false;
 
         if ( savedInstanceState != null ) {
             initExPos= savedInstanceState.getInt("exPos");
@@ -379,15 +381,15 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                 //on double tap show ex.add field with tapped ex name. but only once
                 exerciseTextView.setText("");
-                if ( origExPosition == position && !secondClick )
+                if ( origExPosition == position && !secondExClick)
                 {
                     exerciseTextView.setText( exerciseLogAdapter.getNameForCurrent() );
                     showEditsForSubject(Subject.EXERCISES);
-                    secondClick = true;
+                    secondExClick = true;
                 }
                 else
                 {
-                    secondClick = false;
+                    secondExClick = false;
                     showEditsForSubject( Subject.SETS );
                 }
 
@@ -395,7 +397,23 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             case R.id.set_entry_container:
                 currSubj = Subject.SETS;
                 exerciseTextView.setText("");
+                int origSetPosition = setsLogAdapter.getIdxOfCurrent();
                 setsLogAdapter.setIdxOfCurrent(position);
+
+                //only get copy data on first click
+                if ( origSetPosition != position ) {
+                    weightEdit.setText(setsLogAdapter.getWeightForCurrent());
+                    repsEdit.setText(setsLogAdapter.getRepsForCurrent());
+                    showEditsForSubject( Subject.SETS );
+
+                    setsLogAdapter.setIdxOfCurrent(origSetPosition);
+                    secondSetClick = true;
+
+                    return;
+                } else {
+                    secondSetClick = false;
+
+                }
 
                 //same code for exs and sets. update note
                 String noteSet =  setsLogAdapter.getNoteForCurrent();
@@ -407,11 +425,12 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     setNoteTv.setText(noteSet);
                 }
 
-                weightEdit.setText( setsLogAdapter.getWeightForCurrent() );
-                repsEdit.setText( setsLogAdapter.getRepsForCurrent() );
-
                 // show required exercise for selected date
                 //PROBLEM possibly set if is not set at that moment
+
+
+
+
                 setsLogAdapter.notifyDataSetChanged();
 
                 if ( syncListPositions( Subject.SETS ) ) {
