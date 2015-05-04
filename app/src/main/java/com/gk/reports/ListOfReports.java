@@ -33,6 +33,7 @@ public class ListOfReports extends Activity implements LoaderManager.LoaderCallb
     protected void onCreate(Bundle savedInstanceState) {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "Reports::onCreate");
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_common_reports);
 
         String[] from = new String[] { DBClass.KEY_ID };
@@ -55,9 +56,9 @@ public class ListOfReports extends Activity implements LoaderManager.LoaderCallb
 
         Log.v(APP_NAME, "Reports::onItemClick: "+ex);
 
-        Intent periodChooserForExIntent = new Intent( this, ReportPeriodChooser.class );
-        periodChooserForExIntent.putExtra( "exName", ex);
-        startActivity( periodChooserForExIntent );
+        Intent reportConfigurator = new Intent( this, ReportConfigurator.class );
+        reportConfigurator.putExtra("exName", ex);
+        startActivityForResult(reportConfigurator, 0);
     }
 
     @Override

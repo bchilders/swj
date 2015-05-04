@@ -44,9 +44,9 @@
             android:name=".NotesDialog"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity
-            android:name="com.gk.reports.ReportPeriodChooser"
-            android:label="@string/choose_period"
-            android:theme="@android:style/Theme.Holo.Light.Dialog" />
+            android:name="com.gk.reports.ReportConfigurator"
+            android:label="@string/report_config"
+            />
         <activity
             android:name="com.gk.swjsettings.SwjSettings"
             android:label="@string/title_activity_swj_settings" >

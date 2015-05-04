@@ -70,7 +70,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     int initExPos;
     int initSetPos;
 
-    boolean secondExClick; //require to handle ex.add show on ex double tap
+    int potentialNewExPos; //require to handle ex.add show on ex double tap
     int potentialNewSetPos;
 
     protected void onSaveInstanceState(Bundle outState) {
@@ -134,7 +134,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         addSetIfSameDate = false;
         prevExLogId = "";
 
-        secondExClick = false;
+        potentialNewExPos = -1;
         potentialNewSetPos = -1;
 
         if ( savedInstanceState != null ) {
@@ -365,7 +365,22 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutJournal :: onItemClick :: same item clicked, nothing to do.");
                 } else {
 
+                    int initialPos = exerciseLogAdapter.getIdxOfCurrent();
                     exerciseLogAdapter.setIdxOfCurrent(position);
+
+                    //only go further if double clicked
+                    boolean newClickedAgain = potentialNewExPos == position;
+                    if ( !newClickedAgain ) {
+
+                        exerciseTextView.setText( exerciseLogAdapter.getNameForCurrent());
+
+                        exerciseLogAdapter.setIdxOfCurrent(initialPos);
+                        showEditsForSubject( Subject.EXERCISES );
+                        potentialNewExPos = position;
+                        return;
+                    }
+
+                    showEditsForSubject( Subject.SETS );
                     moveToSelected( Subject.EXERCISES, false );
 
                     //empty hint box for set since we have chosen other exercise
@@ -378,41 +393,27 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
                     exerciseLogAdapter.notifyDataSetChanged();
                 }
-
-                //on double tap show ex.add field with tapped ex name. but only once
-                exerciseTextView.setText("");
-                if ( origExPosition == position && !secondExClick)
-                {
-                    exerciseTextView.setText( exerciseLogAdapter.getNameForCurrent() );
-                    showEditsForSubject(Subject.EXERCISES);
-                    secondExClick = true;
-                }
-                else
-                {
-                    secondExClick = false;
-                    showEditsForSubject( Subject.SETS );
-                }
-
                 break;
+
             case R.id.set_entry_container:
                 currSubj = Subject.SETS;
                 exerciseTextView.setText("");
+                
                 int initialPos = setsLogAdapter.getIdxOfCurrent();
                 setsLogAdapter.setIdxOfCurrent(position);
-
-                weightEdit.setText(setsLogAdapter.getWeightForCurrent());
-                repsEdit.setText(setsLogAdapter.getRepsForCurrent());
 
                 //only go further if double clicked
                 boolean newClickedAgain = potentialNewSetPos == position;
                 if ( !newClickedAgain ) {
+
+                    weightEdit.setText(setsLogAdapter.getWeightForCurrent());
+                    repsEdit.setText(setsLogAdapter.getRepsForCurrent());
 
                     setsLogAdapter.setIdxOfCurrent(initialPos);
                     showEditsForSubject( Subject.SETS );
                     potentialNewSetPos = position;
                     return;
                 }
-
 
                 //same code for exs and sets. update note
                 String noteSet =  setsLogAdapter.getNoteForCurrent();

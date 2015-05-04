@@ -50,7 +50,7 @@
     <string name="notes">Notes</string>
     <string name="edit">Edit</string>
     <string name="delete_ex">Delete exercise</string>
-    <string name="choose_period">Limit period</string>
+    <string name="report_config">Report configuration</string>
     <string name="one_month">1 month</string>
     <string name="three_months">3 months</string>
     <string name="six_months">6 months</string>
@@ -65,6 +65,12 @@
     <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
     <string name="title_activity_exercise_report">Exercise report</string>
     <string name="hello_world">Hello world!</string>
+    <string name="period">Period</string>
+    <string name="show_weights">Show weights</string>
+    <string name="weight_per_date">Weight per date</string>
+    <string name="show_reps">Show reps</string>
+    <string name="reps_per_date">Reps per date</string>
+    <string name="exercise">Exercise</string>
 
 
 </resources>

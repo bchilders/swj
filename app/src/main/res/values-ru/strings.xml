@@ -50,8 +50,8 @@
     <string name="notes">Заметки</string>
     <string name="edit">Редактировать</string>
     <string name="delete_ex">Удалить упражнение</string>
+    <string name="report_config">Настройка отчета</string>
     <string name="title_activity_exercise_report">Отчет</string>
-    <string name="choose_period">Ограничьте период</string>
     <string name="one_month">1 месяц</string>
     <string name="three_months">3 месяца</string>
     <string name="six_months">6 месяцев</string>
@@ -64,5 +64,11 @@
     <string name="weights_tab">Веса</string>
     <string name="reps_tab">Повторы</string>
     <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
+    <string name="period">Период</string>
+    <string name="show_weights">Показать веса</string>
+    <string name="weight_per_date">Вес за дату</string>
+    <string name="show_reps">Показать повторения</string>
+    <string name="reps_per_date">Повторения за дату</string>
+    <string name="exercise">Упражнение</string>
 
 </resources>
