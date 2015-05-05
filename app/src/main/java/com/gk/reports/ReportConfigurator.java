@@ -12,9 +12,12 @@ import android.preference.DialogPreference;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.gk.datacontrol.DBClass;
 import com.gk.simpleworkoutjournal.R;
@@ -22,11 +25,14 @@ import com.gk.simpleworkoutjournal.R;
 /**
  * Created by George on 19.04.2015.
  */
-public class ReportConfigurator extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ReportConfigurator extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
     final String APP_NAME = "SWJournal";
     final boolean DEBUG_FLAG = true;
     DBClass dbmediator;
     SimpleCursorAdapter exChooserAdapter;
+
+    Spinner wPointChooser;
+    Spinner rPointChooser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,20 +40,30 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report_configurator);
 
+        CheckBox showWeightsCBox = (CheckBox) findViewById( R.id.show_weight_checkbox );
+        CheckBox showRepsCBox = (CheckBox) findViewById( R.id.show_rep_checkbox );
+
+        showWeightsCBox.setOnClickListener( this );
+        showRepsCBox.setOnClickListener( this );
+
         Spinner periodChooser = (Spinner) findViewById( R.id.periodChooser );
         ArrayAdapter<CharSequence> periodAdapter = ArrayAdapter.createFromResource( this, R.array.periods, R.layout.period_chooser_spinner );
         periodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         periodChooser.setAdapter(periodAdapter);
 
-        Spinner wPointChooser = (Spinner) findViewById( R.id.weightPointChooser );
+        wPointChooser = (Spinner) findViewById( R.id.weightPointChooser );
         ArrayAdapter<CharSequence> wPointAdapter= ArrayAdapter.createFromResource( this, R.array.points, R.layout.period_chooser_spinner );
         wPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         wPointChooser.setAdapter(wPointAdapter);
 
-        Spinner rPointChooser = (Spinner) findViewById( R.id.repsPointChooser );
+        wPointChooser.setEnabled(false);
+
+        rPointChooser = (Spinner) findViewById( R.id.repsPointChooser );
         ArrayAdapter<CharSequence> rPointAdapter= ArrayAdapter.createFromResource( this, R.array.points, R.layout.period_chooser_spinner );
         rPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         rPointChooser.setAdapter(rPointAdapter);
+
+        rPointChooser.setEnabled(false);
 
         Spinner exChooser = (Spinner) findViewById( R.id.exerciseChooser );
 
@@ -56,7 +72,7 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
 
         dbmediator  = new DBClass(this);
         exChooserAdapter = new SimpleCursorAdapter(this, R.layout.period_chooser_spinner, null, from, to, 0);
-        //exChooserAdapter.setDropDownViewResource(android.R.layout.two_line_list_item);
+        exChooserAdapter.setDropDownViewResource(R.layout.period_chooser_spinner);
         exChooser.setAdapter(exChooserAdapter);
 
         getLoaderManager().initLoader(0, null, this);
@@ -75,6 +91,34 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        Spinner targetSpinner;
+        TextView targetLabel;
+        boolean checked = ((CheckBox) v).isChecked();
+
+        switch ( v.getId() )
+        {
+            case R.id.show_weight_checkbox:
+                targetSpinner = wPointChooser;
+                targetLabel = (TextView) findViewById( R.id.weights_per_date_label);;
+                break;
+
+            case R.id.show_rep_checkbox:
+                targetSpinner = rPointChooser;
+                targetLabel = (TextView) findViewById( R.id.reps_per_date_label);
+                break;
+
+            default:
+                return;
+        }
+
+        targetSpinner.setEnabled( checked );
+        targetLabel.setEnabled( checked );
 
     }
 
