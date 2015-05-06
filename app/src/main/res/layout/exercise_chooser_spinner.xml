@@ -3,5 +3,8 @@
     android:id="@+id/periodChooserItem"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:textSize="20sp"
+    android:paddingTop="7dp"
+    android:textSize="16sp"
+    android:lines="2"
+    android:minLines="2"
     />

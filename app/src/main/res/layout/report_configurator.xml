@@ -2,10 +2,14 @@
 
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+<ScrollView
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/report_conf_parent">
+    android:layout_alignParentTop="true"
+    android:layout_above="@+id/report_cnfgrtr_buttons">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,6 +18,7 @@
         android:id="@+id/report_conf_two_panes">
 
         <LinearLayout
+
             android:id="@+id/report_conf_left_side"
             android:layout_width="0dp"
             android:layout_weight="1"
@@ -178,8 +183,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="10dp"
-                android:clickable="false"
-                android:focusable="false" />
+                />
 
             <View
                 android:layout_width="match_parent"
@@ -217,12 +221,15 @@
 
         </LinearLayout>
     </LinearLayout>
+</ScrollView>
 
     <LinearLayout
+        android:id="@+id/report_cnfgrtr_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         style="?android:attr/buttonBarStyle"
-        android:layout_alignParentBottom="true">
+        >
 
         <Button
             android:id="@+id/note_dialog_OK"
@@ -232,7 +239,8 @@
             android:layout_weight="1"
             android:onClick="noteButtonClick"
             android:textColor="@android:color/white"
-            android:text="@string/save" />
+            android:textSize="20sp"
+            android:text="@string/generate" />
 
         <Button
             style="@style/actionBarButton"
@@ -242,8 +250,11 @@
             android:layout_weight="1"
             android:onClick="noteButtonClick"
             android:textColor="@android:color/white"
+            android:textSize="20sp"
             android:text="@string/cancel" />
 
     </LinearLayout>
+
+
 
 </RelativeLayout>

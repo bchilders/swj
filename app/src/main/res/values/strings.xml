@@ -69,8 +69,9 @@
     <string name="show_weights">Show weights</string>
     <string name="weight_per_date">Weight per date</string>
     <string name="show_reps">Show reps</string>
-    <string name="reps_per_date">Reps per date</string>
+    <string name="reps_per_date">Rep per date</string>
     <string name="exercise">Exercise</string>
+    <string name="generate">Generate</string>
 
 
 </resources>

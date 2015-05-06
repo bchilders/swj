@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import com.gk.reports.ListOfReports;
+import com.gk.reports.ReportConfigurator;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -48,7 +49,7 @@ public class MainMenu extends Activity implements OnClickListener {
                 break;
 
             case R.id.buttonMmReports:
-                startActivity(new Intent(this, ListOfReports.class));
+                startActivity(new Intent(this, ReportConfigurator.class));
                 break;
     	}
     }

@@ -4,15 +4,11 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.preference.DialogPreference;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.SimpleCursorAdapter;
@@ -47,19 +43,19 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
         showRepsCBox.setOnClickListener( this );
 
         Spinner periodChooser = (Spinner) findViewById( R.id.periodChooser );
-        ArrayAdapter<CharSequence> periodAdapter = ArrayAdapter.createFromResource( this, R.array.periods, R.layout.period_chooser_spinner );
+        ArrayAdapter<CharSequence> periodAdapter = ArrayAdapter.createFromResource( this, R.array.periods, R.layout.period_chooser_spinner);
         periodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         periodChooser.setAdapter(periodAdapter);
 
         wPointChooser = (Spinner) findViewById( R.id.weightPointChooser );
-        ArrayAdapter<CharSequence> wPointAdapter= ArrayAdapter.createFromResource( this, R.array.points, R.layout.period_chooser_spinner );
+        ArrayAdapter<CharSequence> wPointAdapter= ArrayAdapter.createFromResource( this, R.array.points_w, R.layout.period_chooser_spinner);
         wPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         wPointChooser.setAdapter(wPointAdapter);
 
         wPointChooser.setEnabled(false);
 
         rPointChooser = (Spinner) findViewById( R.id.repsPointChooser );
-        ArrayAdapter<CharSequence> rPointAdapter= ArrayAdapter.createFromResource( this, R.array.points, R.layout.period_chooser_spinner );
+        ArrayAdapter<CharSequence> rPointAdapter= ArrayAdapter.createFromResource( this, R.array.points_r, R.layout.period_chooser_spinner);
         rPointAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         rPointChooser.setAdapter(rPointAdapter);
 
@@ -71,8 +67,8 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
         int[] to = new int[] { R.id.periodChooserItem };
 
         dbmediator  = new DBClass(this);
-        exChooserAdapter = new SimpleCursorAdapter(this, R.layout.period_chooser_spinner, null, from, to, 0);
-        exChooserAdapter.setDropDownViewResource(R.layout.period_chooser_spinner);
+        exChooserAdapter = new SimpleCursorAdapter(this, R.layout.exercise_chooser_spinner, null, from, to, 0);
+        exChooserAdapter.setDropDownViewResource( R.layout.exercise_chooser_spinner);
         exChooser.setAdapter(exChooserAdapter);
 
         getLoaderManager().initLoader(0, null, this);
