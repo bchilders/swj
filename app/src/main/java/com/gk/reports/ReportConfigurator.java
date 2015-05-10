@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.SimpleCursorAdapter;
@@ -21,7 +22,7 @@ import com.gk.simpleworkoutjournal.R;
 /**
  * Created by George on 19.04.2015.
  */
-public class ReportConfigurator extends Activity implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
+public class ReportConfigurator extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
     final String APP_NAME = "SWJournal";
     final boolean DEBUG_FLAG = true;
     DBClass dbmediator;
@@ -32,15 +33,9 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (DEBUG_FLAG) Log.v(APP_NAME, "NotesDialog :: creating NotesDialog");
+        if (DEBUG_FLAG) Log.v(APP_NAME, "onCreate :: creating ReportConfigurator");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.report_configurator);
-
-        CheckBox showWeightsCBox = (CheckBox) findViewById( R.id.show_weight_checkbox );
-        CheckBox showRepsCBox = (CheckBox) findViewById( R.id.show_rep_checkbox );
-
-        showWeightsCBox.setOnClickListener( this );
-        showRepsCBox.setOnClickListener( this );
 
         Spinner periodChooser = (Spinner) findViewById( R.id.periodChooser );
         ArrayAdapter<CharSequence> periodAdapter = ArrayAdapter.createFromResource( this, R.array.periods, R.layout.period_chooser_spinner);
@@ -90,8 +85,8 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
 
     }
 
-    @Override
-    public void onClick(View v) {
+    public void onChbClick(View v) {
+        if (DEBUG_FLAG) Log.v(APP_NAME, "onChbClick :: started");
 
         Spinner targetSpinner;
         TextView targetLabel;
@@ -110,12 +105,100 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
                 break;
 
             default:
+                Log.e(APP_NAME, "onChbClick :: unknown source ID");
                 return;
         }
 
         targetSpinner.setEnabled( checked );
         targetLabel.setEnabled( checked );
 
+    }
+
+    void createReport()
+    {
+        if (DEBUG_FLAG) Log.v(APP_NAME, "createReport :: started");
+        //ex name
+        //period months
+        //weights type
+        //reps type
+        //error if nothing choosen
+        Cursor selectedExCs  = (Cursor) ((Spinner) findViewById(R.id.exerciseChooser)).getSelectedItem();
+        String exName = selectedExCs.getString(selectedExCs.getColumnIndex(DBClass.KEY_ID));
+
+        int months;
+        switch ( ( (Spinner) findViewById(R.id.periodChooser)).getSelectedItemPosition() )
+        {
+            case 0:
+                months = 1;
+                break;
+
+            case 1:
+                months = 3;
+                break;
+
+            case 2:
+                months  = 6;
+                break;
+
+            case 3:
+                months = 12;
+                break;
+
+            case 4:
+                months = 24;
+                break;
+
+            default:
+                Log.e(APP_NAME, "createReport :: unknown period");
+                return;
+        }
+
+        int weightType;
+        if ( ((CheckBox) findViewById(R.id.show_weight_checkbox) ).isChecked() )
+        {
+            weightType = ((Spinner) findViewById(R.id.weightPointChooser)).getSelectedItemPosition();
+        }
+        else
+        {
+            weightType = -1;
+        }
+
+        int repsType;
+        if ( ((CheckBox) findViewById(R.id.show_rep_checkbox) ).isChecked() )
+        {
+            repsType = ((Spinner) findViewById(R.id.repsPointChooser)).getSelectedItemPosition();
+        }
+        else
+        {
+            repsType = -1;
+        }
+
+        if ( weightType < 0 && repsType < 0)
+        {
+            //error
+            Log.e(APP_NAME, "createReport :: no reps and weight selected. Must select at least one.");
+            return;
+        }
+
+        int lol = 2;
+    }
+
+    public void onBtnClick( View view) {
+        if (DEBUG_FLAG) Log.v(APP_NAME, "onBtnClick :: started");
+
+        switch ( view.getId() )
+        {
+            case R.id.gen_rep_btn:
+                createReport();
+                break;
+
+            case R.id.cancel_report:
+                break;
+
+            default:
+                Log.e(APP_NAME, "onBtnClick :: unknown source ID");
+                return;
+        }
     }
 
     static class MyCursorLoader extends CursorLoader {

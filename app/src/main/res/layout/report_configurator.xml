@@ -161,6 +161,7 @@
 
             <CheckBox
                 android:id="@+id/show_weight_checkbox"
+                android:onClick="onChbClick"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
@@ -194,6 +195,7 @@
 
             <CheckBox
                 android:id="@+id/show_rep_checkbox"
+                android:onClick="onChbClick"
                 android:layout_width="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
@@ -232,23 +234,23 @@
         >
 
         <Button
-            android:id="@+id/note_dialog_OK"
+            android:id="@+id/gen_rep_btn"
             style="@style/actionBarButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="noteButtonClick"
+            android:onClick="onBtnClick"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:text="@string/generate" />
 
         <Button
             style="@style/actionBarButton"
-            android:id="@+id/note_dialog_CANCEL"
+            android:id="@+id/cancel_report"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="noteButtonClick"
+            android:onClick="onBtnClick"
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:text="@string/cancel" />
