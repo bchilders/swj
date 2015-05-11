@@ -22,8 +22,7 @@ public class ExerciseReportContainer extends Activity
     private static boolean DEBUG_FLAG = false;
 
     private final int MISC_TAB = 0;
-    private final int WEIGHT_TAB = 1;
-    private final int REPS_TAB = 2;
+    private final int GRAPH_TAB = 1;
 
     List fragList = new ArrayList();
 
@@ -34,8 +33,10 @@ public class ExerciseReportContainer extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ex_report_container);
 
-        String exName = getIntent().getExtras().getString("exName");
-        int months = getIntent().getExtras().getInt("months");
+        final String exName  = getIntent().getExtras().getString("exName");
+        final int months     = getIntent().getExtras().getInt("months");
+        final int weightType = getIntent().getExtras().getInt("weightType");
+        final int repsType   = getIntent().getExtras().getInt("repsType");
 
         int titleId;
         switch ( months ) {
@@ -61,10 +62,8 @@ public class ExerciseReportContainer extends Activity
                 return;
         }
 
-
         ActionBar actionBar = getActionBar();
         actionBar.setTitle( titleId );
-
 
         // Creating ActionBar tabs.
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -79,25 +78,19 @@ public class ExerciseReportContainer extends Activity
                     fragList.get(tab.getPosition());
 
                 Bundle data = new Bundle();
-                data.putString("exName", getIntent().getStringExtra("exName"));
-                data.putInt("months", getIntent().getIntExtra("months", 0));
+
+                data.putString("exName", exName);
+                data.putInt("months", months);
+                data.putInt("weightType", weightType);
+                data.putInt("repsType", repsType);
 
                 if ( tab.getPosition() == MISC_TAB ) {
                     return;
                 }
-                else if ( tab.getPosition() == WEIGHT_TAB )
+                else if ( tab.getPosition() == GRAPH_TAB )
                 {
                     if (frag == null) {
                         frag = new ReportGraphTab();
-                        data.putBoolean("isWeight", true);
-                    }
-                }
-                else if ( tab.getPosition() == REPS_TAB )
-                {
-                    if (frag == null) {
-                        frag = new ReportGraphTab();
-                        data.putBoolean("isWeight", false);
-
                     }
                 }
 

@@ -71,5 +71,6 @@
     <string name="reps_per_date">Повторения за дату</string>
     <string name="exercise">Упражнение</string>
     <string name="generate">Генерировать</string>
+    <string name="need_include_reps_or_weights">Нужно включить в отчет повторения и/или веса</string>
 
 </resources>

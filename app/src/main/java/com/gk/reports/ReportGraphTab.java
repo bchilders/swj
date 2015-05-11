@@ -19,6 +19,8 @@ import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import junit.framework.Assert;
+
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,8 +50,9 @@ public class ReportGraphTab extends Fragment {
         //get passed data
         Bundle exBundle = getArguments();
         String exName = exBundle.getString("exName");
-        boolean isWeight = exBundle.getBoolean("isWeight");
         int months = exBundle.getInt("months");
+        int weightType = exBundle.getInt("weightType");
+        int repsType = exBundle.getInt("repsType");
 
         long minMillis = new Date().getTime();
         minMillis = minMillis - ( (DBClass.MS_IN_A_DAY * 30)* months);
@@ -65,7 +68,20 @@ public class ReportGraphTab extends Fragment {
 
         ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
 
-        String dbKey = isWeight ? DBClass.KEY_WEIGHT : DBClass.KEY_REPS;
+        String dbKey;
+        if ( weightType >= 0 )
+        {
+            dbKey = DBClass.KEY_WEIGHT;
+        }
+        else if ( repsType >= 0)
+        {
+            dbKey = DBClass.KEY_REPS;
+        }
+        else
+        {
+            Log.e(APP_NAME,"ReportGraphTab :: onCreateView : ");
+            throw new RuntimeException();
+        }
 
         GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
 

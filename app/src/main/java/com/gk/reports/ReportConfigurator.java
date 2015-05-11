@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.CheckBox;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gk.datacontrol.DBClass;
 import com.gk.simpleworkoutjournal.R;
@@ -114,17 +116,9 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
 
     }
 
-    void createReport()
+    int getPeriodInMonths()
     {
-        if (DEBUG_FLAG) Log.v(APP_NAME, "createReport :: started");
-        //ex name
-        //period months
-        //weights type
-        //reps type
-        //error if nothing choosen
-        Cursor selectedExCs  = (Cursor) ((Spinner) findViewById(R.id.exerciseChooser)).getSelectedItem();
-        String exName = selectedExCs.getString(selectedExCs.getColumnIndex(DBClass.KEY_ID));
-
+        if (DEBUG_FLAG) Log.v(APP_NAME, "getPeriodInMonths :: started");
         int months;
         switch ( ( (Spinner) findViewById(R.id.periodChooser)).getSelectedItemPosition() )
         {
@@ -150,37 +144,61 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
 
             default:
                 Log.e(APP_NAME, "createReport :: unknown period");
-                return;
+                return -1;
         }
+        return months;
+    }
 
-        int weightType;
+    int getWeightPointType()
+    {
+        if (DEBUG_FLAG) Log.v(APP_NAME, "getWeightPointType :: started");
         if ( ((CheckBox) findViewById(R.id.show_weight_checkbox) ).isChecked() )
         {
-            weightType = ((Spinner) findViewById(R.id.weightPointChooser)).getSelectedItemPosition();
+            return ((Spinner) findViewById(R.id.weightPointChooser)).getSelectedItemPosition();
         }
         else
         {
-            weightType = -1;
+            return -1;
         }
+    }
 
-        int repsType;
+    int getRepsPointType()
+    {
+        if (DEBUG_FLAG) Log.v(APP_NAME, "getRepsPointType :: started");
         if ( ((CheckBox) findViewById(R.id.show_rep_checkbox) ).isChecked() )
         {
-            repsType = ((Spinner) findViewById(R.id.repsPointChooser)).getSelectedItemPosition();
+            return ((Spinner) findViewById(R.id.repsPointChooser)).getSelectedItemPosition();
         }
         else
         {
-            repsType = -1;
+            return -1;
         }
+    }
+
+    void createReport()
+    {
+        if (DEBUG_FLAG) Log.v(APP_NAME, "createReport :: started");
+
+        Cursor selectedExCs  = (Cursor) ((Spinner) findViewById(R.id.exerciseChooser)).getSelectedItem();
+        String exName = selectedExCs.getString(selectedExCs.getColumnIndex(DBClass.KEY_ID));
+        int months = getPeriodInMonths();
+        int weightType = getWeightPointType();
+        int repsType = getRepsPointType();
 
         if ( weightType < 0 && repsType < 0)
         {
             //error
             Log.e(APP_NAME, "createReport :: no reps and weight selected. Must select at least one.");
+            Toast.makeText(this, R.string.need_include_reps_or_weights,Toast.LENGTH_SHORT).show();
             return;
         }
 
-        int lol = 2;
+        Intent reportConfigurator = new Intent( this, ExerciseReportContainer.class );
+        reportConfigurator.putExtra( "exName"    , exName     );
+        reportConfigurator.putExtra( "months"    , months     );
+        reportConfigurator.putExtra( "weightType", weightType );
+        reportConfigurator.putExtra( "repsType"  , repsType   );
+        startActivityForResult(reportConfigurator, 0);
     }
 
     public void onBtnClick( View view) {
