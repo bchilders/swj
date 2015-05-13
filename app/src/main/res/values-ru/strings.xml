@@ -60,8 +60,9 @@
     <string name="three_months_period_report">Отчет за 3 месяца</string>
     <string name="six_months_period_report">Отчет за 6 месяцев</string>
     <string name="one_year_period_report">Отчет за 1 год</string>
+    <string name="two_year_period_report">Отчет за 2 года</string>
     <string name="stats_tab">Разное</string>
-    <string name="weights_tab">Веса</string>
+    <string name="graph_tab">График</string>
     <string name="reps_tab">Повторы</string>
     <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
     <string name="period">Период</string>

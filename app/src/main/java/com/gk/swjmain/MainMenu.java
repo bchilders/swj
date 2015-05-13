@@ -8,7 +8,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.gk.reports.ListOfReports;
 import com.gk.reports.ReportConfigurator;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;

@@ -37,10 +37,6 @@
             android:label="@string/journal"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.gk.reports.ListOfReports"
-            android:label="@string/main_menu_btn_reports" >
-        </activity>
-        <activity
             android:name=".NotesDialog"
             android:theme="@android:style/Theme.Holo.Light.Dialog" />
         <activity

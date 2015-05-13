@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class ExerciseReportContainer extends Activity
 {
+
     private static final String APP_NAME = "SWJournal";
     private static boolean DEBUG_FLAG = false;
 
@@ -56,8 +57,12 @@ public class ExerciseReportContainer extends Activity
                 titleId = R.string.one_year_period_report;
                 break;
 
+            case 24:
+                titleId = R.string.two_year_period_report;
+                break;
+
             default:
-                Log.e( APP_NAME ,"unexpected months amount passed");
+                Log.e( APP_NAME ,"ExerciseReportContainer :: onCreate :: unexpected months amount passed");
                 assert false;
                 return;
         }
@@ -85,7 +90,9 @@ public class ExerciseReportContainer extends Activity
                 data.putInt("repsType", repsType);
 
                 if ( tab.getPosition() == MISC_TAB ) {
-                    return;
+                    if (frag == null) {
+                        frag = new ReportStatsTab();
+                    }
                 }
                 else if ( tab.getPosition() == GRAPH_TAB )
                 {
@@ -115,12 +122,7 @@ public class ExerciseReportContainer extends Activity
 
         actionBar.addTab(
                 actionBar.newTab()
-                        .setText( R.string.weights_tab )
-                        .setTabListener(tabListener));
-
-        actionBar.addTab(
-                actionBar.newTab()
-                        .setText( R.string.reps_tab )
+                        .setText( R.string.graph_tab )
                         .setTabListener(tabListener));
 
 
