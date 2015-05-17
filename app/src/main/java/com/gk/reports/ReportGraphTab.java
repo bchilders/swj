@@ -4,7 +4,6 @@ package com.gk.reports;
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,8 +17,6 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
-
-import junit.framework.Assert;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -104,48 +101,114 @@ public class ReportGraphTab extends Fragment {
         long minMillis = new Date().getTime();
         minMillis = minMillis - ( (DBClass.MS_IN_A_DAY * 30)* months);
 
+        double maxYW = 0;
+        double maxYR = 0;
         if ( weightType != PointType.NONE )
         {
             dbKey = DBClass.KEY_WEIGHT;
-            addLineToGraph(graph, dbKey, allsets, minMillis);
+            maxYW = addLineToGraph(graph, dbKey, allsets, minMillis, weightType, swjDb);
         }
 
         if ( repsType != PointType.NONE)
         {
             dbKey = DBClass.KEY_REPS;
-            addLineToGraph(graph, dbKey, allsets, minMillis);
+            maxYR = addLineToGraph(graph, dbKey, allsets, minMillis, repsType, swjDb);
         }
 
+        graph.getViewport().setMaxY( maxYW > maxYR ? maxYW : maxYR );
 
         return rootView;
     }
 
-    void addLineToGraph( GraphView graph, String dataKey, Cursor dataCursor, final long minMillis )
+    private double actualizeValue( double cur, double prev, double act, PointType pt)
     {
-        int  value;
-        long time ;
-        int maxVal = 0;
+        //   take min / take max / take sum (both for avg)
+        switch ( pt ) {
+            case MIN:
+                if ( cur < prev )
+                {
+                    act = cur;
+                }
+                break;
+
+            case MAX:
+                if ( cur > prev )
+                {
+                    act = cur;
+                }
+                break;
+
+            case AVG:
+            case SUM:
+                act += cur;
+                break;
+
+            case NONE:
+            default:
+                if ( DEBUG_FLAG ) Log.e(APP_NAME, "dwdw");
+                act = -1;
+                break;
+        }
+
+        return act;
+    }
+
+    double addLineToGraph( GraphView graph, String dataKey, Cursor dataCursor, final long minMillis, PointType pointType, DBClass db )
+    {
+        double prevValue = 0;
+        double curValue;
+        double perDateVal = -1;
+        double maxVal = 0;
+
+        int setsAmount = 0;
+        long curTime ;
+        long prevTime = -1;
 
         ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
 
         for ( dataCursor.moveToFirst(); !dataCursor.isAfterLast() ; dataCursor.moveToNext()  ) {
 
-            value = dataCursor.getInt( dataCursor.getColumnIndex( dataKey ) );
-            time = dataCursor.getLong( dataCursor.getColumnIndex( DBClass.KEY_TIME ) );
+            curTime = dataCursor.getLong( dataCursor.getColumnIndex( DBClass.KEY_TIME ) );
 
-            if ( time > minMillis )
+            if ( curTime > minMillis )
             {
-                dataPoints.add( new DataPoint(new Date(time), value) );
+
+                if ( prevTime == -1)  { prevTime  = curTime ; }
+
+                setsAmount++;
+                curValue = dataCursor.getInt(dataCursor.getColumnIndex(dataKey));
+
+                if (curValue > maxVal) { maxVal = curValue; }
+
+                perDateVal = actualizeValue( curValue, prevValue, perDateVal, pointType);
+
+                if ( perDateVal == -1 )
+                {
+                    Log.e(APP_NAME, "ss");
+                    return -1;
+                }
+
+                for ( int i = 0; i < 2; i++)
+                {
+                    if ( ( !db.isSameDay(prevTime, curTime) && i == 0) ||
+                         ( dataCursor.isLast()              && i == 1) )
+                    {
+                        if ( pointType == PointType.AVG ) { perDateVal /= setsAmount; }
+
+                        dataPoints.add( new DataPoint( i == 0 ? new Date( prevTime ) : new Date( curTime ), perDateVal) );
+
+                        perDateVal = 0;
+                        setsAmount = 0;
+                    }
+                }
+
+                prevTime = curTime;
+                prevValue = curValue;
             }
 
-            if (value > maxVal)
-            {
-                maxVal = value;
-            }
         }
 
         graph.getViewport().setMinY(0);
-        graph.getViewport().setMaxY(maxVal);
         graph.getViewport().setYAxisBoundsManual(true);
 
         // set date label formatter
@@ -164,6 +227,7 @@ public class ReportGraphTab extends Fragment {
         }
 
         graph.addSeries(series);
+        return maxVal;
     }
 
 
