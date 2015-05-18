@@ -125,6 +125,11 @@ public class ReportGraphTab extends Fragment {
         //   take min / take max / take sum (both for avg)
         switch ( pt ) {
             case MIN:
+                if ( prev == -1.0)
+                {
+                    prev = Double.MAX_VALUE;
+                }
+
                 if ( cur < prev )
                 {
                     act = cur;
@@ -132,6 +137,11 @@ public class ReportGraphTab extends Fragment {
                 break;
 
             case MAX:
+                if ( prev == -1.0)
+                {
+                    prev = Double.MIN_VALUE;
+                }
+
                 if ( cur > prev )
                 {
                     act = cur;
@@ -155,10 +165,11 @@ public class ReportGraphTab extends Fragment {
 
     double addLineToGraph( GraphView graph, String dataKey, Cursor dataCursor, final long minMillis, PointType pointType, DBClass db )
     {
-        double prevValue = 0;
+        double prevValue = -1.0;
         double curValue;
-        double perDateVal = -1;
-        double maxVal = 0;
+        double perDateVal = -1.0;
+        double oldPerDateVal = -1.0;
+        double maxVal = 0.0;
 
         int setsAmount = 0;
         long curTime ;
@@ -180,6 +191,7 @@ public class ReportGraphTab extends Fragment {
 
                 if (curValue > maxVal) { maxVal = curValue; }
 
+                oldPerDateVal = perDateVal;
                 perDateVal = actualizeValue( curValue, prevValue, perDateVal, pointType);
 
                 if ( perDateVal == -1 )
@@ -195,9 +207,9 @@ public class ReportGraphTab extends Fragment {
                     {
                         if ( pointType == PointType.AVG ) { perDateVal /= setsAmount; }
 
-                        dataPoints.add( new DataPoint( i == 0 ? new Date( prevTime ) : new Date( curTime ), perDateVal) );
+                        dataPoints.add( new DataPoint( i == 0 ? new Date( prevTime ) : new Date( curTime ), i == 0 ? oldPerDateVal : perDateVal) );
 
-                        perDateVal = 0;
+                        perDateVal = curValue;
                         setsAmount = 0;
                     }
                 }
