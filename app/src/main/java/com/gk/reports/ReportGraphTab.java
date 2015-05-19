@@ -168,12 +168,15 @@ public class ReportGraphTab extends Fragment {
         double prevValue = -1.0;
         double curValue;
         double perDateVal = -1.0;
-        double oldPerDateVal = -1.0;
+        double prevPerDateVal = -1.0;
         double maxVal = 0.0;
 
         int setsAmount = 0;
         long curTime ;
         long prevTime = -1;
+
+        Date actDate;
+        double actPerDate;
 
         ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
 
@@ -189,9 +192,8 @@ public class ReportGraphTab extends Fragment {
                 setsAmount++;
                 curValue = dataCursor.getInt(dataCursor.getColumnIndex(dataKey));
 
-                if (curValue > maxVal) { maxVal = curValue; }
+                if ( pointType != PointType.SUM && pointType != PointType.AVG && curValue > maxVal) { maxVal = curValue; } //TODO: max for min point type is otheR!
 
-                oldPerDateVal = perDateVal;
                 perDateVal = actualizeValue( curValue, prevValue, perDateVal, pointType);
 
                 if ( perDateVal == -1 )
@@ -205,15 +207,20 @@ public class ReportGraphTab extends Fragment {
                     if ( ( !db.isSameDay(prevTime, curTime) && i == 0) ||
                          ( dataCursor.isLast()              && i == 1) )
                     {
-                        if ( pointType == PointType.AVG ) { perDateVal /= setsAmount; }
+                        actDate =  i == 0 ? new Date( prevTime ) : new Date( curTime );
+                        actPerDate = i == 0 ? prevPerDateVal : perDateVal;
 
-                        dataPoints.add( new DataPoint( i == 0 ? new Date( prevTime ) : new Date( curTime ), i == 0 ? oldPerDateVal : perDateVal) );
+                        if ( pointType == PointType.AVG ) { actPerDate /= setsAmount; }
+                        if ( pointType == PointType.SUM || pointType == PointType.AVG ) { maxVal = (actPerDate > maxVal) ? actPerDate : maxVal; }
+
+                        dataPoints.add( new DataPoint( actDate, actPerDate) );
 
                         perDateVal = curValue;
                         setsAmount = 0;
                     }
                 }
 
+                prevPerDateVal = perDateVal;
                 prevTime = curTime;
                 prevValue = curValue;
             }
