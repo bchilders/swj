@@ -74,6 +74,8 @@
     <string name="exercise">Exercise</string>
     <string name="generate">Generate</string>
     <string name="need_include_reps_or_weights">Report should include reps or/and weights</string>
+    <string name="weights">Weights</string>
+    <string name="reps">Reps</string>
 
 
 </resources>

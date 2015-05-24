@@ -73,5 +73,7 @@
     <string name="exercise">Упражнение</string>
     <string name="generate">Генерировать</string>
     <string name="need_include_reps_or_weights">Нужно включить в отчет повторения и/или веса</string>
+    <string name="weights">Вес</string>
+    <string name="reps">Повторения</string>
 
 </resources>

@@ -4,6 +4,8 @@ package com.gk.reports;
 import android.app.Activity;
 import android.app.Fragment;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import com.gk.datacontrol.DBClass;
 import com.gk.simpleworkoutjournal.R;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
@@ -52,9 +55,6 @@ public class ReportGraphTab extends Fragment {
             return null;
         }
 
-        public int getValue() {
-            return value;
-        }
     }
 
     @Override
@@ -87,7 +87,6 @@ public class ReportGraphTab extends Fragment {
         //draw graph
         DBClass swjDb = new DBClass( getActivity() );
 
-
         String dbKey;
         GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
         Cursor allsets = swjDb.fetchSetsForExercise(exName);
@@ -115,7 +114,20 @@ public class ReportGraphTab extends Fragment {
             maxYR = addLineToGraph(graph, dbKey, allsets, minMillis, repsType, swjDb);
         }
 
-        graph.getViewport().setMaxY( maxYW > maxYR ? maxYW : maxYR );
+        graph.getViewport().setYAxisBoundsManual(true);
+        // set date label formatter
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(), DateFormat.getDateInstance(DateFormat.SHORT)));
+        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
+        graph.getGridLabelRenderer().setNumVerticalLabels(7);
+
+        graph.getViewport().setMaxY((maxYW > maxYR ? maxYW : maxYR) + 5);
+        graph.getViewport().setMinY(0);
+
+        // legend
+        graph.getLegendRenderer().setVisible(true);
+        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
+        graph.getLegendRenderer().setMargin( 10 );
+        graph.getLegendRenderer().setBackgroundColor( Color.argb( 150 , 187 , 231, 247 ) ); // base color - lightest
 
         return rootView;
     }
@@ -169,7 +181,7 @@ public class ReportGraphTab extends Fragment {
         double curValue;
         double perDateVal = -1.0;
         double prevPerDateVal = -1.0;
-        double maxVal = 0.0;
+        double extremum = 0.0;
 
         int setsAmount = 0;
         long curTime ;
@@ -192,8 +204,6 @@ public class ReportGraphTab extends Fragment {
                 setsAmount++;
                 curValue = dataCursor.getInt(dataCursor.getColumnIndex(dataKey));
 
-                if ( pointType != PointType.SUM && pointType != PointType.AVG && curValue > maxVal) { maxVal = curValue; } //TODO: max for min point type is otheR!
-
                 perDateVal = actualizeValue( curValue, prevValue, perDateVal, pointType);
 
                 if ( perDateVal == -1 )
@@ -211,8 +221,8 @@ public class ReportGraphTab extends Fragment {
                         actPerDate = i == 0 ? prevPerDateVal : perDateVal;
 
                         if ( pointType == PointType.AVG ) { actPerDate /= setsAmount; }
-                        if ( pointType == PointType.SUM || pointType == PointType.AVG ) { maxVal = (actPerDate > maxVal) ? actPerDate : maxVal; }
 
+                        extremum = ( actPerDate > extremum ) ? actPerDate : extremum;
                         dataPoints.add( new DataPoint( actDate, actPerDate) );
 
                         perDateVal = curValue;
@@ -227,14 +237,6 @@ public class ReportGraphTab extends Fragment {
 
         }
 
-        graph.getViewport().setMinY(0);
-        graph.getViewport().setYAxisBoundsManual(true);
-
-        // set date label formatter
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(getActivity(), DateFormat.getDateInstance(DateFormat.SHORT)));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
-        graph.getGridLabelRenderer().setNumVerticalLabels(7);
-
         LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>( dataPoints.toArray( new DataPoint[ dataPoints.size() ] ));
         series.setDataPointsRadius(4);
         series.setDrawDataPoints(true);
@@ -245,8 +247,12 @@ public class ReportGraphTab extends Fragment {
             series.setColor(getResources().getColor(R.color.baseColor));
         }
 
+        String legendTitle = ( dataKey == DBClass.KEY_WEIGHT) ? getString( R.string.weights ): getString( R.string.reps );
         graph.addSeries(series);
-        return maxVal;
+
+        series.setTitle( legendTitle);
+
+        return extremum;
     }
 
 

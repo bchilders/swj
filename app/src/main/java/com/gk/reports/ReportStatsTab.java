@@ -43,6 +43,13 @@ public class ReportStatsTab extends Fragment {
         }
 
         View rootView = inflater.inflate(R.layout.fragment_ex_stats, container, false);
+        TextView exNameTv = (TextView)rootView.findViewById( R.id.exercise_name_in_report);
+
+        Bundle exBundle = getArguments();
+        String exName = exBundle.getString("exName");
+
+        exNameTv.setText( exName );
+
         return rootView;
     }
 

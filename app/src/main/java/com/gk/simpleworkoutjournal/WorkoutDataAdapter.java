@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gk.datacontrol.DBClass;
+import com.google.android.gms.internal.co;
 
 public class WorkoutDataAdapter extends CursorAdapter {
 	private static final String APP_NAME = "SWJournal";
@@ -36,7 +38,6 @@ public class WorkoutDataAdapter extends CursorAdapter {
         ctxCheckedItems = new HashSet<Integer>();
 		currSubj = subject;
         subjCursor = c;
-
 	}
 	
 	public Subject getSubject()
