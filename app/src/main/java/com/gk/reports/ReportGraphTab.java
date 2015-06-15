@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gk.datacontrol.DBClass;
+import com.gk.datacontrol.DataPointParcel;
 import com.gk.simpleworkoutjournal.R;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.LegendRenderer;
@@ -76,43 +77,37 @@ public class ReportGraphTab extends Fragment {
         //get passed data
         Bundle exBundle = getArguments();
         String exName = exBundle.getString("exName");
-        int months = exBundle.getInt("months");
-        PointType weightType = PointType.fromInteger(exBundle.getInt("weightType"));
-        PointType repsType = PointType.fromInteger(exBundle.getInt("repsType"));
 
-        ((TextView)rootView.findViewById( R.id.exercise_name_in_report )).setText( exName );
+
+        ((TextView)rootView.findViewById( R.id.exercise_name_in_report )).setText(exName);
 
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "ReportGraphTab :: first ex : "+exName);
 
+        DataPointParcel dpPoints = exBundle.getParcelable( "wPoints");
+
+        ArrayList<DataPoint> wPoints = dpPoints.restoreData();
+       // ArrayList<DataPoint> wPoints = exBundle.getParcelable( "wPoints");
+        ArrayList<DataPoint> rPoints = exBundle.getParcelable("rPoints");
+
         //draw graph
-        DBClass swjDb = new DBClass( getActivity() );
-
-        String dbKey;
         GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
-        Cursor allsets = swjDb.fetchSetsForExercise(exName);
 
-        if ( weightType == PointType.NONE && repsType == PointType.NONE )
-        {
-            Log.e(APP_NAME,"ReportGraphTab :: onCreateView : ");
-            throw new RuntimeException();
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(wPoints.toArray(new DataPoint[wPoints.size()]));
+        series.setDataPointsRadius(4);
+        series.setDrawDataPoints(true);
+
+
+        String dataKey = DBClass.KEY_WEIGHT;
+        if (dataKey == DBClass.KEY_WEIGHT) {
+            series.setColor(getResources().getColor(R.color.baseColor_complementary));
+        } else {
+            series.setColor(getResources().getColor(R.color.baseColor));
         }
 
-        long minMillis = new Date().getTime();
-        minMillis = minMillis - ( (DBClass.MS_IN_A_DAY * 30)* months);
+        String legendTitle = (dataKey == DBClass.KEY_WEIGHT) ? getString(R.string.weights) : getString(R.string.reps);
+        graph.addSeries(series);
 
-        double maxYW = 0;
-        double maxYR = 0;
-        if ( weightType != PointType.NONE )
-        {
-            dbKey = DBClass.KEY_WEIGHT;
-            maxYW = addLineToGraph(graph, dbKey, allsets, minMillis, weightType, swjDb);
-        }
-
-        if ( repsType != PointType.NONE)
-        {
-            dbKey = DBClass.KEY_REPS;
-            maxYR = addLineToGraph(graph, dbKey, allsets, minMillis, repsType, swjDb);
-        }
+        series.setTitle(legendTitle);
 
         graph.getViewport().setYAxisBoundsManual(true);
         // set date label formatter
@@ -120,7 +115,7 @@ public class ReportGraphTab extends Fragment {
         graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
         graph.getGridLabelRenderer().setNumVerticalLabels(7);
 
-        graph.getViewport().setMaxY((maxYW > maxYR ? maxYW : maxYR) + 5);
+        graph.getViewport().setMaxY((88) + 5);
         graph.getViewport().setMinY(0);
 
         // legend
