@@ -157,11 +157,10 @@ public class ExerciseReportContainer extends Activity {
         Date actDate;
         double actPerDate;
 
-        ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
-
         PointType pType;
         String dataKey;
         DataPointParcel dpc = new DataPointParcel();
+        DataPointParcel dpc2 = new DataPointParcel();
 
         //iterate through reps and weight
         for (int j = 0; j < 2; j++) {
@@ -173,7 +172,6 @@ public class ExerciseReportContainer extends Activity {
             extremum = 0.0;
             prevTime = -1;
             setsAmount = 0;
-            dataPoints.clear();
 
             pType = (j == 0) ? wType : rType;
             dataKey = (j == 0) ? DBClass.KEY_WEIGHT : DBClass.KEY_REPS;
@@ -210,9 +208,12 @@ public class ExerciseReportContainer extends Activity {
                             }
 
                             extremum = (actPerDate > extremum) ? actPerDate : extremum;
-                            dataPoints.add(new DataPoint(actDate, actPerDate));
-                            dpc.addPoint(new DataPoint(actDate, actPerDate));
 
+                            if ( j == 0) {
+                                dpc.addPoint(new DataPoint(actDate, actPerDate));
+                            } else {
+                                dpc2.addPoint(new DataPoint(actDate, actPerDate));
+                            }
                             perDateVal = curValue;
                             setsAmount = 0;
                         }
@@ -225,7 +226,14 @@ public class ExerciseReportContainer extends Activity {
 
             }
            // getIntent().putExtra((j == 0) ? "wPoints" : "rPoints", dpc);
-            bdl.putParcelable((j == 0) ? "wPoints" : "rPoints", dpc);
+            //bdl.putParcelable((j == 0) ? "wPoints" : "rPoints", dpc);
+            if ( j == 0 )
+            {
+                bdl.putParcelable( "wPoints", dpc );
+            } else {
+                bdl.putParcelable( "rPoints", dpc2 );
+            }
+
         }
 
         return extremum;

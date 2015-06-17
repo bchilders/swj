@@ -78,36 +78,36 @@ public class ReportGraphTab extends Fragment {
         Bundle exBundle = getArguments();
         String exName = exBundle.getString("exName");
 
-
         ((TextView)rootView.findViewById( R.id.exercise_name_in_report )).setText(exName);
 
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "ReportGraphTab :: first ex : "+exName);
 
-        DataPointParcel dpPoints = exBundle.getParcelable( "wPoints");
-
-        ArrayList<DataPoint> wPoints = dpPoints.restoreData();
-       // ArrayList<DataPoint> wPoints = exBundle.getParcelable( "wPoints");
-        ArrayList<DataPoint> rPoints = exBundle.getParcelable("rPoints");
+        DataPointParcel parceledPoints;
+        ArrayList<DataPoint> points;
+        LineGraphSeries<DataPoint> series;
 
         //draw graph
         GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
 
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(wPoints.toArray(new DataPoint[wPoints.size()]));
-        series.setDataPointsRadius(4);
-        series.setDrawDataPoints(true);
+        String[] parPoints = {"wPoints","rPoints"};
+        for ( String parPoint : parPoints )
+        {
+            parceledPoints = exBundle.getParcelable( parPoint );
+            points = parceledPoints.restoreData();
+            series = new LineGraphSeries<DataPoint>( points.toArray( new DataPoint[ points.size() ] ) );
+            series.setDataPointsRadius(4);
+            series.setDrawDataPoints(true);
 
+            if ( parPoint == "wPoints" ) {
+                series.setColor(getResources().getColor(R.color.baseColor_complementary));
+            } else {
+                series.setColor(getResources().getColor(R.color.baseColor));
+            }
 
-        String dataKey = DBClass.KEY_WEIGHT;
-        if (dataKey == DBClass.KEY_WEIGHT) {
-            series.setColor(getResources().getColor(R.color.baseColor_complementary));
-        } else {
-            series.setColor(getResources().getColor(R.color.baseColor));
+            String legendTitle = (  parPoint == "wPoints" ) ? getString(R.string.weights) : getString(R.string.reps);
+            graph.addSeries( series );
+            series.setTitle( legendTitle );
         }
-
-        String legendTitle = (dataKey == DBClass.KEY_WEIGHT) ? getString(R.string.weights) : getString(R.string.reps);
-        graph.addSeries(series);
-
-        series.setTitle(legendTitle);
 
         graph.getViewport().setYAxisBoundsManual(true);
         // set date label formatter

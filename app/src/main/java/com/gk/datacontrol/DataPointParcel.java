@@ -15,7 +15,7 @@ import java.util.List;
 public class DataPointParcel  implements Parcelable {
     private static final String APP_NAME = "SWJournal";
     private static boolean DEBUG_FLAG = true;
-    static  private ArrayList<DataPoint> dataPoints;
+    private ArrayList<DataPoint> dataPoints;
 
     public DataPointParcel() {
         if ( DEBUG_FLAG ) Log.d( APP_NAME, "DataPointParcel :: DataPointParcel");
@@ -59,18 +59,5 @@ public class DataPointParcel  implements Parcelable {
 
     }
 
-    public static final Parcelable.Creator<  ArrayList<DataPoint> > CREATOR = new Parcelable.Creator<  ArrayList<DataPoint> >() {
-        @Override
-        public ArrayList<DataPoint> createFromParcel(Parcel in) {
-            if ( DEBUG_FLAG ) Log.d( APP_NAME, "createFromParcel");
-            return new ArrayList<DataPoint>();
-        }
 
-        @Override
-        public ArrayList<DataPoint>[] newArray(int size) {
-            return null;
-        }
-
-
-    };
 }
