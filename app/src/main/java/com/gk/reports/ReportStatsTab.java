@@ -43,12 +43,21 @@ public class ReportStatsTab extends Fragment {
         }
 
         View rootView = inflater.inflate(R.layout.fragment_ex_stats, container, false);
-        TextView exNameTv = (TextView)rootView.findViewById( R.id.exercise_name_in_report);
 
         Bundle exBundle = getArguments();
-        String exName = exBundle.getString("exName");
 
-        exNameTv.setText( exName );
+        ((TextView)rootView.findViewById( R.id.exercise_name_in_report)).setText( exBundle.getString("exName") );
+
+        ((TextView)rootView.findViewById( R.id.oneRepMaxWeightNum )).setText( String.valueOf(exBundle.getDouble("wOneRepMax")) );
+        ((TextView)rootView.findViewById( R.id.oneRepAvgWeightNum )).setText( String.valueOf( exBundle.getDouble("wOneRepAvg") ) );
+
+        ((TextView)rootView.findViewById( R.id.oneSetMaxWeightNum )).setText( String.valueOf( exBundle.getDouble("wOneSetMax") ) );
+        ((TextView)rootView.findViewById( R.id.oneSetAvgWeightNum )).setText( String.valueOf( exBundle.getDouble("wOneSetAvg") ) );
+
+        ((TextView)rootView.findViewById( R.id.oneDayMaxWeightNum )).setText( String.valueOf( exBundle.getDouble("wOneDayMax") ) );
+        ((TextView)rootView.findViewById( R.id.oneDayAvgWeightNum )).setText( String.valueOf(exBundle.getDouble("wOneDayAvg")) );
+
+        ((TextView)rootView.findViewById( R.id.allTimeMaxWeightNum )).setText( String.valueOf(exBundle.getDouble("wTotal")) );
 
         return rootView;
     }

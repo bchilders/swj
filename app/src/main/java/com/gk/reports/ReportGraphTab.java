@@ -90,8 +90,15 @@ public class ReportGraphTab extends Fragment {
         GraphView graph = (GraphView) rootView.findViewById(R.id.graph);
 
         String[] parPoints = {"wPoints","rPoints"};
+        String pointType;
         for ( String parPoint : parPoints )
         {
+            pointType = (parPoint == "wPoints") ? "weightType" : "repsType";
+            if ( PointType.fromInteger( exBundle.getInt( pointType  ) ) == PointType.NONE )
+            {
+                continue;
+            }
+
             parceledPoints = exBundle.getParcelable( parPoint );
             points = parceledPoints.restoreData();
             series = new LineGraphSeries<DataPoint>( points.toArray( new DataPoint[ points.size() ] ) );
@@ -115,7 +122,7 @@ public class ReportGraphTab extends Fragment {
         graph.getGridLabelRenderer().setNumHorizontalLabels(4); // only 4 because of the space
         graph.getGridLabelRenderer().setNumVerticalLabels(7);
 
-        graph.getViewport().setMaxY((88) + 5);
+        graph.getViewport().setMaxY( exBundle.getDouble("extremum") + 5);
         graph.getViewport().setMinY(0);
 
         // legend

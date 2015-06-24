@@ -96,31 +96,35 @@ public class ExerciseReportContainer extends Activity {
         actionBar.setTitle(titleId);
     }
 
-    private double actualizeValue(double cur, double prev, double act, PointType pt) {
+    private double actualizeValue(double cur, double act, PointType pt) {
         //   take min / take max / take sum (both for avg)
         switch (pt) {
             case MIN:
-                if (prev == -1.0) {
-                    prev = Double.MAX_VALUE;
+                if (act == -1.0) {
+                    act = Double.MAX_VALUE;
                 }
 
-                if (cur < prev) {
+                if (cur < act) {
                     act = cur;
                 }
                 break;
 
             case MAX:
-                if (prev == -1.0) {
-                    prev = Double.MIN_VALUE;
+                if (act == -1.0) {
+                    act = Double.MIN_VALUE;
                 }
 
-                if (cur > prev) {
+                if (cur > act) {
                     act = cur;
                 }
                 break;
 
             case AVG:
             case SUM:
+                if (act == -1.0) {
+                    act = 0;
+                }
+
                 act += cur;
                 break;
 
@@ -135,9 +139,6 @@ public class ExerciseReportContainer extends Activity {
     }
 
     double calculateStats(String exName, int months, PointType wType, PointType rType, Bundle bdl) {
-        //double addLineToGraph(GraphView graph, String dataKey,  final long minMillis, PointType pointType )
-        //{
-
         long minMillis = new Date().getTime();
         minMillis = minMillis - ((DBClass.MS_IN_A_DAY * 30) * months);
 
@@ -149,8 +150,14 @@ public class ExerciseReportContainer extends Activity {
         double perDateVal;
         double prevPerDateVal;
         double extremum = 0.0;
+        double setTotal = 0.0;
 
-        int setsAmount;
+        double oneRepMax = 0.0, oneRepAvg = 0.0, oneSetMax = 0.0, oneSetAvg = 0.0, oneDayMax = 0.0, oneDayAvg = 0.0, totalWeight = 0.0;
+
+        int repsInSet = 0;
+        int setsAmount = allsets.getCount();
+        int daysAmount = 0;
+        int totalReps = 0;
         long curTime;
         long prevTime;
 
@@ -164,12 +171,9 @@ public class ExerciseReportContainer extends Activity {
 
         //iterate through reps and weight
         for (int j = 0; j < 2; j++) {
-            //dpc.clear();
             prevValue = -1.0;
             perDateVal = -1.0;
             prevPerDateVal = -1.0;
-            actPerDate = -1.0;
-            extremum = 0.0;
             prevTime = -1;
             setsAmount = 0;
 
@@ -186,14 +190,27 @@ public class ExerciseReportContainer extends Activity {
                         prevTime = curTime;
                     }
 
-                    setsAmount++;
                     curValue = allsets.getInt(allsets.getColumnIndex(dataKey));
+                    setsAmount++;
 
-                    perDateVal = actualizeValue(curValue, prevValue, perDateVal, pType);
+                    if ( dataKey == DBClass.KEY_WEIGHT  )
+                    {
+                        repsInSet = allsets.getInt(allsets.getColumnIndex( DBClass.KEY_REPS));
+                        totalReps += repsInSet;
+
+                        oneRepMax = curValue > oneRepMax ? curValue : oneRepMax;
+
+                        setTotal = curValue * repsInSet;
+                        oneSetMax = setTotal > oneSetMax ? setTotal : oneSetMax;
+
+                        totalWeight += (curValue * repsInSet);
+                    }
+
+                    perDateVal = actualizeValue(curValue, perDateVal, pType);
 
                     if (perDateVal == -1) {
-                        Log.e(APP_NAME, "ss");
-                        return -1;
+                        Log.e(APP_NAME, "NONE value is required, exiting");
+                        break;
                     }
 
                     //second check for last entry case
@@ -209,13 +226,17 @@ public class ExerciseReportContainer extends Activity {
 
                             extremum = (actPerDate > extremum) ? actPerDate : extremum;
 
-                            if ( j == 0) {
+                            if ( dataKey == DBClass.KEY_WEIGHT)
+                            {
+                                daysAmount++;
+                                oneDayMax = curValue > oneDayMax ? curValue : oneDayMax;
+
                                 dpc.addPoint(new DataPoint(actDate, actPerDate));
                             } else {
                                 dpc2.addPoint(new DataPoint(actDate, actPerDate));
                             }
                             perDateVal = curValue;
-                            setsAmount = 0;
+
                         }
                     }
 
@@ -236,7 +257,24 @@ public class ExerciseReportContainer extends Activity {
 
         }
 
-        return extremum;
+        oneRepAvg = totalWeight / totalReps;
+        oneSetAvg = totalWeight / setsAmount;
+        oneDayAvg = totalWeight / daysAmount;
+
+        bdl.putDouble( "extremum"  , extremum    );
+
+        bdl.putDouble( "wOneRepMax", oneRepMax   );
+        bdl.putDouble( "wOneRepAvg", oneRepAvg   );
+
+        bdl.putDouble( "wOneSetMax", oneSetMax );
+        bdl.putDouble( "wOneSetAvg", oneSetAvg );
+
+        bdl.putDouble( "wOneDayMax", oneDayMax );
+        bdl.putDouble( "wOneDayAvg", oneDayAvg );
+
+        bdl.putDouble( "wTotal"    , totalWeight );
+
+        return 0;
     }
 
     @Override
@@ -257,13 +295,12 @@ public class ExerciseReportContainer extends Activity {
 
         final Bundle data = new Bundle();
 
-        double extremum = calculateStats(exName, months, PointType.fromInteger(weightType), PointType.fromInteger(repsType), data );
+        calculateStats(exName, months, PointType.fromInteger(weightType), PointType.fromInteger(repsType), data );
 
         data.putString("exName", exName);
         data.putInt("months", months);
         data.putInt("weightType", weightType);
         data.putInt("repsType", repsType);
-        data.putDouble("extremum", extremum);
 
         // Create a tab listener that is called when the user changes tabs.
         ActionBar.TabListener tabListener = new ActionBar.TabListener() {
