@@ -211,6 +211,7 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
                 break;
 
             case R.id.cancel_report:
+                finish();
                 break;
 
             default:

@@ -191,7 +191,6 @@ public class ExerciseReportContainer extends Activity {
                     }
 
                     curValue = allsets.getInt(allsets.getColumnIndex(dataKey));
-                    setsAmount++;
 
                     if ( dataKey == DBClass.KEY_WEIGHT  )
                     {
@@ -208,9 +207,16 @@ public class ExerciseReportContainer extends Activity {
 
                     perDateVal = actualizeValue(curValue, perDateVal, pType);
 
+
                     if (perDateVal == -1) {
                         Log.e(APP_NAME, "NONE value is required, exiting");
                         break;
+                    }
+
+                    setsAmount++;
+                    if ( allsets.isLast() && dataKey == DBClass.KEY_WEIGHT )
+                    {
+                        oneSetAvg = totalWeight / setsAmount;
                     }
 
                     //second check for last entry case
@@ -258,7 +264,6 @@ public class ExerciseReportContainer extends Activity {
         }
 
         oneRepAvg = totalWeight / totalReps;
-        oneSetAvg = totalWeight / setsAmount;
         oneDayAvg = totalWeight / daysAmount;
 
         bdl.putDouble( "extremum"  , extremum    );

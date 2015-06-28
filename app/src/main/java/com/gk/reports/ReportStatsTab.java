@@ -19,6 +19,8 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -46,18 +48,22 @@ public class ReportStatsTab extends Fragment {
 
         Bundle exBundle = getArguments();
 
-        ((TextView)rootView.findViewById( R.id.exercise_name_in_report)).setText( exBundle.getString("exName") );
+        DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
+        otherSymbols.setDecimalSeparator('.');
+        DecimalFormat df = new DecimalFormat("#.##", otherSymbols);
 
-        ((TextView)rootView.findViewById( R.id.oneRepMaxWeightNum )).setText( String.valueOf(exBundle.getDouble("wOneRepMax")) );
-        ((TextView)rootView.findViewById( R.id.oneRepAvgWeightNum )).setText( String.valueOf( exBundle.getDouble("wOneRepAvg") ) );
+        ((TextView) rootView.findViewById(R.id.exercise_name_in_report)).setText(exBundle.getString("exName"));
 
-        ((TextView)rootView.findViewById( R.id.oneSetMaxWeightNum )).setText( String.valueOf( exBundle.getDouble("wOneSetMax") ) );
-        ((TextView)rootView.findViewById( R.id.oneSetAvgWeightNum )).setText( String.valueOf( exBundle.getDouble("wOneSetAvg") ) );
+        ((TextView)rootView.findViewById( R.id.oneRepMaxWeightNum )).setText( String.valueOf( df.format( exBundle.getDouble("wOneRepMax")) ) );
+        ((TextView)rootView.findViewById( R.id.oneRepAvgWeightNum )).setText( String.valueOf( df.format(exBundle.getDouble("wOneRepAvg")) ) );
 
-        ((TextView)rootView.findViewById( R.id.oneDayMaxWeightNum )).setText( String.valueOf( exBundle.getDouble("wOneDayMax") ) );
-        ((TextView)rootView.findViewById( R.id.oneDayAvgWeightNum )).setText( String.valueOf(exBundle.getDouble("wOneDayAvg")) );
+        ((TextView)rootView.findViewById( R.id.oneSetMaxWeightNum )).setText( String.valueOf( df.format(exBundle.getDouble("wOneSetMax")) ) );
+        ((TextView)rootView.findViewById( R.id.oneSetAvgWeightNum )).setText( String.valueOf( df.format(exBundle.getDouble("wOneSetAvg")) ) );
 
-        ((TextView)rootView.findViewById( R.id.allTimeMaxWeightNum )).setText( String.valueOf(exBundle.getDouble("wTotal")) );
+        ((TextView)rootView.findViewById( R.id.oneDayMaxWeightNum )).setText( String.valueOf( df.format(exBundle.getDouble("wOneDayMax")) ) );
+        ((TextView)rootView.findViewById( R.id.oneDayAvgWeightNum )).setText( String.valueOf( df.format(exBundle.getDouble("wOneDayAvg")) ) );
+
+        ((TextView)rootView.findViewById( R.id.allTimeMaxWeightNum )).setText( String.valueOf( df.format(exBundle.getDouble("wTotal")) ) );
 
         return rootView;
     }
