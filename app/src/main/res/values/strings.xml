@@ -26,8 +26,8 @@
     <string name="save">Save</string>
     <string name="delete_log_entries">Delete log entries</string>
     <string name="note_mark">note mark</string>
-    <string name="sets_chosen">Sets chosen: </string>
-    <string name="exercises_chosen">Exercises chosen: </string>
+    <string name="sets_chosen">Sets chosen:\u0020</string>
+    <string name="exercises_chosen">Ex. chosen:\u0020</string>
     <string name="db_copied_to">DB copied to </string>
     <string name="db_copy_failed">DB copy failed</string>
     <string name="delete_everything_related_to_ex">Delete everything related to this exercise?</string>

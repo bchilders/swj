@@ -26,8 +26,8 @@
     <string name="save">Сохранить</string>
     <string name="delete_log_entries">Удалить лог</string>
     <string name="note_mark">Метка заметки</string>
-    <string name="sets_chosen">Выбрано подходов: </string>
-    <string name="exercises_chosen">Выбрано упражнений: </string>
+    <string name="sets_chosen">Выбрано подх.:\u0020</string>
+    <string name="exercises_chosen">Выбрано упр.:\u0020</string>
     <string name="db_copied_to">База скопирована в </string>
     <string name="db_copy_failed">Копирование не удалось</string>
     <string name="delete_everything_related_to_ex">Удалить всё связанное с упражнением?</string>

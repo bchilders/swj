@@ -70,9 +70,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     int initExPos;
     int initSetPos;
 
-    int potentialNewExPos; //require to handle ex.add show on ex double tap
-    int potentialNewSetPos;
-
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
@@ -133,9 +130,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
         addSetIfSameDate = false;
         prevExLogId = "";
-
-        potentialNewExPos = -1;
-        potentialNewSetPos = -1;
 
         if ( savedInstanceState != null ) {
             initExPos= savedInstanceState.getInt("exPos");
@@ -368,18 +362,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                     int initialPos = exerciseLogAdapter.getIdxOfCurrent();
                     exerciseLogAdapter.setIdxOfCurrent(position);
 
-                    //only go further if double clicked
-                    boolean newClickedAgain = potentialNewExPos == position;
-                    if ( !newClickedAgain ) {
-
-                        exerciseTextView.setText( exerciseLogAdapter.getNameForCurrent());
-
-                        exerciseLogAdapter.setIdxOfCurrent(initialPos);
-                        showEditsForSubject( Subject.EXERCISES );
-                        potentialNewExPos = position;
-                        return;
-                    }
-
                     showEditsForSubject( Subject.SETS );
                     moveToSelected( Subject.EXERCISES, false );
 
@@ -401,19 +383,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 
                 int initialPos = setsLogAdapter.getIdxOfCurrent();
                 setsLogAdapter.setIdxOfCurrent(position);
-
-                //only go further if double clicked
-                boolean newClickedAgain = potentialNewSetPos == position;
-                if ( !newClickedAgain ) {
-
-                    weightEdit.setText(setsLogAdapter.getWeightForCurrent());
-                    repsEdit.setText(setsLogAdapter.getRepsForCurrent());
-
-                    setsLogAdapter.setIdxOfCurrent(initialPos);
-                    showEditsForSubject( Subject.SETS );
-                    potentialNewSetPos = position;
-                    return;
-                }
 
                 //same code for exs and sets. update note
                 String noteSet =  setsLogAdapter.getNoteForCurrent();
