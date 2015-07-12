@@ -618,6 +618,10 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         }
 
         switch (contextualActionButton.getId()) {
+            case R.id.ctx_copySelectedBtn:
+                cmcb.copyButtonPressed();
+                break;
+
             case R.id.ctx_deleteLogEntriesBtn:
                 cmcb.onDeleteLogEntriesPressed();
                 break;

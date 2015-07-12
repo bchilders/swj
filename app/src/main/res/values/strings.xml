@@ -76,6 +76,5 @@
     <string name="need_include_reps_or_weights">Report should include reps or/and weights</string>
     <string name="weights">Weights</string>
     <string name="reps">Reps</string>
-
-
+    <string name="copy">Copy</string>
 </resources>

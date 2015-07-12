@@ -108,6 +108,20 @@
             >
 
             <Button
+                android:id="@+id/ctx_copySelectedBtn"
+                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:layout_height="fill_parent"
+                style="@style/WorkoutEditButtonStyle_complementary"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:text="@string/copy"
+                android:paddingLeft="15sp"
+                android:drawableLeft="@drawable/ic_custom_circledcopy"
+                android:onClick="onContextButtonPressed"
+                />
+
+            <Button
                 android:id="@+id/ctx_deleteLogEntriesBtn"
                 android:layout_width="fill_parent"
                 android:layout_weight="1"
@@ -120,7 +134,6 @@
                 android:drawableLeft="@drawable/ic_custom_circledtrashbin"
                 android:onClick="onContextButtonPressed"
                 />
-
             <ImageButton
                 android:id="@+id/ctx_cancelBtn"
                 style="@style/WorkoutEditButtonStyle_complementary"

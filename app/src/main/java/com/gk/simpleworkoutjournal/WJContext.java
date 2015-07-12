@@ -31,7 +31,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
     WorkoutDataAdapter.Subject contextSubj;
 
     LinearLayout actionModeZone;
-    Button ctxDeleteLogBtn;
+    Button ctxDeleteLogBtn, ctxCopyBtn;
 
     ImageButton ctxCancelBtn;
     ImageButton ctxAddBtn;
@@ -52,6 +52,8 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
         this.contextSubj = subj;
 
         actionModeZone = (LinearLayout) activity.findViewById( R.id.actionModeZone);
+
+        ctxCopyBtn = (Button)activity.findViewById(R.id.ctx_copySelectedBtn);
         ctxDeleteLogBtn = (Button)activity.findViewById(R.id.ctx_deleteLogEntriesBtn);
 
         ctxCancelBtn = (ImageButton)activity.findViewById(R.id.ctx_cancelBtn);
@@ -102,6 +104,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
             case R.id.context_action_rename_edit_single:
                if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: onActionItemClicked case: edit/rename");
 
+                ctxCopyBtn.setVisibility(View.GONE);
                 ctxDeleteLogBtn.setVisibility(View.GONE);
                 ctxCancelBtn.setVisibility(View.VISIBLE);
                 ctxAddBtn.setVisibility(View.VISIBLE);
@@ -130,6 +133,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
 
             case R.id.context_action_delete_ex:
 
+                ctxCopyBtn.setVisibility(View.VISIBLE);
                 ctxDeleteLogBtn.setVisibility(View.VISIBLE);
                 ctxCancelBtn.setVisibility(View.GONE);
                 ctxAddBtn.setVisibility(View.GONE);
@@ -251,6 +255,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
         } else if ( checkedAmount == 1 ) {
 
             actMode.getMenu().getItem( 0 ).setVisible( true ); //edit btn
+            ctxCopyBtn.setVisibility( View.VISIBLE );
 
             if ( this.contextSubj == WorkoutDataAdapter.Subject.EXERCISES ) {
                 actMode.getMenu().getItem(1).setVisible(true); // delete exercise btn
@@ -259,12 +264,49 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
             }
 
         } else {
+            ctxCopyBtn.setVisibility( View.GONE );
             actMode.getMenu().getItem( 0 ).setVisible( false );
             actMode.getMenu().getItem( 1 ).setVisible( false );
         }
 
         actionBarText += currAdapter.getcheckedAmount();
         actMode.setTitle( actionBarText );
+    }
+
+    public void copyButtonPressed(){
+        if ( DEBUG_FLAG ) Log.v(APP_NAME, "WJContext :: copyButtonPressed : active context subject: "+contextSubj.toString() );
+
+        if ( contextSubj  == WorkoutDataAdapter.Subject.EXERCISES ) {
+            HashSet<Integer> ids = activity.exerciseLogAdapter.getListIdsOfCtxChecked();
+            if ( ids.size() != 1 )
+            {
+                Log.e(APP_NAME, "WJContext :: copyButtonPressed : one selected expected for subject: "+contextSubj.toString() );
+                return;
+            }
+            Cursor entry = (Cursor) activity.exercisesLv.getItemAtPosition( (Integer)ids.toArray()[0] );
+            String ex = entry.getString(entry.getColumnIndex(DBClass.KEY_EX_NAME) );
+
+            activity.exerciseTextView.setText( ex );
+            activity.showEditsForSubject(WorkoutDataAdapter.Subject.EXERCISES);
+
+        } else if ( contextSubj  == WorkoutDataAdapter.Subject.SETS ) {
+            HashSet<Integer> ids = activity.setsLogAdapter.getListIdsOfCtxChecked();
+            if ( ids.size() != 1 )
+            {
+                Log.e(APP_NAME, "WJContext :: copyButtonPressed : one selected expected for subject: "+contextSubj.toString() );
+                return;
+            }
+            Cursor entry = (Cursor) activity.setsLv.getItemAtPosition( (Integer)ids.toArray()[0] );
+
+            String w = entry.getString(entry.getColumnIndex(DBClass.KEY_WEIGHT));
+            String r = entry.getString(entry.getColumnIndex(DBClass.KEY_REPS));
+
+            activity.weightEdit.setText( w );
+            activity.repsEdit.setText(r);
+
+        }
+
+        thisActionMode.finish();
     }
 
     public void onDeleteLogEntriesPressed() {
@@ -359,6 +401,7 @@ public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInt
         ctxEditExField.setVisibility(View.GONE);
 
         ctxDeleteLogBtn.setVisibility(View.VISIBLE);
+        ctxCopyBtn.setVisibility(View.VISIBLE);
 
         ctxEditWeightField.setText("");
         ctxEditRepsField.setText("");
