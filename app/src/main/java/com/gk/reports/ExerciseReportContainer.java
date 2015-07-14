@@ -152,7 +152,7 @@ public class ExerciseReportContainer extends Activity {
         double extremum = 0.0;
         double setTotal = 0.0;
 
-        double oneRepMax = 0.0, oneRepAvg = 0.0, oneSetMax = 0.0, oneSetAvg = 0.0, oneDayMax = 0.0, oneDayAvg = 0.0, totalWeight = 0.0;
+        double oneRepMax = 0.0, oneRepAvg = 0.0, oneSetMax = 0.0, oneSetAvg = 0.0, oneDayMax = 0.0, oneDayAvg = 0.0, totalWeight = 0.0, perDayTotalWeight = 0.0;
 
         int repsInSet = 0;
         int setsAmount = allsets.getCount();
@@ -203,10 +203,10 @@ public class ExerciseReportContainer extends Activity {
                         oneSetMax = setTotal > oneSetMax ? setTotal : oneSetMax;
 
                         totalWeight += (curValue * repsInSet);
+                        perDayTotalWeight += (curValue * repsInSet);
                     }
 
                     perDateVal = actualizeValue(curValue, perDateVal, pType);
-
 
                     if (perDateVal == -1) {
                         Log.e(APP_NAME, "NONE value is required, exiting");
@@ -235,7 +235,9 @@ public class ExerciseReportContainer extends Activity {
                             if ( dataKey == DBClass.KEY_WEIGHT)
                             {
                                 daysAmount++;
-                                oneDayMax = curValue > oneDayMax ? curValue : oneDayMax;
+
+                                oneDayMax = perDayTotalWeight > oneDayMax ? perDayTotalWeight : oneDayMax;
+                                perDayTotalWeight = 0;
 
                                 dpc.addPoint(new DataPoint(actDate, actPerDate));
                             } else {

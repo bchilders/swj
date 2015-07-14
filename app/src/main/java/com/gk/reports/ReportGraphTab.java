@@ -101,6 +101,17 @@ public class ReportGraphTab extends Fragment {
 
             parceledPoints = exBundle.getParcelable( parPoint );
             points = parceledPoints.restoreData();
+            if ( points.size() <= 1 )
+            {
+                if ( DEBUG_FLAG ) Log.d( APP_NAME, "ReportGraphTab :: not enough data points to draw.");
+                (rootView.findViewById( R.id.noDataView )).setVisibility( View.VISIBLE );
+                return rootView;
+            }
+            else
+            {
+                (rootView.findViewById( R.id.noDataView )).setVisibility( View.GONE );
+            }
+
             series = new LineGraphSeries<DataPoint>( points.toArray( new DataPoint[ points.size() ] ) );
             series.setDataPointsRadius(4);
             series.setDrawDataPoints(true);
@@ -133,129 +144,5 @@ public class ReportGraphTab extends Fragment {
 
         return rootView;
     }
-
-    private double actualizeValue( double cur, double prev, double act, PointType pt)
-    {
-        //   take min / take max / take sum (both for avg)
-        switch ( pt ) {
-            case MIN:
-                if ( prev == -1.0)
-                {
-                    prev = Double.MAX_VALUE;
-                }
-
-                if ( cur < prev )
-                {
-                    act = cur;
-                }
-                break;
-
-            case MAX:
-                if ( prev == -1.0)
-                {
-                    prev = Double.MIN_VALUE;
-                }
-
-                if ( cur > prev )
-                {
-                    act = cur;
-                }
-                break;
-
-            case AVG:
-            case SUM:
-                act += cur;
-                break;
-
-            case NONE:
-            default:
-                if ( DEBUG_FLAG ) Log.e(APP_NAME, "dwdw");
-                act = -1;
-                break;
-        }
-
-        return act;
-    }
-
-    double addLineToGraph( GraphView graph, String dataKey, Cursor dataCursor, final long minMillis, PointType pointType, DBClass db )
-    {
-        double prevValue = -1.0;
-        double curValue;
-        double perDateVal = -1.0;
-        double prevPerDateVal = -1.0;
-        double extremum = 0.0;
-
-        int setsAmount = 0;
-        long curTime ;
-        long prevTime = -1;
-
-        Date actDate;
-        double actPerDate;
-
-        ArrayList<DataPoint> dataPoints = new ArrayList<DataPoint>();
-
-        for ( dataCursor.moveToFirst(); !dataCursor.isAfterLast() ; dataCursor.moveToNext()  ) {
-
-            curTime = dataCursor.getLong( dataCursor.getColumnIndex( DBClass.KEY_TIME ) );
-
-            if ( curTime > minMillis )
-            {
-
-                if ( prevTime == -1)  { prevTime  = curTime ; }
-
-                setsAmount++;
-                curValue = dataCursor.getInt(dataCursor.getColumnIndex(dataKey));
-
-                perDateVal = actualizeValue( curValue, prevValue, perDateVal, pointType);
-
-                if ( perDateVal == -1 )
-                {
-                    Log.e(APP_NAME, "ss");
-                    return -1;
-                }
-
-                for ( int i = 0; i < 2; i++)
-                {
-                    if ( ( !db.isSameDay(prevTime, curTime) && i == 0) ||
-                         ( dataCursor.isLast()              && i == 1) )
-                    {
-                        actDate =  i == 0 ? new Date( prevTime ) : new Date( curTime );
-                        actPerDate = i == 0 ? prevPerDateVal : perDateVal;
-
-                        if ( pointType == PointType.AVG ) { actPerDate /= setsAmount; }
-
-                        extremum = ( actPerDate > extremum ) ? actPerDate : extremum;
-                        dataPoints.add( new DataPoint( actDate, actPerDate) );
-
-                        perDateVal = curValue;
-                        setsAmount = 0;
-                    }
-                }
-
-                prevPerDateVal = perDateVal;
-                prevTime = curTime;
-                prevValue = curValue;
-            }
-
-        }
-
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>( dataPoints.toArray( new DataPoint[ dataPoints.size() ] ));
-        series.setDataPointsRadius(4);
-        series.setDrawDataPoints(true);
-
-        if ( dataKey ==  DBClass.KEY_WEIGHT) {
-            series.setColor(getResources().getColor(R.color.baseColor_complementary));
-        } else {
-            series.setColor(getResources().getColor(R.color.baseColor));
-        }
-
-        String legendTitle = ( dataKey == DBClass.KEY_WEIGHT) ? getString( R.string.weights ): getString( R.string.reps );
-        graph.addSeries(series);
-
-        series.setTitle( legendTitle);
-
-        return extremum;
-    }
-
 
 }
