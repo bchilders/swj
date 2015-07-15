@@ -30,7 +30,7 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
 
     public boolean copyFile( String from, String to ) {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "SwjSettingsFragment :: copyFile" );
-
+        boolean success = true;
         //File source  = new File( from );
         FileInputStream inp = null;
         FileOutputStream out = null;
@@ -52,19 +52,21 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
         catch(Exception e)
         {
             e.printStackTrace();
-            Toast.makeText(getActivity(), getResources().getString( R.string.db_copy_failed ), Toast.LENGTH_LONG).show();
+            success = false;
         }
         finally
         {
             try
             {
-                out.close();
-                inp.close();
+                if ( out != null ) out.close();
+                if ( inp != null ) inp.close();
             }
             catch(IOException ioe)
-            {}
+            {
+                success = false;
+            }
         }
-        return true;
+        return success;
     }
 
     public boolean copyDB( boolean isRestore, String pathArg ) {

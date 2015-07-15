@@ -29,7 +29,6 @@
     <string name="sets_chosen">Выбрано подх.:\u0020</string>
     <string name="exercises_chosen">Выбрано упр.:\u0020</string>
     <string name="db_copied_to">База скопирована в </string>
-    <string name="db_copy_failed">Копирование не удалось</string>
     <string name="delete_everything_related_to_ex">Удалить всё связанное с упражнением?</string>
     <string name="empty_not_allowed">Пустые поля не разрешены</string>
     <string name="journal">Журнал</string>
@@ -76,5 +75,7 @@
     <string name="weights">Вес</string>
     <string name="reps">Повторения</string>
     <string name="copy">Копировать</string>
+    <string name="no_ex_selected">Упражнение не выбрано</string>
+    <string name="not_enough_data">Не хватает данных</string>
 
 </resources>

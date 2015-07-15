@@ -180,7 +180,15 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
         if (DEBUG_FLAG) Log.v(APP_NAME, "createReport :: started");
 
         Cursor selectedExCs  = (Cursor) ((Spinner) findViewById(R.id.exerciseChooser)).getSelectedItem();
-        String exName = selectedExCs.getString(selectedExCs.getColumnIndex(DBClass.KEY_ID));
+
+        String exName;
+        if ( selectedExCs == null ) {
+            Toast.makeText(this, R.string.no_ex_selected,Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            exName = selectedExCs.getString(selectedExCs.getColumnIndex(DBClass.KEY_ID));
+        }
+
         int months = getPeriodInMonths();
         int weightType = getWeightPointType();
         int repsType = getRepsPointType();

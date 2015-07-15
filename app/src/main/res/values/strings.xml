@@ -29,7 +29,6 @@
     <string name="sets_chosen">Sets chosen:\u0020</string>
     <string name="exercises_chosen">Ex. chosen:\u0020</string>
     <string name="db_copied_to">DB copied to </string>
-    <string name="db_copy_failed">DB copy failed</string>
     <string name="delete_everything_related_to_ex">Delete everything related to this exercise?</string>
     <string name="empty_not_allowed">Empty fields are not allowed</string>
     <string name="journal">Journal</string>
@@ -77,4 +76,6 @@
     <string name="weights">Weights</string>
     <string name="reps">Reps</string>
     <string name="copy">Copy</string>
+    <string name="no_ex_selected">No exercise selected</string>
+    <string name="not_enough_data">Not enough data</string>
 </resources>
