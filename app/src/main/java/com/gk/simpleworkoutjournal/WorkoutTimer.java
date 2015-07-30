@@ -11,7 +11,7 @@ import android.widget.TextView;
 public class WorkoutTimer {
 
     public static final  String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
 
     enum timerState  { DISABLED, STOPPED, TICKING, PAUSED };
     Thread clockThread;

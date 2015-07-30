@@ -8,7 +8,7 @@ import com.gk.datacontrol.DBClass;
 
 public class SwjSettings extends Activity {
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

@@ -6,25 +6,17 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcel;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.gk.datacontrol.DBClass;
 import com.gk.datacontrol.DataPointParcel;
 import com.gk.simpleworkoutjournal.R;
-import com.gk.simpleworkoutjournal.WorkoutDataAdapter;
-import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by gkurockins on 14/04/2015.
- */
 public class ExerciseReportContainer extends Activity {
     public enum PointType {
         NONE(-1), MIN(0), MAX(1), AVG(2), SUM(3);
@@ -55,12 +47,12 @@ public class ExerciseReportContainer extends Activity {
 
 
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
 
     private final int MISC_TAB = 0;
     private final int GRAPH_TAB = 1;
 
-    List fragList = new ArrayList();
+    List<Fragment> fragList = new ArrayList<Fragment>();
 
     void setMonthsToTitle(ActionBar actionBar, int months) {
 
@@ -88,8 +80,8 @@ public class ExerciseReportContainer extends Activity {
 
             default:
                 Log.e(APP_NAME, "ExerciseReportContainer :: onCreate :: unexpected months amount passed");
-                assert false;
-                return;
+                throw new AssertionError();
+
         }
 
 
@@ -145,17 +137,17 @@ public class ExerciseReportContainer extends Activity {
         DBClass swjDb = new DBClass(this);
         Cursor allsets = swjDb.fetchSetsForExercise(exName);
 
-        double prevValue;
+
         double curValue;
         double perDateVal;
         double prevPerDateVal;
         double extremum = 0.0;
-        double setTotal = 0.0;
+        double setTotal ;
 
-        double oneRepMax = 0.0, oneRepAvg = 0.0, oneSetMax = 0.0, oneSetAvg = 0.0, oneDayMax = 0.0, oneDayAvg = 0.0, totalWeight = 0.0, perDayTotalWeight = 0.0;
+        double oneRepMax = 0.0, oneRepAvg, oneSetMax = 0.0, oneSetAvg = 0.0, oneDayMax = 0.0, oneDayAvg, totalWeight = 0.0, perDayTotalWeight = 0.0;
 
-        int repsInSet = 0;
-        int setsAmount = allsets.getCount();
+        int repsInSet;
+        int setsAmount;
         int daysAmount = 0;
         int totalReps = 0;
         long curTime;
@@ -171,7 +163,6 @@ public class ExerciseReportContainer extends Activity {
 
         //iterate through reps and weight
         for (int j = 0; j < 2; j++) {
-            prevValue = -1.0;
             perDateVal = -1.0;
             prevPerDateVal = -1.0;
             prevTime = -1;
@@ -192,7 +183,7 @@ public class ExerciseReportContainer extends Activity {
 
                     curValue = allsets.getInt(allsets.getColumnIndex(dataKey));
 
-                    if ( dataKey == DBClass.KEY_WEIGHT  )
+                    if ( dataKey.equals(DBClass.KEY_WEIGHT)  )
                     {
                         repsInSet = allsets.getInt(allsets.getColumnIndex( DBClass.KEY_REPS));
                         totalReps += repsInSet;
@@ -214,7 +205,7 @@ public class ExerciseReportContainer extends Activity {
                     }
 
                     setsAmount++;
-                    if ( allsets.isLast() && dataKey == DBClass.KEY_WEIGHT )
+                    if ( allsets.isLast() && dataKey.equals(DBClass.KEY_WEIGHT) )
                     {
                         oneSetAvg = totalWeight / setsAmount;
                     }
@@ -232,7 +223,7 @@ public class ExerciseReportContainer extends Activity {
 
                             extremum = (actPerDate > extremum) ? actPerDate : extremum;
 
-                            if ( dataKey == DBClass.KEY_WEIGHT)
+                            if ( dataKey.equals(DBClass.KEY_WEIGHT) )
                             {
                                 daysAmount++;
 
@@ -250,7 +241,6 @@ public class ExerciseReportContainer extends Activity {
 
                     prevPerDateVal = perDateVal;
                     prevTime = curTime;
-                    prevValue = curValue;
                 }
 
             }
@@ -298,7 +288,15 @@ public class ExerciseReportContainer extends Activity {
 
         ActionBar actionBar = getActionBar();
         setMonthsToTitle( actionBar, months );
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        if (actionBar != null )
+        {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        }
+        else
+        {
+            throw new AssertionError("action bar is null in onCreate of ex report container");
+        }
 
         final Bundle data = new Bundle();
 
@@ -318,20 +316,24 @@ public class ExerciseReportContainer extends Activity {
                 if (fragList.size() > tab.getPosition())
                     fragList.get(tab.getPosition());
 
-
                 if ( tab.getPosition() == MISC_TAB ) {
-                    if (frag == null) {
-                        frag = new ReportStatsTab();
-                    }
+                    frag = new ReportStatsTab();
                 }
                 else if ( tab.getPosition() == GRAPH_TAB )
                 {
-                    if (frag == null) {
-                        frag = new ReportGraphTab();
-                    }
+
+                    frag = new ReportGraphTab();
                 }
 
-                frag.setArguments(data);
+                if ( frag != null)
+                {
+                    frag.setArguments(data);
+                }
+                else
+                {
+                    throw new AssertionError("frag is null in onTabSelected of ex report container");
+                }
+
                 fragList.add(frag);
                 ft.replace(android.R.id.content, frag);
             }
@@ -352,7 +354,7 @@ public class ExerciseReportContainer extends Activity {
 
         actionBar.addTab(
                 actionBar.newTab()
-                        .setText( R.string.graph_tab )
+                        .setText(R.string.graph_tab)
                         .setTabListener(tabListener));
 
 

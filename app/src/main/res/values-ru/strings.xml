@@ -45,7 +45,7 @@
     <string name="send_message">Послать сообщение</string>
     <string name="backup_create_failed_toast">Не получилось создать резервную копию</string>
     <string name="backup_restore_failed_toast">Не получилось восстановить резервную копию</string>
-    <string name="press_again_to_confirm">Подтвердите повторным нажатием, т.к. упражнение в прошлом</string>
+    <string name="press_again_to_add">Подтвердите повторным нажатием, т.к. упражнение в прошлом</string>
     <string name="notes">Заметки</string>
     <string name="edit">Редактировать</string>
     <string name="delete_ex">Удалить упражнение</string>
@@ -77,5 +77,6 @@
     <string name="copy">Копировать</string>
     <string name="no_ex_selected">Упражнение не выбрано</string>
     <string name="not_enough_data">Не хватает данных</string>
+    <string name="press_again_to_confirm">Повторите для подтверждения</string>
 
 </resources>

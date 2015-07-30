@@ -25,8 +25,11 @@ import java.util.Stack;
 
 public class SwjSettingsFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
     final PreferenceFragment prefFrag = this;
+
+    boolean createBackupConfirmed = false;
+    boolean restoreBackupConfirmed = false;
 
     public boolean copyFile( String from, String to ) {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "SwjSettingsFragment :: copyFile" );
@@ -157,19 +160,40 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
         }
         else if ( pref.getKey().equals("create_backup") )
         {
-            res = copyDB(false, Environment.getExternalStorageDirectory().getAbsolutePath() );
-            if ( !res )
+            if ( createBackupConfirmed )
             {
-                Toast.makeText(getActivity(), getResources().getText( R.string.backup_create_failed_toast ), Toast.LENGTH_SHORT).show();
+                createBackupConfirmed = false;
+                res = copyDB(false, Environment.getExternalStorageDirectory().getAbsolutePath() );
+                if ( !res )
+                {
+                    Toast.makeText(getActivity(), getResources().getText( R.string.backup_create_failed_toast ), Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                Toast.makeText(getActivity(), getResources().getText(R.string.press_again_to_confirm), Toast.LENGTH_SHORT).show();
+                res = true;
+                createBackupConfirmed = true;
+                restoreBackupConfirmed = false;
             }
 
         }
         else if ( pref.getKey().equals("restore_backup") )
         {
-            res = copyDB( true, Environment.getExternalStorageDirectory().getAbsolutePath() );
-            if ( !res )
+            if ( restoreBackupConfirmed )
             {
-                Toast.makeText(getActivity(), getResources().getText( R.string.backup_restore_failed_toast ), Toast.LENGTH_SHORT).show();
+                restoreBackupConfirmed = false;
+                res = copyDB(true, Environment.getExternalStorageDirectory().getAbsolutePath());
+                if (!res) {
+                    Toast.makeText(getActivity(), getResources().getText(R.string.backup_restore_failed_toast), Toast.LENGTH_SHORT).show();
+                }
+            }
+            else
+            {
+                Toast.makeText(getActivity(), getResources().getText(R.string.press_again_to_confirm), Toast.LENGTH_SHORT).show();
+                res = true;
+                restoreBackupConfirmed = true;
+                createBackupConfirmed = false;
             }
 
         }
@@ -192,6 +216,9 @@ public class SwjSettingsFragment extends PreferenceFragment implements Preferenc
         mailPref.setOnPreferenceClickListener( this );
         createBackupPref.setOnPreferenceClickListener( this );
         restoreBackupPref.setOnPreferenceClickListener( this );
+
+        createBackupConfirmed = false;
+        restoreBackupConfirmed = false;
 
     }
 

@@ -3,7 +3,6 @@ package com.gk.reports;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,23 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.gk.datacontrol.DBClass;
 import com.gk.simpleworkoutjournal.R;
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Date;
-
 
 public class ReportStatsTab extends Fragment {
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = true;
+    private static final boolean DEBUG_FLAG = false;
 
 
     @Override

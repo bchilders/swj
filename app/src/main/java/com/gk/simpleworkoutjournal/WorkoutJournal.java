@@ -29,10 +29,10 @@ import com.gk.datacontrol.SetDataCursorLoader;
 import static com.gk.simpleworkoutjournal.WorkoutDataAdapter.*;
 
 public class WorkoutJournal extends Activity implements  OnItemClickListener, OnTouchListener, LoaderManager.LoaderCallbacks<Cursor> {
-    public enum TriggerEvent { NONE, INIT, ADD, DELETE, NOTEADD, TRIG_BY_EX, SET_CLICK, EDIT }
+    public enum TriggerEvent { NONE, INIT, ADD, DELETE, NOTEADD, TRIG_BY_EX, EDIT }
 
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
 
     public static final int EXERCISES = 0;
     public static final int SETS = 1;
@@ -65,12 +65,13 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     boolean notesShowed = false;
     DBClass dbmediator;
 
-    WorkoutTimer workoutTimer;
+    //WorkoutTimer workoutTimer;
 
     int initExPos;
     int initSetPos;
 
     protected void onSaveInstanceState(Bundle outState) {
+        if (outState == null) throw  new AssertionError("outState is null when onSaveInstanceState of workoutjournal ");
         super.onSaveInstanceState(outState);
 
         outState.putInt("exPos", exerciseLogAdapter.getIdxOfCurrent());
@@ -149,10 +150,8 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.workout_options_menu, menu);
 
-        workoutTimer = new WorkoutTimer( this, menu.findItem( R.id.action_timer) );
-        workoutTimer.enable();
-
-
+        //workoutTimer = new WorkoutTimer( this, menu.findItem( R.id.action_timer) );
+        //workoutTimer.enable();
         return true;
     }
 
@@ -171,7 +170,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 break;
 
             case R.id.action_timer:
-                workoutTimer.nextStep();
+                //workoutTimer.nextStep();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -179,7 +178,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
     @Override
     public void onDestroy() {
-        workoutTimer.stop( true );
+        //workoutTimer.stop( true );
 
         setsListDataLoader.reset();
         exListDataLoader.reset();
@@ -244,7 +243,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
 
             default:
                 Log.e( APP_NAME, "WorkoutJournal :: initiateListUpdate : unexpected trigger event: "+trigEvent.toString() );
-                return;
             }
     }
 
@@ -316,11 +314,11 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             }
             prevExLogId = exerciseLogId;
 
-            weiString = ( weiString == "," ) ? "0" : weiString;
+            weiString = ( weiString.equals(",") ) ? "0" : weiString;
             if ( DBClass.EX_IN_PAST == dbmediator.insertSet( exerciseName, exerciseLogId, repString, weiString, addSetIfSameDate) )
             {
                 addSetIfSameDate = true;
-                Toast.makeText(this, R.string.press_again_to_confirm, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.press_again_to_add, Toast.LENGTH_SHORT).show();
             }
             else
             {
@@ -353,13 +351,9 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 // obtain sets for this exercise
                 // fetch new sets only if exercise entry changed
 
-                int origExPosition = exerciseLogAdapter.getIdxOfCurrent();
-
                 if (exerciseLogAdapter.getIdxOfCurrent() == position) {
                     if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutJournal :: onItemClick :: same item clicked, nothing to do.");
                 } else {
-
-                    int initialPos = exerciseLogAdapter.getIdxOfCurrent();
                     exerciseLogAdapter.setIdxOfCurrent(position);
 
                     showEditsForSubject( Subject.SETS );
@@ -380,8 +374,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
             case R.id.set_entry_container:
                 currSubj = Subject.SETS;
                 exerciseTextView.setText("");
-                
-                int initialPos = setsLogAdapter.getIdxOfCurrent();
+
                 setsLogAdapter.setIdxOfCurrent(position);
 
                 //same code for exs and sets. update note
@@ -544,7 +537,7 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
                 return;
         }
 
-        if (subjAdapter == null || subjAdapter.getCount() == 0 || subjAdapter.getIdxOfCurrent() == -1 ) {
+        if ( subjAdapter.getCount() == 0 || subjAdapter.getIdxOfCurrent() == -1 ) {
             if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutJournal :: onNotesTap : doing nothing since no source for note exist");
             return;
         }
@@ -736,7 +729,6 @@ public class WorkoutJournal extends Activity implements  OnItemClickListener, On
     public void moveToSelected( Subject subj, boolean needToScroll ) {
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "WorkoutJournal :: moveToSelected :: subject : "+subj.toString()+" need to scroll: "+needToScroll );
 
-        TextView targetNoteView;
         WorkoutDataAdapter targetAdapter;
         ListView targetLv;
 

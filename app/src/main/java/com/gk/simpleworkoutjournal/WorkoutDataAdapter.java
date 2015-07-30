@@ -5,9 +5,7 @@ import java.util.HashSet;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gk.datacontrol.DBClass;
-import com.google.android.gms.internal.co;
 
 public class WorkoutDataAdapter extends CursorAdapter {
 	private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
-	public enum Subject { NONE, EXERCISES, SETS, ALL }
+    private static final boolean DEBUG_FLAG = false;
+	public enum Subject { EXERCISES, SETS, ALL }
 
 	private Subject currSubj;
 	private String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
@@ -31,13 +28,11 @@ public class WorkoutDataAdapter extends CursorAdapter {
 	private Calendar formattedDate = Calendar.getInstance();
 	private int currentIndex = -1;
 	private String dateString;
-    private Cursor subjCursor;
 
 	public WorkoutDataAdapter(Context context, Cursor c, Subject subject) {
 		super(context, c, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER );
         ctxCheckedItems = new HashSet<Integer>();
 		currSubj = subject;
-        subjCursor = c;
 	}
 	
 	public Subject getSubject()
@@ -250,28 +245,6 @@ public class WorkoutDataAdapter extends CursorAdapter {
         return name;
     }
 
-    public String getWeightForCurrent() {
-        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent");
-
-        if ( currSubj != Subject.SETS ) {
-            Log.e( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent :: called on inappropriate subject "+currSubj.toString());
-            return "";
-        }
-
-        return  ((Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_WEIGHT) );
-    }
-
-    public String getRepsForCurrent() {
-        if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent");
-
-        if ( currSubj != Subject.SETS ) {
-            Log.e( APP_NAME, "WorkoutDataAdapter :: getWeightForCurrent :: called on inappropriate subject "+currSubj.toString());
-            return "";
-        }
-
-        return  ((Cursor)getItem( currentIndex ) ).getString( getCursor().getColumnIndex(DBClass.KEY_REPS) );
-    }
-
     public String getIdForCurrent() {
         if ( DEBUG_FLAG ) Log.v( APP_NAME, "WorkoutDataAdapter :: getIdForCurrent : subj : "+currSubj.toString()+" index of current: "+currentIndex );
 
@@ -286,20 +259,4 @@ public class WorkoutDataAdapter extends CursorAdapter {
         return id;
     }
 
-    public HashSet< String > listIdsToExNames(HashSet<Integer> listIds) {
-        Log.v( APP_NAME, "WorkoutDataAdapter :: listIdsToExNames :: got listIds with size of "+listIds.size() );
-
-        HashSet< String > exNames = new HashSet< String >();
-        if (currSubj != Subject.EXERCISES)
-        {
-            return exNames;
-        }
-
-        for ( int id : listIds ) {
-            subjCursor.moveToPosition( id );
-            exNames.add( subjCursor.getString( subjCursor.getColumnIndex( DBClass.KEY_EX_NAME )  ) );
-        }
-
-        return exNames;
-    }
 }

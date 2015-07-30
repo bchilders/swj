@@ -18,7 +18,7 @@ import com.gk.swjsettings.SwjSettings;
 
 public class MainMenu extends Activity implements OnClickListener {
 	private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {

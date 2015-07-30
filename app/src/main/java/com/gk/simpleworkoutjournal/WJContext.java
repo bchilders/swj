@@ -2,9 +2,7 @@ package com.gk.simpleworkoutjournal;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -26,7 +24,7 @@ import java.util.HashSet;
 
 public class WJContext implements AbsListView.MultiChoiceModeListener, DialogInterface.OnClickListener  {
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
     WorkoutJournal activity;
     WorkoutDataAdapter.Subject contextSubj;
 

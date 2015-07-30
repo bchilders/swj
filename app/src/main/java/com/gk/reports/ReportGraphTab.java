@@ -3,9 +3,7 @@ package com.gk.reports;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.database.Cursor;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.gk.datacontrol.DBClass;
 import com.gk.datacontrol.DataPointParcel;
 import com.gk.simpleworkoutjournal.R;
 import com.jjoe64.graphview.GraphView;
@@ -24,21 +21,16 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
 
 public class ReportGraphTab extends Fragment {
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = true;
+    private static final boolean DEBUG_FLAG = false;
 
     public enum PointType {
         NONE(-1), MIN(0), MAX(1), AVG(2), SUM(3);
 
-        private final int value;
 
-        PointType(int value) {
-            this.value = value;
-        }
+        PointType(int val) {}
 
         public static PointType fromInteger(int x) {
             switch(x) {
@@ -93,7 +85,7 @@ public class ReportGraphTab extends Fragment {
         String pointType;
         for ( String parPoint : parPoints )
         {
-            pointType = (parPoint == "wPoints") ? "weightType" : "repsType";
+            pointType = parPoint.equals("wPoints")  ? "weightType" : "repsType";
             if ( PointType.fromInteger( exBundle.getInt( pointType  ) ) == PointType.NONE )
             {
                 continue;
@@ -116,13 +108,13 @@ public class ReportGraphTab extends Fragment {
             series.setDataPointsRadius(4);
             series.setDrawDataPoints(true);
 
-            if ( parPoint == "wPoints" ) {
+            if ( parPoint.equals("wPoints") ) {
                 series.setColor(getResources().getColor(R.color.baseColor_complementary));
             } else {
                 series.setColor(getResources().getColor(R.color.baseColor));
             }
 
-            String legendTitle = (  parPoint == "wPoints" ) ? getString(R.string.weights) : getString(R.string.reps);
+            String legendTitle = (  parPoint.equals("wPoints") ) ? getString(R.string.weights) : getString(R.string.reps);
             graph.addSeries( series );
             series.setTitle( legendTitle );
         }

@@ -45,7 +45,7 @@
     <string name="send_message">Send message</string>
     <string name="backup_create_failed_toast">Failed to create backup</string>
     <string name="backup_restore_failed_toast">Failed to restore backup</string>
-    <string name="press_again_to_confirm">Press again to confirm since exercise in the past</string>
+    <string name="press_again_to_add">Press again to confirm since exercise in the past</string>
     <string name="notes">Notes</string>
     <string name="edit">Edit</string>
     <string name="delete_ex">Delete exercise</string>
@@ -78,4 +78,5 @@
     <string name="copy">Copy</string>
     <string name="no_ex_selected">No exercise selected</string>
     <string name="not_enough_data">Not enough data</string>
+    <string name="press_again_to_confirm">Tap again to confirm</string>
 </resources>

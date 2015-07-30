@@ -2,7 +2,6 @@ package com.gk.datacontrol;
 
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -14,7 +13,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 public class DBClass  {
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
 	private int exercisesInDay = 0, exerciseDays = 0, setsInDay = 0, setDays = 0; // used for simulating date change situation\
 	public static final  String APP_NAME = "SWJournal";
 	
@@ -91,7 +90,7 @@ public class DBClass  {
     {
         GregorianCalendar cal = new GregorianCalendar(TimeZone.getDefault());
         cal.setTimeInMillis( millitime );
-        cal.set( cal.get( cal.YEAR ), cal.get( cal.MONTH ),cal.get( cal.DATE ), 23, 59  );
+        cal.set( cal.get( GregorianCalendar.YEAR ), cal.get( GregorianCalendar.MONTH ),cal.get( GregorianCalendar.DATE ), 23, 59  );
         return cal.getTimeInMillis();
     }
 
@@ -179,11 +178,15 @@ public class DBClass  {
 
         if ( entryCursor.getCount() != 1 ) {
             Log.e(APP_NAME, "DBClass :: getTimeForEx unexpected query result." );
+            entryCursor.close();
             return -1;
         } else {
             entryCursor.moveToFirst();
-            return entryCursor.getLong( entryCursor.getColumnIndex( KEY_TIME ) );
+            long val = entryCursor.getLong( entryCursor.getColumnIndex( KEY_TIME ) );
+            entryCursor.close();
+            return val;
         }
+
     }
 
     // if dates for set and exercise not match - set will be inserted only if ignoreDateDiff is set. otherwise EX_IN_PAST is returned.
@@ -297,6 +300,7 @@ public class DBClass  {
 		 if (tmpcs.getCount() == 0)
 			 result = realdb.insert(TABLE_EXERCISES, null, values);
 
+         tmpcs.close();
 		 values.clear();
 		 if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: addExercise done");
 		 return (result != -1);
@@ -340,7 +344,9 @@ public class DBClass  {
          if ( DEBUG_FLAG ) Log.v(APP_NAME, "DBClass :: haveSetsWithExId . id: "+ exId);
          Cursor setsWithExId = realdb.rawQuery( "SELECT "+KEY_ID+" FROM "+TABLE_SETS_LOG+" WHERE "+KEY_EX_LOG_ID+" = "+exId, null);
 
-         return ( setsWithExId.getCount() > 0 );
+         boolean res = setsWithExId.getCount() > 0;
+         setsWithExId.close();
+         return res;
      }
 
     public boolean updateExercise( String origName, String newName) {
@@ -365,6 +371,7 @@ public class DBClass  {
             insertExerciseNote( newName, noteCursor.getString( noteCursor.getColumnIndex(KEY_NOTE)) );
         }
 
+        noteCursor.close();
         //delete original exercise
         realdb.delete(TABLE_EXERCISES,KEY_NAME+"=\""+origName+"\"", null);
 
@@ -427,10 +434,4 @@ public class DBClass  {
 			}
 	  }
 
-
-
-	  public long getUnixDay() {
-		  long now = System.currentTimeMillis();
-		  return now  - (now % MS_IN_A_DAY) ;
-	  }
 }

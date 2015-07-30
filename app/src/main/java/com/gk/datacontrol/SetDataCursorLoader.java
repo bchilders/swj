@@ -5,12 +5,9 @@ import android.content.CursorLoader;
 import android.database.Cursor;
 import android.util.Log;
 
-/**
- * Created by Georgeek on 30.12.2014.
- */
 public class SetDataCursorLoader extends CursorLoader {
     private static final String APP_NAME = "SWJournal";
-    private static boolean DEBUG_FLAG = false;
+    private static final boolean DEBUG_FLAG = false;
     DBClass db;
     String targetEx;
 
@@ -37,7 +34,6 @@ public class SetDataCursorLoader extends CursorLoader {
     public Cursor loadInBackground() {
         //get sets/exercises
         if ( DEBUG_FLAG ) Log.v(APP_NAME, "SetDataCursorLoader :: loadInBackground :: id "+this.getId()+" exercise: \""+targetEx+"\"" );
-        Cursor  cursor = db.fetchSetsForExercise( targetEx );
-        return cursor;
+        return db.fetchSetsForExercise( targetEx );
     }
 }

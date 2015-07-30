@@ -10,7 +10,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.SimpleCursorAdapter;
@@ -21,12 +20,9 @@ import android.widget.Toast;
 import com.gk.datacontrol.DBClass;
 import com.gk.simpleworkoutjournal.R;
 
-/**
- * Created by George on 19.04.2015.
- */
 public class ReportConfigurator extends Activity implements LoaderManager.LoaderCallbacks<Cursor> {
     final String APP_NAME = "SWJournal";
-    final boolean DEBUG_FLAG = true;
+    private static final boolean DEBUG_FLAG = false;
     DBClass dbmediator;
     SimpleCursorAdapter exChooserAdapter;
 
@@ -98,7 +94,7 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
         {
             case R.id.show_weight_checkbox:
                 targetSpinner = wPointChooser;
-                targetLabel = (TextView) findViewById( R.id.weights_per_date_label);;
+                targetLabel = (TextView) findViewById( R.id.weights_per_date_label);
                 break;
 
             case R.id.show_rep_checkbox:
@@ -224,7 +220,6 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
 
             default:
                 Log.e(APP_NAME, "onBtnClick :: unknown source ID");
-                return;
         }
     }
 
@@ -243,14 +238,3 @@ public class ReportConfigurator extends Activity implements LoaderManager.Loader
     }
 
 }
-
-
-
-/*
-Intent reportStatsScreen = new Intent( getContext(), ExerciseReportContainer.class );
-reportStatsScreen.putExtra("exName", getIntent().getExtras().getString("exName") );
-        reportStatsScreen.putExtra("months", 1);
-
-        //startActivity( reportStatsScreen );
-
-*/
