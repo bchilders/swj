@@ -92,7 +92,8 @@ public class WorkoutDataAdapter extends CursorAdapter {
     	        	dateHeader.setVisibility(View.VISIBLE);
            		    dateString = formattedDate.get(Calendar.DAY_OF_MONTH)  +" "+
       		    			 monthNames[formattedDate.get(Calendar.MONTH)] +" "+
-      		    			 formattedDate.get(Calendar.YEAR)+"    "+formattedDate.get(Calendar.HOUR_OF_DAY)+":"+formattedDate.get(Calendar.MINUTE);
+      		    			 formattedDate.get(Calendar.YEAR)+"    ";
+					dateString += String.format("%02d:%02d", formattedDate.get(Calendar.HOUR_OF_DAY), formattedDate.get(Calendar.MINUTE));
     	        } else { //TODO: date format
     	        	dateHeader.setVisibility(View.INVISIBLE);
     	        }
