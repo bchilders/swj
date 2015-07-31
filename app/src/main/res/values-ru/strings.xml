@@ -78,5 +78,10 @@
     <string name="no_ex_selected">Упражнение не выбрано</string>
     <string name="not_enough_data">Не хватает данных</string>
     <string name="press_again_to_confirm">Повторите для подтверждения</string>
-
+    <string name="per_one_rep">За одно повторение</string>
+    <string name="max_weight">Макс. вес</string>
+    <string name="average_weight">Средний вес</string>
+    <string name="per_one_set">За один подход</string>
+    <string name="per_one_day">За день</string>
+    <string name="per_period">За весь период</string>
 </resources>

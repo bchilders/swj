@@ -24,7 +24,7 @@
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
-    <string name="delete_log_entries">Delete log entries</string>
+    <string name="delete_log_entries">Delete log</string>
     <string name="note_mark">note mark</string>
     <string name="sets_chosen">Sets chosen:\u0020</string>
     <string name="exercises_chosen">Ex. chosen:\u0020</string>
@@ -64,7 +64,6 @@
     <string name="reps_tab">Repeats</string>
     <string name="banner_ad_unit_id">ca-app-pub-5724830746715959/4196797025</string>
     <string name="title_activity_exercise_report">Exercise report</string>
-    <string name="hello_world">Hello world!</string>
     <string name="period">Period</string>
     <string name="show_weights">Show weights</string>
     <string name="weight_per_date">Weight per date</string>
@@ -79,4 +78,10 @@
     <string name="no_ex_selected">No exercise selected</string>
     <string name="not_enough_data">Not enough data</string>
     <string name="press_again_to_confirm">Tap again to confirm</string>
+    <string name="per_one_rep">Per one repetition</string>
+    <string name="max_weight">Max weight</string>
+    <string name="average_weight">Average weight</string>
+    <string name="per_one_set">Per set</string>
+    <string name="per_one_day">Per day</string>
+    <string name="per_period">Per period</string>
 </resources>

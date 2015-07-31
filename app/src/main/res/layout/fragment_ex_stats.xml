@@ -11,14 +11,14 @@
     <RelativeLayout
 
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/exStatCaption"
             android:layout_width="fill_parent"
             android:layout_height="45dp"
             android:background="@color/baseColor"
-            android:text="Упражнение"
+            android:text="@string/exercise"
             android:layout_marginTop="4dp"
             android:padding="7dp"
             android:textSize="22sp"
@@ -29,7 +29,6 @@
             android:layout_below="@id/exStatCaption"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
-            android:text="Упражнение"
             android:paddingLeft="10dp"
             android:textSize="20sp" />
 
@@ -39,7 +38,7 @@
             android:layout_width="fill_parent"
             android:layout_height="45dp"
             android:background="@color/baseColor"
-            android:text="За одно повторение"
+            android:text="@string/per_one_rep"
             android:padding="7dp"
             android:textSize="22sp"
             android:textColor="@android:color/white" />
@@ -49,7 +48,7 @@
             android:layout_below="@id/oneRepCaption"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Макс. вес"
+            android:text="@string/max_weight"
             android:paddingLeft="10dp"
             android:textSize="20sp" />
 
@@ -70,7 +69,7 @@
             android:layout_below="@id/oneRepMaxWeightCap"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Средний вес"
+            android:text="@string/average_weight"
             android:paddingLeft="10dp"
             android:textSize="20sp" />
 
@@ -91,7 +90,7 @@
             android:layout_width="fill_parent"
             android:layout_height="45dp"
             android:background="@color/baseColor"
-            android:text="За один подход"
+            android:text="@string/per_one_set"
             android:padding="7dp"
             android:textSize="22sp"
             android:textColor="@android:color/white"
@@ -104,7 +103,7 @@
             android:layout_below="@id/oneSetCaption"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Макс. вес"
+            android:text="@string/max_weight"
             android:paddingLeft="10dp"
             android:textSize="20sp" />
 
@@ -125,7 +124,7 @@
             android:layout_below="@id/oneSetMaxWeightCap"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Средний. вес"
+            android:text="@string/average_weight"
             android:paddingLeft="10dp"
             android:textSize="20sp" />
 
@@ -146,7 +145,7 @@
             android:layout_width="fill_parent"
             android:layout_height="45dp"
             android:background="@color/baseColor"
-            android:text="За день"
+            android:text="@string/per_one_day"
             android:padding="7dp"
             android:textSize="22sp"
             android:textColor="@android:color/white"
@@ -159,7 +158,7 @@
             android:layout_below="@id/oneDayCaption"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Макс. вес"
+            android:text="@string/max_weight"
             android:paddingLeft="10dp"
             android:textSize="20sp" />
 
@@ -180,7 +179,7 @@
             android:layout_below="@id/oneDayMaxWeightCap"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Средний. вес"
+            android:text="@string/average_weight"
             android:paddingLeft="10dp"
             android:textSize="20sp" />
 
@@ -201,7 +200,7 @@
             android:layout_width="fill_parent"
             android:layout_height="45dp"
             android:background="@color/baseColor"
-            android:text="За весь период"
+            android:text="@string/per_period"
             android:padding="7dp"
             android:textSize="22sp"
             android:textColor="@android:color/white"
@@ -214,7 +213,7 @@
             android:layout_below="@id/allTimeCaption"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Макс. вес"
+            android:text="@string/max_weight"
             android:paddingLeft="10dp"
             android:textSize="20sp" />
 
