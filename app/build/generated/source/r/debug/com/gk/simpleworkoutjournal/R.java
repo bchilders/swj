@@ -11,117 +11,423 @@ public final class R {
     public static final class animator {
         public static final int notes_animator=0x7f040000;
     }
+    public static final class array {
+        public static final int periods=0x7f070000;
+        public static final int points_r=0x7f070001;
+        public static final int points_w=0x7f070002;
+    }
     public static final class attr {
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int adSize=0x7f010000;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int adSizes=0x7f010001;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int adUnitId=0x7f010002;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int circleCrop=0x7f010009;
+        /** <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int imageAspectRatio=0x7f010008;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>none</code></td><td>0</td><td></td></tr>
+<tr><td><code>adjust_width</code></td><td>1</td><td></td></tr>
+<tr><td><code>adjust_height</code></td><td>2</td><td></td></tr>
+</table>
+         */
+        public static final int imageAspectRatioAdjust=0x7f010007;
+        /** <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int seriesColor=0x7f010006;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int seriesData=0x7f010003;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int seriesTitle=0x7f010005;
+        /** <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int seriesType=0x7f010004;
     }
     public static final class color {
-        public static final int baseColor=0x7f050000;
-        public static final int baseColor_complementary=0x7f050001;
-        public static final int baseColor_darker=0x7f050002;
-        public static final int baseColor_darker_complementary=0x7f050003;
-        public static final int baseColor_lighter=0x7f050004;
-        public static final int baseColor_lighter_complementary=0x7f050005;
-        public static final int baseColor_lightest=0x7f050006;
-        public static final int baseColor_lightest_complementary=0x7f050007;
+        public static final int baseColor=0x7f080000;
+        public static final int baseColor_complementary=0x7f080001;
+        public static final int baseColor_darker=0x7f080002;
+        public static final int baseColor_darker_complementary=0x7f080003;
+        public static final int baseColor_lighter=0x7f080004;
+        public static final int baseColor_lighter_complementary=0x7f080005;
+        public static final int baseColor_lightest=0x7f080006;
+        public static final int baseColor_lightest_complementary=0x7f080007;
+        public static final int common_action_bar_splitter=0x7f080008;
+        public static final int common_signin_btn_dark_text_default=0x7f080009;
+        public static final int common_signin_btn_dark_text_disabled=0x7f08000a;
+        public static final int common_signin_btn_dark_text_focused=0x7f08000b;
+        public static final int common_signin_btn_dark_text_pressed=0x7f08000c;
+        public static final int common_signin_btn_default_background=0x7f08000d;
+        public static final int common_signin_btn_light_text_default=0x7f08000e;
+        public static final int common_signin_btn_light_text_disabled=0x7f08000f;
+        public static final int common_signin_btn_light_text_focused=0x7f080010;
+        public static final int common_signin_btn_light_text_pressed=0x7f080011;
+        public static final int common_signin_btn_text_dark=0x7f080012;
+        public static final int common_signin_btn_text_light=0x7f080013;
     }
     public static final class dimen {
-        public static final int activity_horizontal_margin=0x7f060000;
-        public static final int activity_vertical_margin=0x7f060001;
+        public static final int activity_horizontal_margin=0x7f0a0000;
+        public static final int activity_vertical_margin=0x7f0a0001;
     }
     public static final class drawable {
-        public static final int button_contextedit=0x7f020000;
-        public static final int button_contextedit_pressed=0x7f020001;
-        public static final int button_contextedit_unpressed=0x7f020002;
-        public static final int button_mmenu=0x7f020003;
-        public static final int button_mmenu_pressed=0x7f020004;
-        public static final int button_mmenu_unpressed=0x7f020005;
-        public static final int button_workoutedit=0x7f020006;
-        public static final int button_workoutedit_pressed=0x7f020007;
-        public static final int button_workoutedit_unpressed=0x7f020008;
-        public static final int date_header_bg=0x7f020009;
-        public static final int date_header_bg_complementary=0x7f02000a;
-        public static final int ic_action_custom_circledlist=0x7f02000b;
-        public static final int ic_action_custom_circledsave=0x7f02000c;
-        public static final int ic_action_custom_preferences=0x7f02000d;
-        public static final int ic_circledpen=0x7f02000e;
-        public static final int ic_custom_arrowback=0x7f02000f;
-        public static final int ic_custom_circledback=0x7f020010;
-        public static final int ic_custom_circleddot=0x7f020011;
-        public static final int ic_custom_circledforward=0x7f020012;
-        public static final int ic_custom_circledpen=0x7f020013;
-        public static final int ic_custom_circledplus=0x7f020014;
-        public static final int ic_custom_circledtick=0x7f020015;
-        public static final int ic_custom_circledtrashbin=0x7f020016;
-        public static final int ic_custom_overflow_btn_circles=0x7f020017;
-        public static final int ic_launcher=0x7f020018;
-        public static final int listview_workoutedit=0x7f020019;
-        public static final int textview_workoutedit=0x7f02001a;
+        public static final int button_mmenu=0x7f020000;
+        public static final int button_mmenu_pressed=0x7f020001;
+        public static final int button_mmenu_unpressed=0x7f020002;
+        public static final int button_workoutedit=0x7f020003;
+        public static final int button_workoutedit_complementary=0x7f020004;
+        public static final int button_workoutedit_pressed=0x7f020005;
+        public static final int button_workoutedit_pressed_complementary=0x7f020006;
+        public static final int button_workoutedit_unpressed=0x7f020007;
+        public static final int button_workoutedit_unpressed_complementary=0x7f020008;
+        public static final int common_full_open_on_phone=0x7f020009;
+        public static final int common_ic_googleplayservices=0x7f02000a;
+        public static final int common_signin_btn_icon_dark=0x7f02000b;
+        public static final int common_signin_btn_icon_disabled_dark=0x7f02000c;
+        public static final int common_signin_btn_icon_disabled_focus_dark=0x7f02000d;
+        public static final int common_signin_btn_icon_disabled_focus_light=0x7f02000e;
+        public static final int common_signin_btn_icon_disabled_light=0x7f02000f;
+        public static final int common_signin_btn_icon_focus_dark=0x7f020010;
+        public static final int common_signin_btn_icon_focus_light=0x7f020011;
+        public static final int common_signin_btn_icon_light=0x7f020012;
+        public static final int common_signin_btn_icon_normal_dark=0x7f020013;
+        public static final int common_signin_btn_icon_normal_light=0x7f020014;
+        public static final int common_signin_btn_icon_pressed_dark=0x7f020015;
+        public static final int common_signin_btn_icon_pressed_light=0x7f020016;
+        public static final int common_signin_btn_text_dark=0x7f020017;
+        public static final int common_signin_btn_text_disabled_dark=0x7f020018;
+        public static final int common_signin_btn_text_disabled_focus_dark=0x7f020019;
+        public static final int common_signin_btn_text_disabled_focus_light=0x7f02001a;
+        public static final int common_signin_btn_text_disabled_light=0x7f02001b;
+        public static final int common_signin_btn_text_focus_dark=0x7f02001c;
+        public static final int common_signin_btn_text_focus_light=0x7f02001d;
+        public static final int common_signin_btn_text_light=0x7f02001e;
+        public static final int common_signin_btn_text_normal_dark=0x7f02001f;
+        public static final int common_signin_btn_text_normal_light=0x7f020020;
+        public static final int common_signin_btn_text_pressed_dark=0x7f020021;
+        public static final int common_signin_btn_text_pressed_light=0x7f020022;
+        public static final int date_header_bg=0x7f020023;
+        public static final int date_header_bg_complementary=0x7f020024;
+        public static final int ic_action_custom_circledlist=0x7f020025;
+        public static final int ic_action_custom_circledsave=0x7f020026;
+        public static final int ic_action_custom_preferences=0x7f020027;
+        public static final int ic_circledpen=0x7f020028;
+        public static final int ic_custom_arrowback=0x7f020029;
+        public static final int ic_custom_circledback=0x7f02002a;
+        public static final int ic_custom_circledcopy=0x7f02002b;
+        public static final int ic_custom_circleddot=0x7f02002c;
+        public static final int ic_custom_circledforward=0x7f02002d;
+        public static final int ic_custom_circledpen=0x7f02002e;
+        public static final int ic_custom_circledplus=0x7f02002f;
+        public static final int ic_custom_circledtick=0x7f020030;
+        public static final int ic_custom_circledtrashbin=0x7f020031;
+        public static final int ic_custom_overflow_btn_circles=0x7f020032;
+        public static final int ic_launcher=0x7f020033;
+        public static final int ic_plusone_medium_off_client=0x7f020034;
+        public static final int ic_plusone_small_off_client=0x7f020035;
+        public static final int ic_plusone_standard_off_client=0x7f020036;
+        public static final int ic_plusone_tall_off_client=0x7f020037;
+        public static final int main_background=0x7f020038;
+        public static final int main_menu_bg=0x7f020039;
+        public static final int pressed=0x7f02003a;
+        public static final int pressed_or_not=0x7f02003b;
+        public static final int textview_workoutedit=0x7f02003c;
+        public static final int unpressed=0x7f02003d;
     }
     public static final class id {
-        public static final int CancelBtn=0x7f0a000e;
-        public static final int actionModeZone=0x7f0a000d;
-        public static final int action_moreinfo_icon=0x7f0a0020;
-        public static final int addExerciseACTV=0x7f0a0011;
-        public static final int addExerciseSBtn=0x7f0a0012;
-        public static final int buttonMmBody=0x7f0a0003;
-        public static final int buttonMmExercises=0x7f0a0001;
-        public static final int buttonMmPresets=0x7f0a0002;
-        public static final int buttonMmReports=0x7f0a0004;
-        public static final int buttonMmStart=0x7f0a0000;
-        public static final int context_action_delete_ex=0x7f0a001f;
-        public static final int context_action_rename_edit_single=0x7f0a001e;
-        public static final int dataEditZone=0x7f0a000c;
-        public static final int editReps=0x7f0a000f;
-        public static final int editWeight=0x7f0a0010;
-        public static final int exerciseNoteTv=0x7f0a0006;
-        public static final int exercise_entry_container=0x7f0a0013;
-        public static final int exercisesLv=0x7f0a0009;
-        public static final int listsSeparatorTv=0x7f0a000a;
-        public static final int noteDialogEditText=0x7f0a0017;
-        public static final int note_dialog_CANCEL=0x7f0a0019;
-        public static final int note_dialog_OK=0x7f0a0018;
-        public static final int notesLayout=0x7f0a0005;
-        public static final int notesSeparatorMiddleV=0x7f0a0007;
-        public static final int setNoteTv=0x7f0a0008;
-        public static final int set_entry_container=0x7f0a001a;
-        public static final int setsLv=0x7f0a000b;
-        public static final int workout_entry_date_header=0x7f0a0014;
-        public static final int workout_entry_note_image=0x7f0a0016;
-        public static final int workout_entry_textview=0x7f0a0015;
-        public static final int workout_reps_textview=0x7f0a001b;
-        public static final int workout_set_delimiter=0x7f0a001c;
-        public static final int workout_weight_textview=0x7f0a001d;
+        public static final int CancelBtn=0x7f090019;
+        public static final int actionModeZone=0x7f090011;
+        public static final int action_moreinfo_icon=0x7f090056;
+        public static final int action_settings=0x7f090052;
+        public static final int action_timer=0x7f090055;
+        public static final int activity_main=0x7f090004;
+        public static final int adView=0x7f090008;
+        public static final int addEntryBtn=0x7f09001d;
+        public static final int addExerciseACTV=0x7f09001c;
+        public static final int adjust_height=0x7f090002;
+        public static final int adjust_width=0x7f090001;
+        public static final int allTimeCaption=0x7f090039;
+        public static final int allTimeMaxWeightCap=0x7f09003a;
+        public static final int allTimeMaxWeightNum=0x7f09003b;
+        public static final int buttonMmReports=0x7f090006;
+        public static final int buttonMmSettings=0x7f090007;
+        public static final int buttonMmStart=0x7f090005;
+        public static final int cancel_report=0x7f09004d;
+        public static final int context_action_delete_ex=0x7f090054;
+        public static final int context_action_rename_edit_single=0x7f090053;
+        public static final int ctx_addEditedBtn=0x7f090018;
+        public static final int ctx_cancelBtn=0x7f090014;
+        public static final int ctx_copySelectedBtn=0x7f090012;
+        public static final int ctx_deleteLogEntriesBtn=0x7f090013;
+        public static final int ctx_editExerciseACTV=0x7f090017;
+        public static final int ctx_editReps=0x7f090015;
+        public static final int ctx_editWeight=0x7f090016;
+        public static final int dataEditZone=0x7f090010;
+        public static final int editReps=0x7f09001a;
+        public static final int editWeight=0x7f09001b;
+        public static final int exNameToReport=0x7f09001e;
+        public static final int exNamesReportList=0x7f090003;
+        public static final int exStatCaption=0x7f090029;
+        public static final int exerciseChooser=0x7f090046;
+        public static final int exerciseNoteTv=0x7f09000a;
+        public static final int exercise_entry_container=0x7f090020;
+        public static final int exercise_name_in_report=0x7f090025;
+        public static final int exercisesLv=0x7f09000d;
+        public static final int gen_rep_btn=0x7f09004c;
+        public static final int graph=0x7f090026;
+        public static final int graphFrag=0x7f090024;
+        public static final int listsSeparatorTv=0x7f09000e;
+        public static final int noDataView=0x7f090027;
+        public static final int none=0x7f090000;
+        public static final int noteDialogEditText=0x7f09003c;
+        public static final int note_dialog_CANCEL=0x7f09003e;
+        public static final int note_dialog_OK=0x7f09003d;
+        public static final int notesLayout=0x7f090009;
+        public static final int notesSeparatorMiddleV=0x7f09000b;
+        public static final int oneDayAvgWeightCap=0x7f090037;
+        public static final int oneDayAvgWeightNum=0x7f090038;
+        public static final int oneDayCaption=0x7f090034;
+        public static final int oneDayMaxWeightCap=0x7f090035;
+        public static final int oneDayMaxWeightNum=0x7f090036;
+        public static final int oneRepAvgWeightCap=0x7f09002d;
+        public static final int oneRepAvgWeightNum=0x7f09002e;
+        public static final int oneRepCaption=0x7f09002a;
+        public static final int oneRepMaxWeightCap=0x7f09002b;
+        public static final int oneRepMaxWeightNum=0x7f09002c;
+        public static final int oneSetAvgWeightCap=0x7f090032;
+        public static final int oneSetAvgWeightNum=0x7f090033;
+        public static final int oneSetCaption=0x7f09002f;
+        public static final int oneSetMaxWeightCap=0x7f090030;
+        public static final int oneSetMaxWeightNum=0x7f090031;
+        public static final int periodChooser=0x7f090047;
+        public static final int periodChooserItem=0x7f09001f;
+        public static final int report_cnfgrtr_buttons=0x7f090028;
+        public static final int report_conf_left_side=0x7f090040;
+        public static final int report_conf_right_side=0x7f090045;
+        public static final int report_conf_two_panes=0x7f09003f;
+        public static final int repsPointChooser=0x7f09004b;
+        public static final int reps_per_date_label=0x7f090044;
+        public static final int setNoteTv=0x7f09000c;
+        public static final int set_entry_container=0x7f09004e;
+        public static final int setsLv=0x7f09000f;
+        public static final int show_rep_checkbox=0x7f09004a;
+        public static final int show_reps_label=0x7f090043;
+        public static final int show_weight_checkbox=0x7f090048;
+        public static final int show_weights_label=0x7f090041;
+        public static final int weightPointChooser=0x7f090049;
+        public static final int weights_per_date_label=0x7f090042;
+        public static final int workout_entry_date_header=0x7f090021;
+        public static final int workout_entry_note_image=0x7f090023;
+        public static final int workout_entry_textview=0x7f090022;
+        public static final int workout_reps_textview=0x7f09004f;
+        public static final int workout_set_delimiter=0x7f090050;
+        public static final int workout_weight_textview=0x7f090051;
+    }
+    public static final class integer {
+        public static final int google_play_services_version=0x7f0b0000;
     }
     public static final class layout {
-        public static final int activity_main_menu=0x7f030000;
-        public static final int activity_workout_journal=0x7f030001;
-        public static final int exercise_entry=0x7f030002;
-        public static final int note_edit_dialog=0x7f030003;
-        public static final int set_entry=0x7f030004;
+        public static final int activity_common_reports=0x7f030000;
+        public static final int activity_ex_report_container=0x7f030001;
+        public static final int activity_main_menu=0x7f030002;
+        public static final int activity_workout_journal=0x7f030003;
+        public static final int autocomplete_entry=0x7f030004;
+        public static final int ex_to_report_list_entry=0x7f030005;
+        public static final int exercise_chooser_spinner=0x7f030006;
+        public static final int exercise_entry=0x7f030007;
+        public static final int fragment_ex_graph=0x7f030008;
+        public static final int fragment_ex_stats=0x7f030009;
+        public static final int note_edit_dialog=0x7f03000a;
+        public static final int period_chooser_spinner=0x7f03000b;
+        public static final int report_configurator=0x7f03000c;
+        public static final int set_entry=0x7f03000d;
     }
     public static final class menu {
-        public static final int main_menu=0x7f090000;
-        public static final int workout_context_menu=0x7f090001;
-        public static final int workout_options_menu=0x7f090002;
+        public static final int main_menu=0x7f0e0000;
+        public static final int menu_ex_report=0x7f0e0001;
+        public static final int menu_swj_settings=0x7f0e0002;
+        public static final int workout_context_menu=0x7f0e0003;
+        public static final int workout_options_menu=0x7f0e0004;
+    }
+    public static final class raw {
+        public static final int gtm_analytics=0x7f060000;
     }
     public static final class string {
-        public static final int action_settings=0x7f070000;
-        public static final int app_name=0x7f070001;
-        public static final int main_menu_actionBar_text=0x7f070002;
-        public static final int main_menu_btn_body=0x7f070003;
-        public static final int main_menu_btn_exercises=0x7f070004;
-        public static final int main_menu_btn_presets=0x7f070005;
-        public static final int main_menu_btn_reports=0x7f070006;
-        public static final int main_menu_btn_settings=0x7f070007;
-        public static final int main_menu_btn_start=0x7f070008;
-        public static final int workout_add_btn_hint=0x7f070009;
-        public static final int workout_cancel_btn_hint=0x7f07000a;
-        public static final int workout_edit_reps_hint=0x7f07000b;
-        public static final int workout_edit_weight_hint=0x7f07000c;
-        public static final int workout_exercise_newnote_hint=0x7f07000d;
-        public static final int workout_exercise_no_note_hint=0x7f07000e;
-        public static final int workout_exercise_textview_hint=0x7f07000f;
-        public static final int workout_set_newnote_hint=0x7f070010;
-        public static final int workout_set_no_note_hint=0x7f070011;
+        public static final int accept=0x7f0c0000;
+        public static final int action_settings=0x7f0c0001;
+        public static final int app_name=0x7f0c0002;
+        public static final int average_weight=0x7f0c0003;
+        public static final int backup=0x7f0c0004;
+        public static final int backup_create_failed_toast=0x7f0c0005;
+        public static final int backup_restore_failed_toast=0x7f0c0006;
+        public static final int banner_ad_unit_id=0x7f0c0007;
+        public static final int cancel=0x7f0c0008;
+        public static final int common_android_wear_notification_needs_update_text=0x7f0c0009;
+        public static final int common_android_wear_update_text=0x7f0c000a;
+        public static final int common_android_wear_update_title=0x7f0c000b;
+        public static final int common_google_play_services_enable_button=0x7f0c000c;
+        public static final int common_google_play_services_enable_text=0x7f0c000d;
+        public static final int common_google_play_services_enable_title=0x7f0c000e;
+        public static final int common_google_play_services_error_notification_requested_by_msg=0x7f0c000f;
+        public static final int common_google_play_services_install_button=0x7f0c0010;
+        public static final int common_google_play_services_install_text_phone=0x7f0c0011;
+        public static final int common_google_play_services_install_text_tablet=0x7f0c0012;
+        public static final int common_google_play_services_install_title=0x7f0c0013;
+        public static final int common_google_play_services_invalid_account_text=0x7f0c0014;
+        public static final int common_google_play_services_invalid_account_title=0x7f0c0015;
+        public static final int common_google_play_services_needs_enabling_title=0x7f0c0016;
+        public static final int common_google_play_services_network_error_text=0x7f0c0017;
+        public static final int common_google_play_services_network_error_title=0x7f0c0018;
+        public static final int common_google_play_services_notification_needs_installation_title=0x7f0c0019;
+        public static final int common_google_play_services_notification_needs_update_title=0x7f0c001a;
+        public static final int common_google_play_services_notification_ticker=0x7f0c001b;
+        public static final int common_google_play_services_unknown_issue=0x7f0c001c;
+        public static final int common_google_play_services_unsupported_text=0x7f0c001d;
+        public static final int common_google_play_services_unsupported_title=0x7f0c001e;
+        public static final int common_google_play_services_update_button=0x7f0c001f;
+        public static final int common_google_play_services_update_text=0x7f0c0020;
+        public static final int common_google_play_services_update_title=0x7f0c0021;
+        public static final int common_open_on_phone=0x7f0c0022;
+        public static final int common_signin_button_text=0x7f0c0023;
+        public static final int common_signin_button_text_long=0x7f0c0024;
+        public static final int contact_developer=0x7f0c0025;
+        public static final int copy=0x7f0c0026;
+        public static final int create_backup=0x7f0c0027;
+        public static final int create_calendar_message=0x7f0c0028;
+        public static final int create_calendar_title=0x7f0c0029;
+        public static final int data_management=0x7f0c002a;
+        public static final int db_copied_to=0x7f0c002b;
+        public static final int decline=0x7f0c002c;
+        public static final int delete=0x7f0c002d;
+        public static final int delete_all=0x7f0c002e;
+        public static final int delete_all_details=0x7f0c002f;
+        public static final int delete_everything_related_to_ex=0x7f0c0030;
+        public static final int delete_ex=0x7f0c0031;
+        public static final int delete_log_entries=0x7f0c0032;
+        public static final int edit=0x7f0c0033;
+        public static final int empty_not_allowed=0x7f0c0034;
+        public static final int exercise=0x7f0c0035;
+        public static final int exercises_chosen=0x7f0c0036;
+        public static final int for_reports=0x7f0c0037;
+        public static final int from_path=0x7f0c0038;
+        public static final int generate=0x7f0c0039;
+        public static final int graph_tab=0x7f0c003a;
+        public static final int in_path=0x7f0c003b;
+        public static final int journal=0x7f0c003c;
+        public static final int main_menu_actionBar_text=0x7f0c003d;
+        public static final int main_menu_btn_body=0x7f0c003e;
+        public static final int main_menu_btn_exercises=0x7f0c003f;
+        public static final int main_menu_btn_presets=0x7f0c0040;
+        public static final int main_menu_btn_reports=0x7f0c0041;
+        public static final int main_menu_btn_settings=0x7f0c0042;
+        public static final int main_menu_btn_start=0x7f0c0043;
+        public static final int max_weight=0x7f0c0044;
+        public static final int need_include_reps_or_weights=0x7f0c0045;
+        public static final int no_ex_selected=0x7f0c0046;
+        public static final int not_enough_data=0x7f0c0047;
+        public static final int note_mark=0x7f0c0048;
+        public static final int notes=0x7f0c0049;
+        public static final int one_month=0x7f0c004a;
+        public static final int one_month_period_report=0x7f0c004b;
+        public static final int one_year=0x7f0c004c;
+        public static final int one_year_period_report=0x7f0c004d;
+        public static final int per_one_day=0x7f0c004e;
+        public static final int per_one_rep=0x7f0c004f;
+        public static final int per_one_set=0x7f0c0050;
+        public static final int per_period=0x7f0c0051;
+        public static final int period=0x7f0c0052;
+        public static final int press_again_to_add=0x7f0c0053;
+        public static final int press_again_to_confirm=0x7f0c0054;
+        public static final int report_config=0x7f0c0055;
+        public static final int reps=0x7f0c0056;
+        public static final int reps_per_date=0x7f0c0057;
+        public static final int reps_tab=0x7f0c0058;
+        public static final int restore_backup=0x7f0c0059;
+        public static final int save=0x7f0c005a;
+        public static final int send_message=0x7f0c005b;
+        public static final int sets_chosen=0x7f0c005c;
+        public static final int show_reps=0x7f0c005d;
+        public static final int show_weights=0x7f0c005e;
+        public static final int six_months=0x7f0c005f;
+        public static final int six_months_period_report=0x7f0c0060;
+        public static final int stats_tab=0x7f0c0061;
+        public static final int store_picture_message=0x7f0c0062;
+        public static final int store_picture_title=0x7f0c0063;
+        public static final int three_months=0x7f0c0064;
+        public static final int three_months_period_report=0x7f0c0065;
+        public static final int title_activity_exercise_report=0x7f0c0066;
+        public static final int title_activity_swj_settings=0x7f0c0067;
+        public static final int two_year_period_report=0x7f0c0068;
+        public static final int weight_per_date=0x7f0c0069;
+        public static final int weights=0x7f0c006a;
+        public static final int workout_add_btn_hint=0x7f0c006b;
+        public static final int workout_cancel_btn_hint=0x7f0c006c;
+        public static final int workout_edit_reps_hint=0x7f0c006d;
+        public static final int workout_edit_weight_hint=0x7f0c006e;
+        public static final int workout_exercise_newnote_hint=0x7f0c006f;
+        public static final int workout_exercise_no_note_hint=0x7f0c0070;
+        public static final int workout_exercise_textview_hint=0x7f0c0071;
+        public static final int workout_set_newnote_hint=0x7f0c0072;
+        public static final int workout_set_no_note_hint=0x7f0c0073;
     }
     public static final class style {
         /** 
@@ -130,18 +436,232 @@ public final class R {
             backward-compatibility can go here.
         
          */
-        public static final int AppBaseTheme=0x7f080000;
-        public static final int AppBaseTheme_MyActionBar=0x7f080002;
-        public static final int AppBaseTheme_MyActionBar_MyActionBarTitleText=0x7f080003;
-        public static final int AppBaseTheme_MyActionBar_MyContextBarTitleText=0x7f080004;
-        public static final int AppBaseTheme_MyContextBar=0x7f080005;
-        public static final int AppBaseTheme_MyOverflowButton=0x7f080006;
+        public static final int AppBaseTheme=0x7f0d0000;
+        public static final int AppBaseTheme_MyActionBar=0x7f0d0003;
+        public static final int AppBaseTheme_MyActionBar_MyActionBarTitleText=0x7f0d0004;
+        public static final int AppBaseTheme_MyActionBar_MyContextBarTitleText=0x7f0d0005;
+        public static final int AppBaseTheme_MyContextBar=0x7f0d0006;
+        public static final int AppBaseTheme_MyOverflowButton=0x7f0d0007;
         /**  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f080001;
-        public static final int MainMenuButtonStyle=0x7f080007;
-        public static final int WorkoutContextEditButtonStyle=0x7f080008;
-        public static final int WorkoutEditButtonStyle=0x7f080009;
-        public static final int WorkoutEditTextViewStyle=0x7f08000a;
+        public static final int AppTheme=0x7f0d0001;
+        public static final int MainMenuButtonStyle=0x7f0d0008;
+        public static final int Theme_IAPTheme=0x7f0d0002;
+        public static final int WorkoutEditButtonStyle=0x7f0d0009;
+        public static final int WorkoutEditButtonStyle_complementary=0x7f0d000a;
+        public static final int WorkoutEditTextViewStyle=0x7f0d000b;
+        public static final int actionBarButton=0x7f0d000c;
     }
+    public static final class xml {
+        public static final int swjprefs=0x7f050000;
+    }
+    public static final class styleable {
+        /** Attributes that can be used with a AdsAttrs.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #AdsAttrs_adSize com.gk.simpleworkoutjournal:adSize}</code></td><td></td></tr>
+           <tr><td><code>{@link #AdsAttrs_adSizes com.gk.simpleworkoutjournal:adSizes}</code></td><td></td></tr>
+           <tr><td><code>{@link #AdsAttrs_adUnitId com.gk.simpleworkoutjournal:adUnitId}</code></td><td></td></tr>
+           </table>
+           @see #AdsAttrs_adSize
+           @see #AdsAttrs_adSizes
+           @see #AdsAttrs_adUnitId
+         */
+        public static final int[] AdsAttrs = {
+            0x7f010000, 0x7f010001, 0x7f010002
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#adSize}
+          attribute's value can be found in the {@link #AdsAttrs} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:adSize
+        */
+        public static final int AdsAttrs_adSize = 0;
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#adSizes}
+          attribute's value can be found in the {@link #AdsAttrs} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:adSizes
+        */
+        public static final int AdsAttrs_adSizes = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#adUnitId}
+          attribute's value can be found in the {@link #AdsAttrs} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:adUnitId
+        */
+        public static final int AdsAttrs_adUnitId = 2;
+        /** Attributes that can be used with a GraphViewXML.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #GraphViewXML_android_title android:title}</code></td><td></td></tr>
+           <tr><td><code>{@link #GraphViewXML_seriesColor com.gk.simpleworkoutjournal:seriesColor}</code></td><td></td></tr>
+           <tr><td><code>{@link #GraphViewXML_seriesData com.gk.simpleworkoutjournal:seriesData}</code></td><td></td></tr>
+           <tr><td><code>{@link #GraphViewXML_seriesTitle com.gk.simpleworkoutjournal:seriesTitle}</code></td><td></td></tr>
+           <tr><td><code>{@link #GraphViewXML_seriesType com.gk.simpleworkoutjournal:seriesType}</code></td><td></td></tr>
+           </table>
+           @see #GraphViewXML_android_title
+           @see #GraphViewXML_seriesColor
+           @see #GraphViewXML_seriesData
+           @see #GraphViewXML_seriesTitle
+           @see #GraphViewXML_seriesType
+         */
+        public static final int[] GraphViewXML = {
+            0x010101e1, 0x7f010003, 0x7f010004, 0x7f010005,
+            0x7f010006
+        };
+        /**
+          <p>This symbol is the offset where the {@link android.R.attr#title}
+          attribute's value can be found in the {@link #GraphViewXML} array.
+          @attr name android:title
+        */
+        public static final int GraphViewXML_android_title = 0;
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#seriesColor}
+          attribute's value can be found in the {@link #GraphViewXML} array.
+
+
+          <p>Must be a color value, in the form of "<code>#<i>rgb</i></code>", "<code>#<i>argb</i></code>",
+"<code>#<i>rrggbb</i></code>", or "<code>#<i>aarrggbb</i></code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:seriesColor
+        */
+        public static final int GraphViewXML_seriesColor = 4;
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#seriesData}
+          attribute's value can be found in the {@link #GraphViewXML} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:seriesData
+        */
+        public static final int GraphViewXML_seriesData = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#seriesTitle}
+          attribute's value can be found in the {@link #GraphViewXML} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:seriesTitle
+        */
+        public static final int GraphViewXML_seriesTitle = 3;
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#seriesType}
+          attribute's value can be found in the {@link #GraphViewXML} array.
+
+
+          <p>Must be a string value, using '\\;' to escape characters such as '\\n' or '\\uxxxx' for a unicode character.
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:seriesType
+        */
+        public static final int GraphViewXML_seriesType = 2;
+        /** Attributes that can be used with a LoadingImageView.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #LoadingImageView_circleCrop com.gk.simpleworkoutjournal:circleCrop}</code></td><td></td></tr>
+           <tr><td><code>{@link #LoadingImageView_imageAspectRatio com.gk.simpleworkoutjournal:imageAspectRatio}</code></td><td></td></tr>
+           <tr><td><code>{@link #LoadingImageView_imageAspectRatioAdjust com.gk.simpleworkoutjournal:imageAspectRatioAdjust}</code></td><td></td></tr>
+           </table>
+           @see #LoadingImageView_circleCrop
+           @see #LoadingImageView_imageAspectRatio
+           @see #LoadingImageView_imageAspectRatioAdjust
+         */
+        public static final int[] LoadingImageView = {
+            0x7f010007, 0x7f010008, 0x7f010009
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#circleCrop}
+          attribute's value can be found in the {@link #LoadingImageView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:circleCrop
+        */
+        public static final int LoadingImageView_circleCrop = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#imageAspectRatio}
+          attribute's value can be found in the {@link #LoadingImageView} array.
+
+
+          <p>Must be a floating point value, such as "<code>1.2</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.gk.simpleworkoutjournal:imageAspectRatio
+        */
+        public static final int LoadingImageView_imageAspectRatio = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.gk.simpleworkoutjournal.R.attr#imageAspectRatioAdjust}
+          attribute's value can be found in the {@link #LoadingImageView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>none</code></td><td>0</td><td></td></tr>
+<tr><td><code>adjust_width</code></td><td>1</td><td></td></tr>
+<tr><td><code>adjust_height</code></td><td>2</td><td></td></tr>
+</table>
+          @attr name com.gk.simpleworkoutjournal:imageAspectRatioAdjust
+        */
+        public static final int LoadingImageView_imageAspectRatioAdjust = 0;
+    };
 }

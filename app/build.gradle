@@ -21,5 +21,5 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:21.0.3'
     compile 'com.google.android.gms:play-services-ads:6.+'
-    compile 'com.jjoe64:graphview:4.0.0'
+    compile 'com.jjoe64:graphview:4.0.1'
 }
