@@ -1,4 +1,4 @@
-# swj
+# Simple Workout Journal
 Minimalistic Android workout tracker
 
 SWJ is designed for those who know what they want and who are concentrated on results.You will not find predefined description for routines or any other amateur targeted features here.
