@@ -30,10 +30,6 @@ public class MainMenu extends Activity implements OnClickListener {
         (findViewById(R.id.buttonMmStart   )).setOnClickListener(this);
         (findViewById(R.id.buttonMmSettings)).setOnClickListener(this);
         (findViewById(R.id.buttonMmReports )).setOnClickListener(this);
-
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
     }
 
     @Override
